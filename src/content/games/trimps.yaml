@@ -12,9 +12,14 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive on the author's official build.
-thumb: /thumbs/trimps.svg
 accent: "#c96bd6"
-featured: false
+cover:
+  capsule: /covers/trimps-capsule.svg
+  hero: /covers/trimps-hero.svg
+  source: original
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Hand-drawn UI mock-up (scripts/make-original-covers.ts) built from the game's real terminology (zones, population, Helium), checked against the live game on 2026-08-21. No screenshot, art, or code copied — Trimps has no public licence granting reuse.
 weight: 40
 added: "2026-08-21"
 controls: [mouse]

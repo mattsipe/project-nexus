@@ -32,16 +32,32 @@ for (const file of files) {
   const src = await readFile(join(GAMES_DIR, file), 'utf8');
   const slug = file.replace(/\.yaml$/, '');
 
-  const thumb = field(src, 'thumb');
-  if (!thumb) {
-    problems.push({ file, message: 'Missing `thumb`.' });
-  } else if (!(await exists(join(PUBLIC, thumb)))) {
-    problems.push({ file, message: `Cover art not found: public${thumb}` });
-  } else if (thumb.endsWith('.svg')) {
-    // A malformed SVG renders as a broken-image icon with no console error and
-    // no failed request, so nothing else in the pipeline would catch it.
-    const problem = xmlProblem(await readFile(join(PUBLIC, thumb), 'utf8'));
-    if (problem) problems.push({ file, message: `Cover art ${problem}: public${thumb}` });
+  // Every game needs both a capsule (3:4, the library grid) and a hero
+  // (16:9, the Continue row) — checked the same way, so a small helper.
+  for (const kind of ['capsule', 'hero'] as const) {
+    const cover = field(src, kind);
+    if (!cover) {
+      problems.push({ file, message: `Missing \`cover.${kind}\`.` });
+      continue;
+    }
+    if (!(await exists(join(PUBLIC, cover)))) {
+      problems.push({ file, message: `Cover ${kind} not found: public${cover}` });
+      continue;
+    }
+    if (cover.endsWith('.svg')) {
+      // A malformed SVG renders as a broken-image icon with no console error
+      // and no failed request, so nothing else in the pipeline would catch it.
+      const problem = xmlProblem(await readFile(join(PUBLIC, cover), 'utf8'));
+      if (problem) problems.push({ file, message: `Cover ${kind} ${problem}: public${cover}` });
+    }
+  }
+
+  // Cover provenance gets the same audit-trail requirement as the game
+  // itself: upstream-official art must name the licence and exact source.
+  const coverSource = field(src, 'source');
+  if (coverSource === 'upstream-official') {
+    if (!field(src, 'license')) problems.push({ file, message: 'Cover claims upstream-official but has no `license`.' });
+    if (!field(src, 'sourceUrl')) problems.push({ file, message: 'Cover claims upstream-official but has no `sourceUrl`.' });
   }
 
   const mode = field(src, 'mode');

@@ -81,14 +81,42 @@ For GPL games this record is a licence obligation, not a courtesy.
 
 ## 7. Cover art
 
-Add a motif entry to `scripts/make-covers.ts` and regenerate. We draw our own
-covers; we do not use the game's promotional art, which is copyrighted.
+Two images per game: a **capsule** (3:4, `public/covers/<slug>-capsule.*`,
+the library grid) and a **hero** (16:9, `public/covers/<slug>-hero.*`, the
+Continue row). Cover art gets the same rights bar as the game itself — "we
+drew it ourselves" is not automatically true just because it's original-*looking*.
+Pick one:
+
+- **Self-hosted or original game** → a real screenshot of our own build.
+  Add the game to `CAPTURES` in `scripts/capture-covers.ts` (drive it into a
+  state worth screenshotting — a few real moves, not the title screen), then
+  `node --experimental-strip-types scripts/capture-covers.ts`. Cover
+  `source: captured`.
+- **Embedded game whose upstream repo's licence covers its assets** (not just
+  its code — check for this explicitly) → real official art. Add a fetch
+  block to `scripts/fetch-upstream-art.ts`, pointing at the actual asset
+  files (a Steam Library capsule/hero pair, a loading screen, whatever the
+  repo actually ships), crop/resize with `sips` to the target dimensions.
+  Cover `source: upstream-official`, and record `license` + the exact
+  `sourceUrl` — enforced by the same `REDISTRIBUTABLE_LICENSES` allowlist as
+  self-hosting, in `content.config.ts`'s `superRefine`.
+- **Everything else** → a hand-authored UI mock-up in
+  `scripts/make-original-covers.ts`. Look at the live game first and use its
+  real terminology (resource names, mechanics, HUD language) so someone who
+  plays it recognises the cover — but draw it from scratch; never trace or
+  crop an actual screenshot. Cover `source: original`.
+
+Whichever you pick, derive font sizes and layout spacing from the *same* base
+unit (usually `w`) in both the capsule and hero draw calls — mixing `w`-relative
+sizing with `h`-relative spacing breaks the instant the two aspect ratios
+diverge, which they do a lot (3:4 vs 16:9).
 
 ## 8. Write the manifest and verify
 
-`src/content/games/<slug>.yaml`. The `rightsNote` must say **how** you
-established the rights and **when** — it is the audit trail, so "MIT" is not
-enough but "MIT LICENSE read at repo root on 2026-08-21" is.
+`src/content/games/<slug>.yaml`, including the `cover:` block. Both
+`source.rightsNote` and `cover.rightsNote` must say **how** you established
+the rights and **when** — it is the audit trail, so "MIT" is not enough but
+"MIT LICENSE read at repo root on 2026-08-21" is.
 
 ```bash
 npm run verify && npm run build && npm run test:e2e

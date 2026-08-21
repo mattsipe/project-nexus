@@ -12,9 +12,14 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive on the author's own domain.
-thumb: /thumbs/the-prestige-tree.svg
 accent: "#5ad17e"
-featured: false
+cover:
+  capsule: /covers/the-prestige-tree-capsule.svg
+  hero: /covers/the-prestige-tree-hero.svg
+  source: original
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Hand-drawn UI mock-up (scripts/make-original-covers.ts) depicting the game's own branching-tree mechanic, checked against the live game on 2026-08-21. No screenshot, art, or code copied — no LICENSE file exists upstream.
 weight: 55
 added: "2026-08-21"
 controls: [mouse]

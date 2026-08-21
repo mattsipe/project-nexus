@@ -46,13 +46,21 @@ rename later. The name is not baked into the build; only `site` in
 
 ## Measured payload
 
-Recorded 2026-08-21 at 9 games, so regressions are visible:
+Recorded 2026-08-21 at 9 games (post-Observatory-redesign), so regressions are
+visible:
 
 | | uncompressed | gzipped |
 |---|---|---|
-| All JavaScript | 215 KB | **67 KB** |
-| Home page HTML | 62 KB | 7 KB |
-| Total `dist/` | 3.6 MB | — |
+| All JavaScript | 219 KB | **69 KB** |
+| Home page HTML | 37 KB | 6 KB |
+| Total `dist/` | 5.0 MB | — |
+
+Barely moved despite the redesign being a near-total rewrite of the UI layer
+(new Galaxy/Library/GameCapsule islands, several removed) — the home page HTML
+actually shrank, since the old hero headline and stats block are gone. `dist/`
+grew from 3.6 MB to 5.0 MB from real cover art (PNG screenshots and upstream
+promotional images) replacing the old abstract SVG placeholders; still small
+enough not to matter for a static Netlify deploy.
 
 React's runtime is 176 KB of that 215 KB. If the JS budget ever becomes a real
 constraint on low-end Chromebooks, aliasing `react` → `preact/compat` would cut

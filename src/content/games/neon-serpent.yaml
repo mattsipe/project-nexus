@@ -9,9 +9,14 @@ tags: [snake, reflex, keyboard, quick, original]
 delivery:
   mode: selfhost
   path: /play/neon-serpent/index.html
-thumb: /thumbs/neon-serpent.svg
 accent: "#35e0d4"
-featured: true
+cover:
+  capsule: /covers/neon-serpent-capsule.png
+  hero: /covers/neon-serpent-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own original build, captured via scripts/capture-covers.ts on 2026-08-21.
 weight: 65
 added: "2026-08-21"
 controls: [keyboard, touch]

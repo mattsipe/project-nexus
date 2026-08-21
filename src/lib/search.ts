@@ -1,4 +1,4 @@
-import type { SearchDoc } from './games.ts';
+import type { LibraryDoc } from './gameMeta.ts';
 
 /**
  * Subsequence matching, not substring: "amdi" finds "AntiMatter DImensions".
@@ -29,11 +29,11 @@ function subsequenceScore(needle: string, haystack: string): number {
 }
 
 export interface SearchResult {
-  doc: SearchDoc;
+  doc: LibraryDoc;
   score: number;
 }
 
-export function searchGames(query: string, docs: SearchDoc[], limit = 8): SearchResult[] {
+export function searchGames(query: string, docs: LibraryDoc[], limit = 8): SearchResult[] {
   const q = query.trim();
   if (!q) return [];
 

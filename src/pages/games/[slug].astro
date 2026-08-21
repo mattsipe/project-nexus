@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GameCard from '../../components/GameCard.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
 import GameFrame from '../../components/react/GameFrame.tsx';
 import FavoriteButton from '../../components/react/FavoriteButton.tsx';
-import { allGames, frameSrc, officialUrl, rightsLabel, licenseLabel, CATEGORY_LABELS } from '../../lib/games.ts';
+import GameCapsule from '../../components/react/GameCapsule.tsx';
+import {
+  allGames, libraryDocs, frameSrc, officialUrl, rightsLabel, licenseLabel, CATEGORY_LABELS,
+} from '../../lib/games.ts';
 
 export const getStaticPaths = (async () => {
   const games = await allGames();
@@ -17,9 +18,10 @@ const { data } = game;
 
 const src = frameSrc(data);
 const official = officialUrl(data);
-const related = (await allGames())
-  .filter((g) => g.id !== game.id && g.data.categories.some((c) => data.categories.includes(c)))
-  .slice(0, 4);
+const docs = await libraryDocs();
+const related = docs
+  .filter((d) => d.slug !== game.id && d.categories.some((c) => data.categories.includes(c)))
+  .slice(0, 6);
 
 const badges = [
   rightsLabel(data),
@@ -34,9 +36,9 @@ const badges = [
 ---
 
 <BaseLayout title={data.title} description={data.tagline}>
-  <article class="shell pt-10 pb-6">
+  <article class="shell pt-8 pb-6">
     <nav class="mb-6 text-sm text-text-dim" aria-label="Breadcrumb">
-      <a href="/" class="hover:text-amber">Nexus</a>
+      <a href="/" class="hover:text-amber">← Library</a>
       <span class="mx-1.5 text-text-faint">/</span>
       <a href={`/category/${data.categories[0]}`} class="hover:text-amber">
         {CATEGORY_LABELS[data.categories[0]!]}
@@ -46,11 +48,11 @@ const badges = [
     <div class="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
       <div class="overflow-hidden rounded-2xl border border-edge">
         <img
-          src={data.thumb}
+          src={data.cover.hero}
           alt={`${data.title} cover art`}
-          width="640"
-          height="400"
-          class="aspect-[16/10] w-full object-cover"
+          width="1280"
+          height="720"
+          class="aspect-video w-full object-cover"
         />
       </div>
 
@@ -155,11 +157,13 @@ const badges = [
 
   {
     related.length > 0 && (
-      <section class="shell mt-12">
-        <SectionHeader title="More like this" />
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {related.map((g) => (
-            <GameCard game={g} />
+      <section class="shell mt-4">
+        <p class="mb-3 text-[11px] font-semibold tracking-wider text-text-faint uppercase">
+          More like this
+        </p>
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {related.map((doc) => (
+            <GameCapsule client:visible doc={doc} variant="capsule" />
           ))}
         </div>
       </section>

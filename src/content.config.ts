@@ -54,6 +54,40 @@ const source = z.object({
   rightsNote: z.string().min(10),
 });
 
+/**
+ * Cover art provenance — the same enforcement pattern as game licensing.
+ *
+ *  - upstream-official: real art shipped in a licence that permits reuse
+ *    (e.g. an MIT source repo, or an Apache-2.0 repo's Steam asset set).
+ *    Requires the licence and the exact source URL, because 'it was in
+ *    their repo' is not by itself a rights claim.
+ *  - captured: a screenshot we took ourselves of a game we already have the
+ *    right to run (self-hosted or embedded). No separate licence question —
+ *    it inherits the game's own rights — but still dated and noted, so the
+ *    audit trail is uniform.
+ *  - original: drawn for this project. No third-party rights question.
+ *
+ * Every game gets both a capsule (3:4, the library grid) and a hero (16:9,
+ * the Continue row), matching Steam's own Library asset convention.
+ */
+const coverBase = {
+  capsule: z.string().startsWith('/covers/'),
+  hero: z.string().startsWith('/covers/'),
+  verifiedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  rightsNote: z.string().min(10),
+};
+
+const cover = z.discriminatedUnion('source', [
+  z.object({
+    source: z.literal('upstream-official'),
+    ...coverBase,
+    license: z.string(),
+    sourceUrl: z.url(),
+  }),
+  z.object({ source: z.literal('captured'), ...coverBase }),
+  z.object({ source: z.literal('original'), ...coverBase }),
+]);
+
 const delivery = z.discriminatedUnion('mode', [
   /** Served from our own origin out of public/games/<slug>/. */
   z.object({
@@ -88,11 +122,14 @@ const games = defineCollection({
       categories: z.array(z.enum(CATEGORIES)).min(1),
       tags: z.array(z.string()).default([]),
       delivery,
-      thumb: z.string().startsWith('/thumbs/'),
-      /** Accent used for the card glow + detail hero. Hex. */
-      accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
-      featured: z.boolean().default(false),
-      /** Higher sorts earlier within a section. */
+      cover,
+      /**
+       * Drives the card glow and the galaxy nebula's hover tint — required,
+       * not cosmetic. Every capsule needs one for the signature interaction
+       * to work at all.
+       */
+      accent: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+      /** Higher sorts earlier in the library grid. */
       weight: z.number().default(0),
       added: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       controls: z.array(z.enum(['mouse', 'keyboard', 'touch'])).default(['mouse']),
@@ -150,6 +187,22 @@ const games = defineCollection({
           path: ['savesTo'],
           message: 'External games are not played in-site; savesTo must be "none".',
         });
+      }
+
+      // Cover art gets the same enforcement as the game itself: 'we found it in
+      // their repo' only counts if that repo's licence actually permits reuse.
+      if (game.cover.source === 'upstream-official') {
+        const ok = (REDISTRIBUTABLE_LICENSES as readonly string[]).includes(game.cover.license);
+        if (!ok) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['cover', 'license'],
+            message:
+              `Cover art for "${game.title}" claims licence "${game.cover.license}", ` +
+              `which is not in REDISTRIBUTABLE_LICENSES. Use cover source "original" ` +
+              `instead, or verify the licence and add it to the allowlist with an ADR.`,
+          });
+        }
       }
     }),
 });

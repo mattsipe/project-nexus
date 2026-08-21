@@ -13,9 +13,16 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive on the project's official build.
-thumb: /thumbs/bitburner.svg
 accent: "#3ddc84"
-featured: false
+cover:
+  capsule: /covers/bitburner-capsule.png
+  hero: /covers/bitburner-hero.png
+  source: upstream-official
+  license: Apache-2.0
+  sourceUrl: https://github.com/bitburner-official/bitburner-src/blob/master/assets/Steam/Library/Library_Capsule.png
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    The developers' own Steam Library capsule and hero art, fetched from the Apache-2.0-licensed source repository via jsDelivr on 2026-08-21 (scripts/fetch-upstream-art.ts). Apache-2.0 covers the repo's asset files; it does not grant trademark rights, so this is nominative use of the logo to identify the game, not a claim to the brand.
 weight: 60
 added: "2026-08-21"
 controls: [keyboard, mouse]

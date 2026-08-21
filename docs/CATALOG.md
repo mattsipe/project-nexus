@@ -33,6 +33,19 @@ URL, checking `X-Frame-Options` and CSP `frame-ancestors`.
 | Minecraft-style | Eaglercraft and similar are infringing repackagings | Build an original three.js voxel sandbox |
 | Tetris-style | "Tetris" is a trademark of the Tetris Company | Build an original block-stacker under a different name |
 
+## Cover art provenance
+
+Same audit-trail principle as the games themselves — a screenshot or promotional
+image is only ours to use if the rights actually allow it, checked per game
+rather than assumed.
+
+| Game | Cover source | Evidence |
+|---|---|---|
+| 2048, Hextris, Neon Serpent | `captured` | Screenshot of our own build, `scripts/capture-covers.ts`, 2026-08-21. Inherits the game's own licence. |
+| Antimatter Dimensions | `upstream-official` | Official loading-screen art, MIT source repo (`public/images/loading.png`), fetched via jsDelivr 2026-08-21. |
+| Bitburner | `upstream-official` | Official Steam Library capsule/hero art, Apache-2.0 source repo, fetched via jsDelivr 2026-08-21. Apache-2.0 covers the repo's assets; it does not grant trademark rights, so this is nominative use to identify the game, not a brand claim. |
+| Kittens Game, Trimps, The Prestige Tree, Distance Incremental | `original` | Hand-authored UI mock-up (`scripts/make-original-covers.ts`), built from each game's real terminology and checked against the live game, 2026-08-21. No screenshot or art copied — none of these four grant redistribution rights. |
+
 ## A note on framing
 
 Absence of `X-Frame-Options` means framing is **not technically blocked**. That

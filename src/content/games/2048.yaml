@@ -9,9 +9,14 @@ tags: [tiles, numbers, merge, quick]
 delivery:
   mode: selfhost
   path: /play/2048/index.html
-thumb: /thumbs/2048.svg
 accent: "#f0a93b"
-featured: true
+cover:
+  capsule: /covers/2048-capsule.png
+  hero: /covers/2048-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
 weight: 80
 added: "2026-08-21"
 controls: [keyboard, touch]

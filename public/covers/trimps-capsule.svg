@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect width="600" height="800" fill="#140b15"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#c96bd6" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#c96bd6" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="600" height="800" fill="url(#g)"/>
+  <text x="54" y="112.00000000000001" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="21.599999999999998" fill="#e9d9ee">Trimps</text>
+     <text x="54" y="131.20000000000002" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.2" fill="#c96bd6">Population 8,412 · Breeding</text>
+     <text x="54" y="150.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.4" fill="#8a7891">Helium banked 1.2M</text>
+     <rect x="54" y="564.48" width="42.72" height="91.52" rx="5"
+      fill="#c96bd6" opacity="0.5"/>
+      <text x="75.36" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z1</text><rect x="103.92" y="545.8302647472572" width="42.72" height="110.1697352527428" rx="5"
+      fill="#c96bd6" opacity="0.55"/>
+      <text x="125.28" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z2</text><rect x="153.84" y="518.5589652664479" width="42.72" height="137.4410347335521" rx="5"
+      fill="#c96bd6" opacity="0.6"/>
+      <text x="175.2" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z3</text><rect x="203.76" y="486.68883022598266" width="42.72" height="169.31116977401734" rx="5"
+      fill="#c96bd6" opacity="0.65"/>
+      <text x="225.12" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z4</text><rect x="253.68" y="451.40914926553893" width="42.72" height="204.59085073446107" rx="5"
+      fill="#c96bd6" opacity="0.7"/>
+      <text x="275.04" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z5</text><rect x="303.6" y="413.35591768034396" width="42.72" height="242.644082319656" rx="5"
+      fill="#c96bd6" opacity="0.75"/>
+      <text x="324.96000000000004" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z6</text><rect x="353.52" y="372.9356718503053" width="42.72" height="283.0643281496947" rx="5"
+      fill="#c96bd6" opacity="0.8"/>
+      <text x="374.88" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z7</text><rect x="403.44" y="330.4345928464609" width="42.72" height="325.5654071535391" rx="5"
+      fill="#3c2040" opacity="0.5"/>
+      <text x="424.8" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z8</text><rect x="453.36" y="286.06690761222274" width="42.72" height="369.93309238777726" rx="5"
+      fill="#3c2040" opacity="0.5"/>
+      <text x="474.72" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z9</text><rect x="503.28000000000003" y="240" width="42.72" height="416" rx="5"
+      fill="#3c2040" opacity="0.5"/>
+      <text x="524.64" y="678.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="9.6" fill="#a98fb0" text-anchor="middle">Z10</text>
+     <line x1="54" y1="656" x2="546" y2="656" stroke="#3a2a40" stroke-width="2"/>
+</svg>

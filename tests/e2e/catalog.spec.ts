@@ -19,11 +19,25 @@ function trackConsole(page: Page): string[] {
   return errors;
 }
 
-test('home page renders the catalogue', async ({ page }) => {
+/**
+ * The library launch animates the clicked capsule growing to fill the
+ * screen (~420ms, via a CSS transform on the player wrapper). Waits for
+ * React's own `grown` state (a data attribute, not a computed-style poll —
+ * more direct, and immune to any transform precision noise under CPU load)
+ * and then the transition's own known duration, so the wrapper is both
+ * logically settled and geometrically in place before anything clicks it.
+ */
+async function waitForLaunchAnimation(page: Page): Promise<void> {
+  await page.locator('[data-player-wrapper][data-grown="true"]').waitFor({ timeout: 5000 });
+  await page.waitForTimeout(500);
+}
+
+test('home page renders every game as a launchable capsule', async ({ page }) => {
   const errors = trackConsole(page);
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Browser games');
-  // Every game should be reachable from the home page.
+  await expect(page.locator('[data-capsule]').first()).toBeVisible();
+  // Every playable game gets a capsule; every game (playable or not) gets an
+  // "About" info link into its detail page.
   for (const g of GAMES) {
     await expect(page.locator(`a[href="/games/${g.slug}"]`).first()).toBeAttached();
   }
@@ -50,21 +64,44 @@ test('self-hosted game bundles are actually served', async ({ request }) => {
   }
 });
 
-test('search finds a game by a partial, out-of-order query', async ({ page }) => {
+test('the search box is always present and narrows the grid live', async ({ page }) => {
   await page.goto('/');
-  // The palette owns a global shortcut, so wait until that listener is live.
-  await page.locator('html[data-search-ready="true"]').waitFor();
+  const input = page.getByRole('searchbox', { name: 'Search games' });
+  // No modal to open — search-first means the box is already on screen.
+  await expect(input).toBeVisible();
+
+  // ⌘K/Ctrl-K focuses it rather than opening anything.
   await page.keyboard.press('Control+k');
-  const input = page.getByRole('textbox', { name: 'Search games' });
   await expect(input).toBeFocused();
+
   // Subsequence matching: "srpnt" is not a substring of "Neon Serpent".
   await input.fill('srpnt');
-  await expect(page.getByRole('dialog').getByText('Neon Serpent')).toBeVisible();
-  await input.press('Enter');
-  await expect(page).toHaveURL(/\/games\/neon-serpent/);
+  await expect(page.locator('[data-capsule]')).toHaveCount(1);
+  await expect(page.locator('[data-capsule]')).toContainText('Neon Serpent');
+
+  // Clearing the query restores the full grid.
+  await input.fill('');
+  await expect(page.locator('[data-capsule]')).toHaveCount(
+    GAMES.filter((g) => g.mode !== 'external').length,
+  );
 });
 
-test('a favourite survives a reload and reaches the favourites page', async ({ page }) => {
+test('category chips filter in place — no navigation, URL stays in sync', async ({ page }) => {
+  await page.goto('/');
+  const urlBefore = page.url();
+  await page.getByRole('button', { name: 'Puzzle', exact: true }).click();
+  await expect(page).toHaveURL(/[?&]c=puzzle/);
+  expect(page.url().split('?')[0]).toBe(urlBefore.split('?')[0]); // same document, just a query param
+  const capsules = page.locator('[data-capsule]');
+  await expect(capsules).toHaveCount(2); // 2048, Hextris
+  await expect(capsules.first()).toBeVisible();
+
+  // The back button un-filters, since the chip click pushed history.
+  await page.goBack();
+  await expect(page.getByRole('button', { name: 'All', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('a favourite survives a reload and reaches the favourites view', async ({ page }) => {
   await page.goto('/games/2048');
   await page.getByRole('button', { name: 'Add to favourites' }).click();
   await expect(page.getByRole('button', { name: 'Favourited' })).toBeVisible();
@@ -73,21 +110,40 @@ test('a favourite survives a reload and reaches the favourites page', async ({ p
   await expect(page.getByRole('button', { name: 'Favourited' })).toBeVisible();
 
   await page.goto('/favorites');
-  await expect(page.getByRole('heading', { name: '2048' })).toBeVisible();
+  await expect(page.locator('[data-capsule]')).toContainText('2048');
 });
 
-test('launching a self-hosted game records it in Jump back in', async ({ page }) => {
+test('launching a game inline records it in Continue, with no page navigation', async ({ page }) => {
   const errors = trackConsole(page);
-  await page.goto('/games/neon-serpent');
-  await page.getByRole('button', { name: /^Play Neon Serpent$/ }).click();
+  await page.goto('/');
+  const urlBefore = page.url();
+
+  const neonSerpent = page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' });
+  await neonSerpent.click();
+  expect(page.url()).toBe(urlBefore); // click-to-launch never navigates
 
   const frame = page.frameLocator('iframe[title="Neon Serpent"]');
   await expect(frame.getByRole('heading', { name: 'Neon Serpent' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
+  // Launching immediately adds the game to Continue, so by this point it
+  // legitimately appears twice on the page (Continue row + main grid,
+  // both hidden under the player overlay) — assert at least one, not "the".
+  await expect(page.getByRole('link', { name: 'About Neon Serpent' }).first()).toBeVisible();
+  await waitForLaunchAnimation(page);
 
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Jump back in' })).toBeVisible();
+  await page.getByRole('button', { name: '← Back' }).click();
+  await expect(page.getByText('Continue', { exact: true })).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test('arrow keys move focus around the library grid', async ({ page }) => {
+  await page.goto('/');
+  const capsules = page.locator('[data-capsule]');
+  await capsules.nth(0).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(capsules.nth(1)).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(capsules.nth(0)).toBeFocused();
 });
 
 test('Neon Serpent actually plays', async ({ page }) => {
@@ -112,15 +168,25 @@ test('every page is free of horizontal overflow on a laptop viewport', async ({ 
   }
 });
 
-test('the player covers the site nav completely', async ({ page }) => {
+test('the player covers the rail completely', async ({ page }) => {
   // Regression: `main` establishes a stacking context, so the overlay's z-index
-  // alone did not lift it above the sticky nav. It is portalled to <body> now.
-  await page.goto('/games/neon-serpent');
-  await page.getByRole('button', { name: /^Play Neon Serpent$/ }).click();
+  // alone did not lift it above the rail. It is portalled to <body> now.
+  await page.goto('/');
+  await page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' }).click();
   await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
+  await waitForLaunchAnimation(page);
 
-  const navIsOnTop = await page.evaluate(() =>
-    Boolean(document.elementFromPoint(90, 32)?.closest('header')),
+  const railIsOnTop = await page.evaluate(() =>
+    Boolean(document.elementFromPoint(30, 30)?.closest('nav[aria-label="Primary"]')),
   );
-  expect(navIsOnTop, 'nav must not be visible above a running game').toBe(false);
+  expect(railIsOnTop, 'rail must not be visible above a running game').toBe(false);
+});
+
+test('/category deep links render pre-filtered, and /favorites pre-filters to favourites', async ({ page }) => {
+  await page.goto('/category/puzzle');
+  await expect(page.locator('[data-capsule]')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: 'Puzzle', exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+  await page.goto('/favorites');
+  await expect(page.getByRole('button', { name: 'Favourites only' })).toHaveAttribute('aria-pressed', 'true');
 });

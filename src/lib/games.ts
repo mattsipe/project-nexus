@@ -1,8 +1,17 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { CATEGORIES, type Category } from '../content.config.ts';
+import { frameSrc, officialUrl, type LibraryDoc } from './gameMeta.ts';
+
+// Re-exported so server-side .astro pages can import everything from one
+// place. Client islands must import gameMeta.ts directly instead — this
+// module pulls in `astro:content`, which is server-only and fails the build
+// if it reaches a client bundle even transitively. See gameMeta.ts.
+export {
+  CATEGORY_LABELS, frameSrc, officialUrl, isPlayableInSite, rightsLabel,
+  licenseLabel, type GameData, type LibraryDoc,
+} from './gameMeta.ts';
 
 export type Game = CollectionEntry<'games'>;
-export type GameData = Game['data'];
 
 /** Build-time only. Sorted so every surface has a stable, intentional order. */
 export async function allGames(): Promise<Game[]> {
@@ -10,10 +19,6 @@ export async function allGames(): Promise<Game[]> {
   return games.sort(
     (a, b) => b.data.weight - a.data.weight || a.data.title.localeCompare(b.data.title),
   );
-}
-
-export async function featuredGames(): Promise<Game[]> {
-  return (await allGames()).filter((g) => g.data.featured);
 }
 
 export async function gamesByCategory(): Promise<{ category: Category; games: Game[] }[]> {
@@ -24,101 +29,20 @@ export async function gamesByCategory(): Promise<{ category: Category; games: Ga
   })).filter((group) => group.games.length > 0);
 }
 
-/**
- * Where the Play button goes.
- *
- * `selfhost` and `embed` both render in our in-page player, so they resolve to
- * the frame source. `external` has no in-site destination — the card opens the
- * author's site in a new tab instead, and callers must handle that case.
- */
-export function frameSrc(data: GameData): string | null {
-  switch (data.delivery.mode) {
-    case 'selfhost':
-      return data.delivery.path;
-    case 'embed':
-      return data.delivery.url;
-    case 'external':
-      return null;
-  }
-}
-
-/** The author's own page, for attribution and the "Open official site" action. */
-export function officialUrl(data: GameData): string | null {
-  if (data.delivery.mode !== 'selfhost') return data.delivery.url;
-  return data.source.homepage ?? data.source.repo ?? null;
-}
-
-export function isPlayableInSite(data: GameData): boolean {
-  return data.delivery.mode !== 'external';
-}
-
-/** Compact, human-readable rights summary for the card badge and credits page. */
-export function rightsLabel(data: GameData): string {
-  switch (data.delivery.mode) {
-    case 'selfhost':
-      return data.source.license === 'original'
-        ? 'Original game'
-        : `Self-hosted · ${data.source.license}`;
-    case 'embed':
-      return `Embedded · ${data.source.author}`;
-    case 'external':
-      return `Official site · ${data.source.author}`;
-  }
-}
-
-/**
- * Licence identifiers as a reader should see them. SPDX ids pass through
- * unchanged - they are the precise answer and people who care know them - but
- * our internal sentinels are not words anyone should have to decode.
- */
-export function licenseLabel(license: string): string {
-  switch (license) {
-    case 'original':
-      return 'Original work · MIT';
-    case 'unlicensed':
-      return 'No licence granted · all rights reserved';
-    case 'proprietary':
-      return 'Proprietary';
-    default:
-      return license;
-  }
-}
-
-export const CATEGORY_LABELS: Record<Category, string> = {
-  incremental: 'Incremental',
-  puzzle: 'Puzzle',
-  arcade: 'Arcade',
-  action: 'Action',
-  strategy: 'Strategy',
-  sandbox: 'Sandbox',
-  classic: 'Classic',
-};
-
-/**
- * The search index, inlined into the page at build time.
- * It is small (a few KB for a catalog this size), so shipping it beats a
- * runtime fetch — search is instant on first keypress, even on school wifi.
- */
-export interface SearchDoc {
-  slug: string;
-  title: string;
-  tagline: string;
-  categories: string[];
-  tags: string[];
-  thumb: string;
-  mode: GameData['delivery']['mode'];
-  accent?: string;
-}
-
-export async function searchIndex(): Promise<SearchDoc[]> {
+export async function libraryDocs(): Promise<LibraryDoc[]> {
   return (await allGames()).map((g) => ({
     slug: g.id,
     title: g.data.title,
     tagline: g.data.tagline,
     categories: g.data.categories,
     tags: g.data.tags,
-    thumb: g.data.thumb,
+    capsule: g.data.cover.capsule,
+    hero: g.data.cover.hero,
+    accent: g.data.accent,
     mode: g.data.delivery.mode,
-    ...(g.data.accent ? { accent: g.data.accent } : {}),
+    src: frameSrc(g.data),
+    sameOrigin: g.data.delivery.mode === 'selfhost',
+    officialUrl: officialUrl(g.data),
+    savesThirdParty: g.data.savesTo === 'thirdparty',
   }));
 }

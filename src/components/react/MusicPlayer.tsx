@@ -63,7 +63,7 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className="fixed right-4 bottom-4 z-30 flex items-center gap-2">
+    <div className="fixed right-4 bottom-20 z-30 flex items-center gap-2 md:bottom-4">
       {/* Visible whenever ambience is on. It was briefly behind a disclosure,
           which meant that after a reload the only control was undiscoverable. */}
       {enabled && !unavailable && (

@@ -13,9 +13,14 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive on the author's official site.
-thumb: /thumbs/kittens-game.svg
 accent: "#e8b04b"
-featured: false
+cover:
+  capsule: /covers/kittens-game-capsule.svg
+  hero: /covers/kittens-game-hero.svg
+  source: original
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Hand-drawn UI mock-up (scripts/make-original-covers.ts) built from the game's real resource and building names, checked against the live game on 2026-08-21. No screenshot, art, or code copied — the WET PAWS licence forbids derivative works, so nothing upstream was reused.
 weight: 35
 added: "2026-08-21"
 controls: [mouse]

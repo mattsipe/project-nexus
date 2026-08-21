@@ -13,9 +13,16 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive, so the author's build permits framing.
-thumb: /thumbs/antimatter-dimensions.svg
 accent: "#7c6cff"
-featured: true
+cover:
+  capsule: /covers/antimatter-dimensions-capsule.png
+  hero: /covers/antimatter-dimensions-hero.png
+  source: upstream-official
+  license: MIT
+  sourceUrl: https://github.com/IvarK/AntimatterDimensionsSourceCode/blob/master/public/images/loading.png
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    The game's own official loading-screen artwork, fetched from the MIT-licensed source repository via jsDelivr on 2026-08-21 (scripts/fetch-upstream-art.ts). The repo's MIT licence covers its asset files, not just its code.
 weight: 100
 added: "2026-08-21"
 controls: [mouse, keyboard]

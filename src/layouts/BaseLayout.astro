@@ -1,25 +1,20 @@
 ---
 import '../styles/theme.css';
-import Nav from '../components/Nav.astro';
-import { searchIndex } from '../lib/games.ts';
-import SearchPalette from '../components/react/SearchPalette.tsx';
+import Rail from '../components/Rail.astro';
+import Galaxy from '../components/react/Galaxy.tsx';
 import MusicPlayer from '../components/react/MusicPlayer.tsx';
 
 interface Props {
   title?: string;
   description?: string;
-  /** Player pages hide the nav and footer so the game owns the viewport. */
-  chromeless?: boolean;
 }
 
 const {
   title,
-  description = 'A fast, carefully built arcade of browser games. No accounts, no tracking.',
-  chromeless = false,
+  description = 'A fast, carefully built launcher for browser games. No accounts, no tracking.',
 } = Astro.props;
 
 const fullTitle = title ? `${title} · Nexus` : 'Project Nexus — browser games worth your time';
-const docs = await searchIndex();
 ---
 
 <!doctype html>
@@ -29,7 +24,7 @@ const docs = await searchIndex();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#07080d" />
+    <meta name="theme-color" content="#08060f" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <meta property="og:title" content={fullTitle} />
@@ -52,30 +47,14 @@ const docs = await searchIndex();
       Skip to content
     </a>
 
-    {!chromeless && <Nav />}
+    <Galaxy client:load />
+    <Rail />
 
-    <main id="main" class="relative z-10">
+    <main id="main" class="relative z-10 pb-16 md:pb-0 md:pl-[var(--rail-w)]">
       <slot />
     </main>
 
-    {
-      !chromeless && (
-        <footer class="relative z-10 mt-24 border-t border-edge">
-          <div class="shell flex flex-col gap-4 py-10 text-sm text-text-dim sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              Project Nexus hosts games it has the right to host, and links to the rest.
-              <a href="/credits" class="ml-1 text-text underline decoration-edge-strong underline-offset-4 hover:decoration-amber">
-                Licences and credits
-              </a>
-            </p>
-            <p class="text-text-faint">No accounts. No tracking. Saves stay on your device.</p>
-          </div>
-        </footer>
-      )
-    }
-
-    {/* Mounted once at the layout level so music and search survive navigation. */}
-    <SearchPalette client:load docs={docs} />
+    {/* Mounted once at the layout level so it survives client-side navigation state. */}
     <MusicPlayer client:idle />
   </body>
 </html>
