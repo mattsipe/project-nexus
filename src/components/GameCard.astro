@@ -1,0 +1,63 @@
+---
+import type { Game } from '../lib/games.ts';
+import { isPlayableInSite, officialUrl } from '../lib/games.ts';
+import FavoriteButton from './react/FavoriteButton.tsx';
+
+interface Props {
+  game: Game;
+  /** The first row of the homepage grid should not lazy-load. */
+  priority?: boolean;
+  size?: 'default' | 'large';
+}
+
+const { game, priority = false, size = 'default' } = Astro.props;
+const { data } = game;
+const playable = isPlayableInSite(data);
+const href = playable ? `/games/${game.id}` : (officialUrl(data) ?? '#');
+const external = !playable;
+---
+
+<article
+  class="cabinet-glow group relative flex flex-col overflow-hidden rounded-[--radius-card] border border-edge bg-surface"
+  style={`--glow: ${data.accent ?? 'var(--color-amber)'}`}
+>
+  <a
+    href={href}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener noreferrer' : undefined}
+    class="flex flex-1 flex-col focus:outline-none"
+  >
+    <div class="relative aspect-[16/10] overflow-hidden bg-ink">
+      <img
+        src={data.thumb}
+        alt=""
+        width="640"
+        height="400"
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        class="h-full w-full object-cover transition-transform duration-500 ease-[--ease-out-cabinet] group-hover:scale-[1.04]"
+      />
+      {
+        external && (
+          <span class="absolute top-2.5 right-2.5 rounded-md bg-ink/85 px-2 py-1 text-[11px] font-medium tracking-wide text-text-dim backdrop-blur-sm">
+            Official site ↗
+          </span>
+        )
+      }
+    </div>
+
+    <div class:list={['flex flex-1 flex-col gap-1.5', size === 'large' ? 'p-5' : 'p-4']}>
+      <h3
+        class:list={[
+          'font-display font-extrabold leading-tight text-balance',
+          size === 'large' ? 'text-xl' : 'text-base',
+        ]}
+      >
+        {data.title}
+      </h3>
+      <p class="line-clamp-2 text-sm leading-snug text-text-dim">{data.tagline}</p>
+    </div>
+  </a>
+
+  <FavoriteButton client:visible slug={game.id} title={data.title} />
+</article>

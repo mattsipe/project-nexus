@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+  /** Kept short — it labels the row, it does not sell it. */
+  note?: string;
+  href?: string;
+  linkLabel?: string;
+}
+const { title, note, href, linkLabel = 'See all' } = Astro.props;
+---
+
+<div class="mb-4 flex items-end justify-between gap-4">
+  <div>
+    <h2 class="font-display text-xl font-extrabold tracking-tight sm:text-2xl">{title}</h2>
+    {note && <p class="mt-0.5 text-sm text-text-dim">{note}</p>}
+  </div>
+  {
+    href && (
+      <a
+        href={href}
+        class="shrink-0 text-sm font-medium text-text-dim transition-colors hover:text-amber"
+      >
+        {linkLabel} →
+      </a>
+    )
+  }
+</div>

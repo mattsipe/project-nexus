@@ -1,0 +1,30 @@
+title: Trimps
+tagline: Your trimps fight, breed, and die. Mostly they die.
+description: >-
+  A deep idle game about sending a small civilisation up an endless zone
+  ladder. Deceptively simple for an hour, then it opens out and does not stop.
+categories: [incremental, strategy]
+tags: [idle, zones, long-haul, breeding]
+delivery:
+  mode: embed
+  url: https://trimps.github.io/
+  embedVerifiedOn: "2026-08-21"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive on the author's official build.
+thumb: /thumbs/trimps.svg
+accent: "#c96bd6"
+featured: false
+weight: 40
+added: "2026-08-21"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Greensatellite
+  homepage: https://trimps.github.io/
+  license: proprietary
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    No public licence granting redistribution. We embed the author's own build,
+    which copies nothing and sends players to the official version.

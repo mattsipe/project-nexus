@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Type coverage across .astro and .tsx. Hints are treated as failures too:
+      # the codebase is at 0/0/0 and drift is easier to prevent than to repay.
+      - run: npm run check
+
+      # Manifest integrity: real cover art, real bundles, a licence beside every
+      # self-hosted game. Note the build itself already enforces the licence
+      # allowlist via the content schema.
+      - run: npm run verify:assets
+
+      - run: npm run build
+
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

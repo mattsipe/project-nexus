@@ -1,0 +1,26 @@
+title: Neon Serpent
+tagline: Grid-perfect snake that reads as smooth. Getting long is the problem.
+description: >-
+  Our own take on the oldest arcade idea there is. It runs on a strict grid so
+  collisions are always fair, but draws between ticks so the motion is fluid
+  rather than steppy. Gets faster every four pellets.
+categories: [arcade, classic]
+tags: [snake, reflex, keyboard, quick, original]
+delivery:
+  mode: selfhost
+  path: /play/neon-serpent/index.html
+thumb: /thumbs/neon-serpent.svg
+accent: "#35e0d4"
+featured: true
+weight: 65
+added: "2026-08-21"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Arcadia
+  license: original
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Written for Arcadia from scratch, no third-party code or assets.
+    Released under MIT - see the LICENSE file beside the game.

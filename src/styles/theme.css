@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ARCADIA — "Cabinet"
+   A dark room lit by screens. The chrome recedes so game art is the hero.
+
+   Two accents, strictly separated by meaning:
+     amber — interaction: hover, focus, favorite, primary action
+     cyan  — live only: "playing now", resume rail. Nowhere else.
+   That discipline is the point: when you see cyan, it means something.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Surface: blue-shifted black reads as screen-glow-in-a-dark-room,
+        where neutral black reads as a void. ── */
+  --color-ink: #07080d;
+  --color-surface: #0f111a;
+  --color-raised: #171a26;
+  --color-edge: #242838;
+  --color-edge-strong: #343a50;
+
+  /* ── Interaction (marquee bulbs) ── */
+  --color-amber: #ffb020;
+  --color-amber-dim: #b87a12;
+  --color-amber-wash: #ffb0201a;
+
+  /* ── Live state only ── */
+  --color-live: #35e0d4;
+  --color-live-wash: #35e0d41a;
+
+  /* ── Text ── */
+  --color-text: #e8e9f0;
+  --color-text-dim: #8b90a6;
+  --color-text-faint: #5a5f75;
+
+  --color-danger: #ff5c5c;
+
+  /* ── Type: Archivo carries signage/marquee personality at expanded widths;
+        Plex Sans is the quiet body face; Plex Mono is where the
+        big-number vernacular of incremental games lives. ── */
+  --font-display: 'Archivo', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+
+  --radius-card: 0.875rem;
+  --ease-out-cabinet: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --shell-max: 88rem;
+  }
+
+  html {
+    background-color: var(--color-ink);
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+  }
+
+  /* Ambient grain — the only atmosphere effect that survived the cut.
+     Scanlines were tempting and wrong: they hurt readability on the
+     low-DPI Chromebook panels this site is built for. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    letter-spacing: -0.015em;
+  }
+
+  /* Keyboard focus must be unmistakable — a large share of this catalog is
+     keyboard-driven, and the ⌘K palette is a primary navigation path. */
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  :focus:not(:focus-visible) { outline: none; }
+
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  /* The signature: a card lifts and casts its own art-derived color as a
+     glow beneath it, like a lit cabinet in a dark arcade. --glow is set
+     per-card from the game's accent. */
+  .cabinet-glow {
+    transition:
+      transform 0.32s var(--ease-out-cabinet),
+      box-shadow 0.32s var(--ease-out-cabinet),
+      border-color 0.32s var(--ease-out-cabinet);
+  }
+  .cabinet-glow:hover,
+  .cabinet-glow:focus-visible {
+    transform: translateY(-6px);
+    border-color: color-mix(in oklab, var(--glow, var(--color-amber)) 55%, transparent);
+    box-shadow:
+      0 18px 40px -12px color-mix(in oklab, var(--glow, var(--color-amber)) 45%, transparent),
+      0 2px 0 0 color-mix(in oklab, var(--glow, var(--color-amber)) 30%, transparent) inset;
+  }
+
+  /* Numbers use tabular mono so counts don't jitter as they tick up —
+     which, in a catalog of incremental games, they constantly do. */
+  .tnum {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .hairline { border-color: var(--color-edge); }
+
+  .scrim-b {
+    background: linear-gradient(
+      to top,
+      var(--color-surface) 0%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 45%,
+      transparent 100%
+    );
+  }
+}
+
+/* Honour the OS setting rather than merely reducing durations: the card
+   lift and every rail transition become instant, not just faster. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cabinet-glow:hover,
+  .cabinet-glow:focus-visible { transform: none; }
+}

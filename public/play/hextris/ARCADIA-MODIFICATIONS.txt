@@ -1,0 +1,23 @@
+Arcadia — record of modifications to this vendored game
+=======================================================
+
+Upstream:  https://github.com/Hextris/hextris
+Licence:   GPL-3.0 (see LICENSE.md, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. Per GPL-3.0 §5(a), the changes are:
+
+  1. index.html — removed the inline Google Analytics snippet
+     (property UA-51272720-2).
+  2. js/initialization.js — removed the inline Google Analytics snippet
+     (property UA-51272720-1).
+     Both sites of removal are marked with an "[Arcadia]" comment.
+  3. Removed CNAME (GitHub Pages domain config, meaningless when self-hosted).
+
+Rationale: the analytics sent our visitors' data to a third party without
+their consent, and the request is commonly blocked on school networks, which
+stalled game load.
+
+No game logic was altered. Complete corresponding source for this modified
+version is available at the Arcadia repository, and the unmodified upstream
+remains at the URL above.

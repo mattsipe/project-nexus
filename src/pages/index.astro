@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GameGrid from '../components/GameGrid.astro';
+import GameCard from '../components/GameCard.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PersonalRails from '../components/react/PersonalRails.tsx';
+import { allGames, featuredGames, gamesByCategory, searchIndex, CATEGORY_LABELS } from '../lib/games.ts';
+
+const games = await allGames();
+const featured = await featuredGames();
+const groups = await gamesByCategory();
+const docs = await searchIndex();
+
+const selfHosted = games.filter((g) => g.data.delivery.mode === 'selfhost').length;
+const embedded = games.filter((g) => g.data.delivery.mode === 'embed').length;
+---
+
+<BaseLayout>
+  <!-- The hero states what the catalog is and gets out of the way. The games
+       are the thesis here, so the first thing below the fold is game art. -->
+  <section class="shell pt-12 pb-2 sm:pt-20">
+    <h1 class="max-w-3xl font-display text-4xl leading-[1.05] font-extrabold text-balance sm:text-6xl">
+      Browser games worth your time.
+    </h1>
+    <p class="mt-4 max-w-xl text-base text-text-dim sm:text-lg">
+      {games.length} games, no sign-in, no adverts, nothing to install. Your favourites
+      and your progress stay on your device.
+    </p>
+    <dl class="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-sm">
+      <div class="flex items-baseline gap-1.5">
+        <dt class="text-text-faint">Hosted here</dt>
+        <dd class="tnum font-medium text-text">{selfHosted}</dd>
+      </div>
+      <div class="flex items-baseline gap-1.5">
+        <dt class="text-text-faint">Played in place</dt>
+        <dd class="tnum font-medium text-text">{embedded}</dd>
+      </div>
+      <div class="flex items-baseline gap-1.5">
+        <dt class="text-text-faint">Accounts required</dt>
+        <dd class="tnum font-medium text-text">0</dd>
+      </div>
+    </dl>
+  </section>
+
+  <PersonalRails client:idle docs={docs} which="recent" />
+  <PersonalRails client:idle docs={docs} which="favorites" />
+
+  <section class="shell mt-14">
+    <SectionHeader title="Featured" note="Where to start if you have not been here before." />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {featured.map((game, i) => <GameCard game={game} priority={i < 4} size="large" />)}
+    </div>
+  </section>
+
+  {
+    groups.map(({ category, games: list }) => (
+      <section class="shell mt-14">
+        <SectionHeader
+          title={CATEGORY_LABELS[category]}
+          href={`/category/${category}`}
+          linkLabel={`All ${list.length}`}
+        />
+        <GameGrid games={list} priorityCount={0} />
+      </section>
+    ))
+  }
+</BaseLayout>

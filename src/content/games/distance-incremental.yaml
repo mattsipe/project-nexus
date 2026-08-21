@@ -1,0 +1,30 @@
+title: Distance Incremental
+tagline: Walk further. Then find out what was making you slow.
+description: >-
+  Velocity begets acceleration begets rank. A tightly paced incremental that
+  keeps handing you a new reason the number you just maxed out was the small one.
+categories: [incremental]
+tags: [prestige, idle, ranks]
+delivery:
+  mode: embed
+  url: https://jacorb90.me/DistInc.github.io/main.html
+  embedVerifiedOn: "2026-08-21"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive on the author's own domain.
+thumb: /thumbs/distance-incremental.svg
+accent: "#ff7a4d"
+featured: false
+weight: 45
+added: "2026-08-21"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Jacorb
+  homepage: https://jacorb90.me/DistInc.github.io/main.html
+  license: unlicensed
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    No LICENSE file found upstream, so all rights are reserved. Embedding the
+    author's own build redistributes nothing.

@@ -1,0 +1,42 @@
+name: Embed check
+
+# Embedded games are third-party sites that can start sending X-Frame-Options at
+# any time, which would turn a working game into a blank rectangle. This runs on
+# a schedule rather than in CI so a third-party outage cannot block a deploy.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Probe embedded games for framing restrictions
+        run: node --experimental-strip-types scripts/verify-embed.ts
+
+      - name: Open an issue if a game stopped allowing framing
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'An embedded game no longer permits framing';
+            const { data } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'embed-broken',
+            });
+            if (data.length) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title, labels: ['embed-broken'],
+              body: [
+                'The weekly embed check failed — see the run log for which game.',
+                '',
+                'Fix: change that game to `mode: external` in its manifest.',
+                'Do **not** attempt to work around the restriction.',
+              ].join('\n'),
+            });

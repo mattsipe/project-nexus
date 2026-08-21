@@ -1,0 +1,81 @@
+---
+import '../styles/theme.css';
+import Nav from '../components/Nav.astro';
+import { searchIndex } from '../lib/games.ts';
+import SearchPalette from '../components/react/SearchPalette.tsx';
+import MusicPlayer from '../components/react/MusicPlayer.tsx';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Player pages hide the nav and footer so the game owns the viewport. */
+  chromeless?: boolean;
+}
+
+const {
+  title,
+  description = 'A fast, carefully built arcade of browser games. No accounts, no tracking.',
+  chromeless = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · Arcadia` : 'Arcadia — browser games worth your time';
+const docs = await searchIndex();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#07080d" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+  </head>
+
+  <body class="relative">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-amber focus:px-4 focus:py-2 focus:font-medium focus:text-ink"
+    >
+      Skip to content
+    </a>
+
+    {!chromeless && <Nav />}
+
+    <main id="main" class="relative z-10">
+      <slot />
+    </main>
+
+    {
+      !chromeless && (
+        <footer class="relative z-10 mt-24 border-t border-edge">
+          <div class="shell flex flex-col gap-4 py-10 text-sm text-text-dim sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Arcadia hosts games it has the right to host, and links to the rest.
+              <a href="/credits" class="ml-1 text-text underline decoration-edge-strong underline-offset-4 hover:decoration-amber">
+                Licences and credits
+              </a>
+            </p>
+            <p class="text-text-faint">No accounts. No tracking. Saves stay on your device.</p>
+          </div>
+        </footer>
+      )
+    }
+
+    {/* Mounted once at the layout level so music and search survive navigation. */}
+    <SearchPalette client:load docs={docs} />
+    <MusicPlayer client:idle />
+  </body>
+</html>

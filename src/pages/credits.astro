@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { allGames, rightsLabel } from '../lib/games.ts';
+
+const games = await allGames();
+const byMode = {
+  selfhost: games.filter((g) => g.data.delivery.mode === 'selfhost'),
+  embed: games.filter((g) => g.data.delivery.mode === 'embed'),
+  external: games.filter((g) => g.data.delivery.mode === 'external'),
+};
+---
+
+<BaseLayout
+  title="Licences and credits"
+  description="Where every game on Arcadia came from and under what terms."
+>
+  <section class="shell pt-12">
+    <h1 class="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+      Licences and credits
+    </h1>
+    <p class="mt-4 max-w-prose leading-relaxed text-text-dim">
+      Every game here is made by someone. This page says who, and on what terms we are
+      allowed to show it to you. We host a game ourselves only when its licence permits
+      redistribution; otherwise we frame the developer's own build, or send you to it.
+      Nothing is copied without a licence that allows it.
+    </p>
+  </section>
+
+  {
+    (
+      [
+        ['selfhost', 'Hosted on Arcadia', 'These carry a licence that permits redistribution. The full licence ships with each game.'],
+        ['embed', 'Played in place', 'The developer’s own build, shown in a frame. We host no copy and change nothing.'],
+        ['external', 'Linked to the official site', 'Not licensed for us to host, and not embeddable. We send you to the original.'],
+      ] as const
+    ).map(([mode, heading, note]) =>
+      byMode[mode].length === 0 ? null : (
+        <section class="shell mt-12">
+          <h2 class="font-display text-2xl font-extrabold">{heading}</h2>
+          <p class="mt-1 max-w-prose text-sm text-text-dim">{note}</p>
+          <ul class="mt-5 divide-y divide-edge overflow-hidden rounded-xl border border-edge">
+            {byMode[mode].map((g) => (
+              <li class="flex flex-col gap-1.5 bg-surface p-4 sm:flex-row sm:items-start sm:gap-6">
+                <div class="sm:w-56 sm:shrink-0">
+                  <a href={`/games/${g.id}`} class="font-semibold hover:text-amber">
+                    {g.data.title}
+                  </a>
+                  <p class="text-sm text-text-dim">{g.data.source.author}</p>
+                </div>
+                <div class="min-w-0 flex-1 text-sm">
+                  <p class="text-text-dim">
+                    <span class="text-text">{rightsLabel(g.data)}</span>
+                    <span class="mx-2 text-text-faint">·</span>
+                    verified {g.data.source.verifiedOn}
+                  </p>
+                  <p class="mt-1 text-text-faint">{g.data.source.rightsNote}</p>
+                  {g.data.source.repo && (
+                    <a
+                      href={g.data.source.repo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="mt-1 inline-block break-all text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                    >
+                      {g.data.source.repo}
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ),
+    )
+  }
+
+  <section class="shell mt-14 mb-4">
+    <h2 class="font-display text-2xl font-extrabold">Corrections</h2>
+    <p class="mt-2 max-w-prose leading-relaxed text-text-dim">
+      If you made one of these games and want it removed, or hosted differently, that is
+      your call and we will act on it. Open an issue on the Arcadia repository and it will
+      be handled.
+    </p>
+  </section>
+</BaseLayout>

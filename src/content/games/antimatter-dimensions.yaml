@@ -1,0 +1,35 @@
+title: Antimatter Dimensions
+tagline: Buy a dimension. Buy a dimension that buys dimensions. Keep going.
+description: >-
+  The incremental that taught a generation what an exponent feels like. You
+  start by clicking for antimatter and end up resetting entire universes for a
+  multiplier. Expect to be here for a while.
+categories: [incremental]
+tags: [prestige, big-numbers, idle, long-haul]
+delivery:
+  mode: embed
+  url: https://ivark.github.io/AntimatterDimensions/
+  embedVerifiedOn: "2026-08-21"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive, so the author's build permits framing.
+thumb: /thumbs/antimatter-dimensions.svg
+accent: "#7c6cff"
+featured: true
+weight: 100
+added: "2026-08-21"
+controls: [mouse, keyboard]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: IvarK (Hevipelle)
+  homepage: https://ivark.github.io/AntimatterDimensions/
+  repo: https://github.com/IvarK/AntimatterDimensionsSourceCode
+  license: MIT
+  licenseUrl: https://github.com/IvarK/AntimatterDimensionsSourceCode/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Source is MIT, so self-hosting would be permitted. We embed instead because
+    the repo ships only unbuilt Vue/webpack source and the one prebuilt deploy
+    we found is an outdated release - embedding gives players the current
+    official version. Revisit self-hosting when a build step is worth carrying.

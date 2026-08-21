@@ -1,0 +1,54 @@
+---
+import { CATEGORY_LABELS } from '../lib/games.ts';
+import { gamesByCategory } from '../lib/games.ts';
+import SearchTrigger from './react/SearchTrigger.tsx';
+
+const groups = await gamesByCategory();
+const path = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-40 border-b border-edge bg-ink/85 backdrop-blur-xl">
+  <div class="shell flex h-16 items-center gap-3 sm:gap-6">
+    <a href="/" class="group flex shrink-0 items-center gap-2.5" aria-label="Arcadia home">
+      <span
+        class="grid h-8 w-8 place-items-center rounded-lg bg-amber font-display text-lg font-extrabold text-ink transition-transform group-hover:scale-105"
+        aria-hidden="true">A</span
+      >
+      <span class="font-display text-lg font-extrabold tracking-tight">Arcadia</span>
+    </a>
+
+    <nav class="hidden min-w-0 flex-1 items-center gap-1 md:flex" aria-label="Categories">
+      {
+        groups.map(({ category }) => {
+          const href = `/category/${category}`;
+          const active = path === href;
+          return (
+            <a
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              class:list={[
+                'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                active ? 'bg-raised text-text' : 'text-text-dim hover:bg-raised hover:text-text',
+              ]}
+            >
+              {CATEGORY_LABELS[category]}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2">
+      <SearchTrigger client:idle />
+      <a
+        href="/favorites"
+        class:list={[
+          'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+          path === '/favorites' ? 'bg-raised text-text' : 'text-text-dim hover:bg-raised hover:text-text',
+        ]}
+      >
+        Favourites
+      </a>
+    </div>
+  </div>
+</header>

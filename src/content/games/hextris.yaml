@@ -1,0 +1,31 @@
+title: Hextris
+tagline: A hexagon spins, blocks fall, colours must meet colours.
+description: >-
+  Rotate the hexagon so falling blocks land on matching colours. Three in a row
+  clears them. It starts gentle and becomes genuinely frantic — an arcade puzzle
+  in the truest sense.
+categories: [puzzle, arcade]
+tags: [hexagon, colour-match, reflex, quick]
+delivery:
+  mode: selfhost
+  path: /play/hextris/index.html
+thumb: /thumbs/hextris.svg
+accent: "#2fc4d6"
+featured: true
+weight: 70
+added: "2026-08-21"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Logan Engstrom, Garrett Finucane, Noah Moroze, Michael Yang
+  homepage: https://hextris.io/
+  repo: https://github.com/Hextris/hextris
+  license: GPL-3.0
+  licenseUrl: https://github.com/Hextris/hextris/blob/master/LICENSE.md
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    GPL-3.0 LICENSE.md read at repo root on 2026-08-21. Self-hosting is a
+    conveying of the work, permitted with source availability and change
+    notices; both provided. Google Analytics was removed - see
+    ARCADIA-MODIFICATIONS.txt for the GPL-3.0 s5(a) change record.

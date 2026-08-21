@@ -1,0 +1,29 @@
+title: "2048"
+tagline: Slide the tiles, match the numbers, chase the 2048 tile.
+description: >-
+  Join numbered tiles by sliding them together. Every merge doubles the value,
+  and the board fills up faster than you expect. Gabriele Cirulli built the
+  original in a weekend and it became the definitive puzzle of its year.
+categories: [puzzle, classic]
+tags: [tiles, numbers, merge, quick]
+delivery:
+  mode: selfhost
+  path: /play/2048/index.html
+thumb: /thumbs/2048.svg
+accent: "#f0a93b"
+featured: true
+weight: 80
+added: "2026-08-21"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Gabriele Cirulli
+  homepage: https://play2048.co/
+  repo: https://github.com/gabrielecirulli/2048
+  license: MIT
+  licenseUrl: https://github.com/gabrielecirulli/2048/blob/master/LICENSE.txt
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE.txt read at repo root on 2026-08-21. Vendored via jsDelivr with
+    the licence file intact. Modifications recorded in ARCADIA-MODIFICATIONS.txt.

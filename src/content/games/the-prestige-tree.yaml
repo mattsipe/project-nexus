@@ -1,0 +1,31 @@
+title: The Prestige Tree
+tagline: Every reset unlocks another branch. The tree never really ends.
+description: >-
+  A prestige game about prestige games. Reset to gain points, spend points to
+  unlock layers, and discover the tree is deeper than the last layer implied.
+categories: [incremental]
+tags: [prestige, tree, idle, layers]
+delivery:
+  mode: embed
+  url: https://jacorb90.me/Prestige-Tree/
+  embedVerifiedOn: "2026-08-21"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive on the author's own domain.
+thumb: /thumbs/the-prestige-tree.svg
+accent: "#5ad17e"
+featured: false
+weight: 55
+added: "2026-08-21"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Jacorb / Acamaeda
+  homepage: https://jacorb90.me/Prestige-Tree/
+  license: unlicensed
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    No LICENSE file found in the upstream repository, so all rights are
+    reserved and we may not redistribute it. We link to the author's own
+    build in a frame, which copies nothing.

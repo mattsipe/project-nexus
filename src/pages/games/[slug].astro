@@ -1,0 +1,168 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GameCard from '../../components/GameCard.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import GameFrame from '../../components/react/GameFrame.tsx';
+import FavoriteButton from '../../components/react/FavoriteButton.tsx';
+import { allGames, frameSrc, officialUrl, rightsLabel, licenseLabel, CATEGORY_LABELS } from '../../lib/games.ts';
+
+export const getStaticPaths = (async () => {
+  const games = await allGames();
+  return games.map((game) => ({ params: { slug: game.id }, props: { game } }));
+}) satisfies GetStaticPaths;
+
+const { game } = Astro.props;
+const { data } = game;
+
+const src = frameSrc(data);
+const official = officialUrl(data);
+const related = (await allGames())
+  .filter((g) => g.id !== game.id && g.data.categories.some((c) => data.categories.includes(c)))
+  .slice(0, 4);
+
+const badges = [
+  rightsLabel(data),
+  data.controls.includes('keyboard') ? 'Keyboard' : null,
+  data.fullscreen === 'supported' ? 'Fullscreen' : null,
+  data.savesTo === 'origin'
+    ? 'Saves here'
+    : data.savesTo === 'thirdparty'
+      ? 'Saves on the developer’s site'
+      : null,
+].filter((b): b is string => Boolean(b));
+---
+
+<BaseLayout title={data.title} description={data.tagline}>
+  <article class="shell pt-10 pb-6">
+    <nav class="mb-6 text-sm text-text-dim" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-amber">Arcadia</a>
+      <span class="mx-1.5 text-text-faint">/</span>
+      <a href={`/category/${data.categories[0]}`} class="hover:text-amber">
+        {CATEGORY_LABELS[data.categories[0]!]}
+      </a>
+    </nav>
+
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+      <div class="overflow-hidden rounded-2xl border border-edge">
+        <img
+          src={data.thumb}
+          alt={`${data.title} cover art`}
+          width="640"
+          height="400"
+          class="aspect-[16/10] w-full object-cover"
+        />
+      </div>
+
+      <div class="flex flex-col">
+        <h1 class="font-display text-3xl leading-tight font-extrabold text-balance sm:text-4xl">
+          {data.title}
+        </h1>
+        <p class="mt-2 text-lg text-text-dim">{data.tagline}</p>
+        {data.description && <p class="mt-4 leading-relaxed text-text-dim">{data.description}</p>}
+
+        <ul class="mt-5 flex flex-wrap gap-2">
+          {
+            badges.map((b) => (
+              <li class="rounded-md border border-edge bg-raised px-2.5 py-1 text-xs text-text-dim">
+                {b}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          {
+            src ? (
+              <GameFrame
+                client:load
+                slug={game.id}
+                title={data.title}
+                src={src}
+                sameOrigin={data.delivery.mode === 'selfhost'}
+                officialUrl={official}
+                savesThirdParty={data.savesTo === 'thirdparty'}
+              />
+            ) : (
+              <a
+                href={official ?? '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2.5 rounded-xl bg-amber px-6 py-3 font-display text-base font-extrabold text-ink transition-transform hover:scale-[1.02]"
+              >
+                Play on the official site ↗
+              </a>
+            )
+          }
+          <FavoriteButton client:load slug={game.id} title={data.title} variant="labelled" />
+        </div>
+
+        {
+          data.delivery.mode === 'external' && (
+            <p class="mt-4 max-w-prose text-sm text-text-faint">
+              {data.source.author} has not licensed this game for us to host, and their site does
+              not permit embedding. Rather than copy it without permission, we send you to the
+              original.
+            </p>
+          )
+        }
+
+        <dl class="mt-8 space-y-2 border-t border-edge pt-6 text-sm">
+          <div class="flex gap-3">
+            <dt class="w-20 shrink-0 text-text-faint">Made by</dt>
+            <dd class="text-text-dim">{data.source.author}</dd>
+          </div>
+          <div class="flex gap-3">
+            <dt class="w-20 shrink-0 text-text-faint">Licence</dt>
+            <dd class="text-text-dim">
+              {
+                data.source.licenseUrl ? (
+                  <a
+                    href={data.source.licenseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                  >
+                    {licenseLabel(data.source.license)}
+                  </a>
+                ) : (
+                  licenseLabel(data.source.license)
+                )
+              }
+            </dd>
+          </div>
+          {
+            official && (
+              <div class="flex gap-3">
+                <dt class="w-20 shrink-0 text-text-faint">Official</dt>
+                <dd class="min-w-0">
+                  <a
+                    href={official}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block truncate text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                  >
+                    {official}
+                  </a>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="shell mt-12">
+        <SectionHeader title="More like this" />
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {related.map((g) => (
+            <GameCard game={g} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

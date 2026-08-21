@@ -1,0 +1,34 @@
+title: Kittens Game
+tagline: A village of kittens. Text, spreadsheets, and quiet devastation.
+description: >-
+  You manage a kitten civilisation through seasons, famine, and eventually
+  space travel. Almost entirely text, and one of the most respected idle games
+  ever made.
+categories: [incremental, strategy]
+tags: [village, idle, text, long-haul]
+delivery:
+  mode: embed
+  url: https://kittensgame.com/web/
+  embedVerifiedOn: "2026-08-21"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive on the author's official site.
+thumb: /thumbs/kittens-game.svg
+accent: "#e8b04b"
+featured: false
+weight: 35
+added: "2026-08-21"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: nuclear-unicorn (Bloodrizer)
+  homepage: https://kittensgame.com/web/
+  repo: https://github.com/nuclear-unicorn/kittensgame
+  license: WET PAWS
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    license.txt read on 2026-08-21. The WET PAWS licence permits personal and
+    educational changes but forbids commercial use and derivative works, so we
+    do not self-host. Embedding the author's own build creates no copy and no
+    derivative.

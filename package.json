@@ -1,0 +1,38 @@
+{
+  "name": "arcadia",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Arcadia \u2014 a fast, well-designed browser game arcade.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify:assets": "node --experimental-strip-types scripts/verify-assets.ts",
+    "verify:embed": "node --experimental-strip-types scripts/verify-embed.ts",
+    "verify": "npm run check && npm run verify:assets",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "vendor": "node --experimental-strip-types scripts/vendor-game.ts",
+    "serve": "node --experimental-strip-types scripts/serve.ts"
+  },
+  "dependencies": {
+    "@astrojs/react": "^6.0.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
+  }
+}
