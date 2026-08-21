@@ -111,3 +111,16 @@ test('every page is free of horizontal overflow on a laptop viewport', async ({ 
     expect(overflow, `${path} should not scroll horizontally`).toBe(false);
   }
 });
+
+test('the player covers the site nav completely', async ({ page }) => {
+  // Regression: `main` establishes a stacking context, so the overlay's z-index
+  // alone did not lift it above the sticky nav. It is portalled to <body> now.
+  await page.goto('/games/neon-serpent');
+  await page.getByRole('button', { name: /^Play Neon Serpent$/ }).click();
+  await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
+
+  const navIsOnTop = await page.evaluate(() =>
+    Boolean(document.elementFromPoint(90, 32)?.closest('header')),
+  );
+  expect(navIsOnTop, 'nav must not be visible above a running game').toBe(false);
+});

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { recordPlay } from '../../lib/recent.ts';
 import { getPrefs, setPrefs } from '../../lib/prefs.ts';
 
@@ -82,13 +83,11 @@ export default function GameFrame({
     );
   }
 
-  return (
-    <div
-      ref={wrapRef}
-      className="fixed inset-0 z-50 flex flex-col bg-ink"
-      // The frame owns the viewport once launched; Escape is handled by the browser
-      // for fullscreen and by this bar's Back control otherwise.
-    >
+  // Rendered into <body> rather than in place. `main` establishes a stacking
+  // context, which would otherwise trap this overlay beneath the sticky nav no
+  // matter how high its z-index went.
+  return createPortal(
+    <div ref={wrapRef} className="fixed inset-0 z-[60] flex flex-col bg-ink">
       <div
         className={`flex h-12 shrink-0 items-center gap-2 border-b border-edge bg-surface px-3 transition-transform duration-300 ${
           chromeVisible ? 'translate-y-0' : '-translate-y-full'
@@ -152,6 +151,7 @@ export default function GameFrame({
           className={`h-full w-full border-0 transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
         />
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
