@@ -14,7 +14,7 @@ URL, checking `X-Frame-Options` and CSP `frame-ancestors`.
 | Antimatter Dimensions | IvarK (Hevipelle) | MIT | embed | Source is MIT; embedded because only unbuilt source ships and the prebuilt deploy is outdated. See DECISIONS #5. | 2026-08-21 |
 | 2048 | Gabriele Cirulli | MIT | selfhost | `LICENSE.txt` at repo root | 2026-08-21 |
 | Hextris | Engstrom, Finucane, Moroze, Yang | GPL-3.0 | selfhost | `LICENSE.md` at repo root; modified (analytics removed), change record shipped | 2026-08-21 |
-| Neon Serpent | Arcadia | original (MIT) | selfhost | Written for this project from scratch | 2026-08-21 |
+| Neon Serpent | Project Nexus | original (MIT) | selfhost | Written for this project from scratch | 2026-08-21 |
 | Bitburner | Bitburner contributors | Apache-2.0 + Commons Clause | embed | `license.txt`; Commons Clause forbids *selling* the software, not free hosting — self-hosting would be permissible but the build is heavy | 2026-08-21 |
 | Kittens Game | nuclear-unicorn (Bloodrizer) | "WET PAWS" | embed | `license.txt`: personal/educational changes allowed, **no commercial use, no derivative works**. Embedding creates neither a copy nor a derivative. | 2026-08-21 |
 | The Prestige Tree | Jacorb / Acamaeda | none found | embed | No `LICENSE` file upstream ⇒ all rights reserved | 2026-08-21 |

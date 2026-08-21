@@ -2,28 +2,24 @@
 
 The site is a static build. `npm run build` → `dist/`. There is no backend.
 
-## Current blockers
+## Current status
 
-Both are environmental, not code. Everything else is done and verified.
+### GitHub — resolved
 
-### 1. GitHub is unreachable from this network
+`github.com` was unreachable from the original development network (TLS reset
+on 443, SSH timeout on both 22 and 443 — a network appliance, not local
+config). From the current network it is reachable and `gh` is authenticated,
+so the repository has been created and pushed: **github.com/mattsipe/project-nexus**.
 
-`github.com`, `api.github.com`, and `codeload.github.com` fail from the
-development machine: TCP connects on 443 but the TLS handshake is reset, even
-with no SNI, and SSH times out on both 22 and 443. This is a network appliance
-(disabling the Claude sandbox changes nothing), so it must be resolved by
-switching networks or by IT.
-
-From any unblocked network — home wifi or a phone hotspot is enough:
+If this ever needs redoing from a blocked network again, the fix is simply to
+run the same command from an unblocked one — home wifi or a phone hotspot is
+enough:
 
 ```bash
-gh repo create arcadia --public --source=. --remote=origin --push
+gh repo create project-nexus --public --source=. --remote=origin --push
 ```
 
-The repository is already initialised with clean history, so that single
-command is all that remains.
-
-### 2. Netlify needs an auth token
+### Netlify — still needs your login
 
 `api.netlify.com` is reachable (it answers 401, i.e. it wants credentials).
 Deploying needs one of:
@@ -44,7 +40,7 @@ Claude cannot perform either login step — that is a credential action.
 
 ## Site name
 
-`arcadia` if the subdomain is free, otherwise let Netlify generate one and
+`project-nexus` if the subdomain is free, otherwise let Netlify generate one and
 rename later. The name is not baked into the build; only `site` in
 `astro.config.mjs` refers to it, and that only affects canonical URLs.
 

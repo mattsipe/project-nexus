@@ -1,4 +1,4 @@
-# Arcadia
+# Project Nexus
 
 A browser-game arcade. Static, free to host, no accounts, no database, no
 tracking, nothing to install.

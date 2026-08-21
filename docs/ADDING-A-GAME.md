@@ -76,7 +76,7 @@ grep -Eoh '(src|href)="/[^/"][^"]*"' public/play/<slug>/index.html   # absolute 
 
 Strip any analytics — it sends our visitors' data to a third party without
 consent, and the request is commonly blocked on school networks, which stalls
-the game. Record every change in `public/play/<slug>/ARCADIA-MODIFICATIONS.txt`.
+the game. Record every change in `public/play/<slug>/NEXUS-MODIFICATIONS.txt`.
 For GPL games this record is a licence obligation, not a courtesy.
 
 ## 7. Cover art

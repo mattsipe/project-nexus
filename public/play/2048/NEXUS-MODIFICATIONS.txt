@@ -1,11 +1,11 @@
-Arcadia — record of modifications to this vendored game
-=======================================================
+Project Nexus — record of modifications to this vendored game
+=============================================================
 
 Upstream:  https://github.com/gabrielecirulli/2048
 Licence:   MIT (see LICENSE.txt, unmodified)
 Vendored:  2026-08-21, via cdn.jsdelivr.net
 
-Changes made by Arcadia:
+Changes made by Project Nexus:
   1. index.html — the sentence "This site is the official version of 2048"
      was changed to state that this is a self-hosted copy of the official
      open-source release. The original claim would be untrue on our domain,

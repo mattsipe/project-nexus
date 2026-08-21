@@ -1,4 +1,4 @@
-# Arcadia
+# Project Nexus
 
 A browser-game arcade. Static site, no accounts, no database, no tracking.
 Games are either self-hosted (when the licence permits), embedded from the
@@ -32,7 +32,7 @@ npm run vendor -- <owner>/<repo>@<ref> <slug> [--subdir p] [--dry]
 4. **Never** autoplay audio.
 5. **Never** commit credentials, or the reference-site password (session-only).
 6. When vendoring a game, strip third-party analytics and record every change in
-   `ARCADIA-MODIFICATIONS.txt` beside it. GPL-3.0 §5(a) requires the change
+   `NEXUS-MODIFICATIONS.txt` beside it. GPL-3.0 §5(a) requires the change
    record; the privacy reason applies regardless of licence.
 
 ## Adding a game — the whole recipe
@@ -97,7 +97,7 @@ Never claim the site is official, or that a save is safe when it is not.
 - [ ] `npm run check` at 0/0/0
 - [ ] `npm run test:e2e` green on both viewports
 - [ ] Rights evidence + date recorded in the manifest's `rightsNote`
-- [ ] Self-hosted: licence file and `ARCADIA-MODIFICATIONS.txt` present
+- [ ] Self-hosted: licence file and `NEXUS-MODIFICATIONS.txt` present
 - [ ] Cover art renders (the verify script checks it is well-formed XML)
 
 ## Known constraints

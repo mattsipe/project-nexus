@@ -2,7 +2,7 @@
  * A one-event bus so the nav trigger (an island) can open the palette
  * (a different island) without either importing the other or sharing state.
  */
-const EVENT = 'arcadia:open-search';
+const EVENT = 'nexus:open-search';
 
 export function openSearch(): void {
   window.dispatchEvent(new CustomEvent(EVENT));

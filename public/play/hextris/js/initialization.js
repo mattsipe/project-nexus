@@ -159,7 +159,7 @@ function initialize(a) {
 		});
 
 		addKeyListeners();
-		// [Arcadia] Google Analytics removed - we do not send visitor data to third parties.
+		// [Nexus] Google Analytics removed - we do not send visitor data to third parties.
 
 		document.addEventListener("pause", handlePause, false);
 		document.addEventListener("backbutton", handlePause, false);

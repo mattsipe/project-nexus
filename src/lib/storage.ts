@@ -7,11 +7,11 @@
  *     Safari private mode raise SecurityError on the property access itself.
  *     Every path here is total: it degrades to in-memory and the UI still works.
  *  2. Self-hosted games write their own keys to this same origin. Namespacing
- *     everything of ours under `arcadia:` guarantees we never collide with a
+ *     everything of ours under `nexus:` guarantees we never collide with a
  *     game's save data, and lets the backup feature find our keys precisely.
  */
 
-const NS = 'arcadia';
+const NS = 'nexus';
 
 /** In-memory fallback so a storage-denied browser still behaves for the session. */
 const memory = new Map<string, string>();

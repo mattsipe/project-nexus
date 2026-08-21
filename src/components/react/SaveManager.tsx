@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ownKeys, foreignKeys, snapshot, restore, storageAvailable } from '../../lib/storage.ts';
 
 interface Backup {
-  format: 'arcadia-backup';
+  format: 'nexus-backup';
   version: 1;
   exportedAt: string;
   entries: Record<string, string>;
@@ -35,7 +35,7 @@ export default function SaveManager() {
   const download = () => {
     const keys = [...ownKeys(), ...foreignKeys()];
     const backup: Backup = {
-      format: 'arcadia-backup',
+      format: 'nexus-backup',
       version: 1,
       exportedAt: new Date().toISOString(),
       entries: snapshot(keys),
@@ -44,7 +44,7 @@ export default function SaveManager() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `arcadia-saves-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `nexus-saves-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
     setStatus(`Saved ${keys.length} entries to your downloads.`);
@@ -55,10 +55,10 @@ export default function SaveManager() {
       const parsed: unknown = JSON.parse(await file.text());
       if (
         typeof parsed !== 'object' || parsed === null ||
-        (parsed as Backup).format !== 'arcadia-backup' ||
+        (parsed as Backup).format !== 'nexus-backup' ||
         typeof (parsed as Backup).entries !== 'object'
       ) {
-        setStatus('That file is not an Arcadia backup.');
+        setStatus('That file is not a Nexus backup.');
         return;
       }
       const { written, failed } = restore((parsed as Backup).entries);
@@ -90,7 +90,7 @@ export default function SaveManager() {
         </p>
         <dl className="mt-4 flex gap-8 text-sm">
           <div>
-            <dt className="text-text-faint">Arcadia settings</dt>
+            <dt className="text-text-faint">Nexus settings</dt>
             <dd className="tnum text-lg">{counts.ours}</dd>
           </div>
           <div>

@@ -1,5 +1,5 @@
 /**
- * Neon Serpent — an original game written for Arcadia.
+ * Neon Serpent — an original game written for Project Nexus.
  * No dependencies, no network, no tracking. Saves only a high score.
  *
  * The one design decision worth explaining: the snake moves on a discrete grid

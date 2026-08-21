@@ -125,7 +125,7 @@ export default function GameFrame({
       {savesThirdParty && chromeVisible && (
         <p className="shrink-0 bg-raised px-4 py-1.5 text-center text-xs text-text-dim">
           This game saves to {officialUrl ? new URL(officialUrl).hostname : 'the developer’s site'},
-          not to Arcadia. Some browsers block that in an embedded frame — open the official site if
+          not to this site. Some browsers block that in an embedded frame — open the official site if
           your progress does not stick.
         </p>
       )}

@@ -18,9 +18,9 @@ controls: [keyboard, touch]
 fullscreen: supported
 savesTo: origin
 source:
-  author: Arcadia
+  author: Project Nexus
   license: original
   verifiedOn: "2026-08-21"
   rightsNote: >-
-    Written for Arcadia from scratch, no third-party code or assets.
+    Written for Project Nexus from scratch, no third-party code or assets.
     Released under MIT - see the LICENSE file beside the game.
