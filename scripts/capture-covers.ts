@@ -45,6 +45,14 @@ interface Capture {
    */
   cropCapsule?: [number, number];
   cropHero?: [number, number];
+  /**
+   * The mirror image of `padColor`, for games that only look right in
+   * landscape. Engines that scale to fit width (melonJS, say) fill a portrait
+   * viewport by extending their background downward, so the capsule capture
+   * comes back as a strip of game over a lot of flat sky. Capture the hero
+   * instead and take the capsule out of its middle third.
+   */
+  capsuleFromHero?: boolean;
 }
 
 const CAPTURES: Capture[] = [
@@ -121,6 +129,149 @@ const CAPTURES: Capture[] = [
       await page.waitForTimeout(300);
     },
   },
+  {
+    slug: 'space-huggers',
+    path: '/play/space-huggers/index.html',
+    // The title card is drawn on a timer inside the level, not on a separate
+    // screen (app.js fades 'SPACE HUGGERS' out around the ten-second mark), so
+    // the only way past it is to play through it. A/D to run, W to jump, mouse
+    // to aim and fire.
+    prepare: async (page) => {
+      const vp = page.viewportSize()!;
+      for (const [key, dur] of [['KeyD', 1600], ['KeyA', 900], ['KeyD', 2000], ['KeyD', 1500]] as const) {
+        await page.keyboard.down(key);
+        await page.keyboard.press('KeyW');
+        await page.mouse.move(vp.width * 0.75, vp.height * 0.5);
+        await page.mouse.down();
+        await page.waitForTimeout(dur);
+        await page.mouse.up();
+        await page.keyboard.up(key);
+      }
+      // Sit out the rest of the title timer before the shutter.
+      await page.waitForTimeout(6000);
+      await page.keyboard.down('KeyD');
+      await page.mouse.down();
+      await page.waitForTimeout(900);
+      await page.mouse.up();
+      await page.keyboard.up('KeyD');
+    },
+  },
+  {
+    slug: 'radius-raid',
+    path: '/play/radius-raid/index.html',
+    // The arena is a fixed 800x600 box centred in a much wider viewport, so
+    // the raw hero shot is mostly black margin. Crop to 16:9 inside the arena.
+    cropHero: [450, 800],
+    // Radius Raid opens on a menu; PLAY starts a wave immediately, and a few
+    // seconds of drifting fire gives the capture enemies and particles rather
+    // than an empty arena.
+    prepare: async (page) => {
+      // The menu is canvas-drawn, so there is nothing to select — PLAY sits
+      // at two thirds of the viewport height at both capture sizes.
+      // ...and its buttons fire on `$.mouse.down` being true during an update
+      // tick, not on a click event, so a normal click() is over before the
+      // game ever samples it. Hold the button down across a few frames.
+      const vp = page.viewportSize()!;
+      await page.mouse.move(vp.width * 0.5, vp.height * 0.665);
+      await page.waitForTimeout(200);
+      await page.mouse.down();
+      await page.waitForTimeout(250);
+      await page.mouse.up();
+      // Level 1 opens nearly empty. Play it for a while — WASD to move,
+      // arrows to fire — so the capture has enemies, bullets and trails in
+      // it rather than one ship alone on a grid.
+      await page.waitForTimeout(2000);
+      await page.keyboard.down('ArrowRight');
+      for (const [move, dur] of [['KeyD', 1400], ['KeyS', 1200], ['KeyA', 1400], ['KeyW', 1200], ['KeyD', 1000]] as const) {
+        await page.keyboard.down(move);
+        await page.waitForTimeout(dur);
+        await page.keyboard.up(move);
+      }
+      await page.keyboard.up('ArrowRight');
+      await page.keyboard.down('ArrowUp');
+      await page.waitForTimeout(900);
+      await page.keyboard.up('ArrowUp');
+    },
+  },
+  {
+    slug: 'star-battle',
+    path: '/play/star-battle/index.html',
+    prepare: async (page) => {
+      // The button holds both a "Start game" and a "Loading…" label, so its
+      // accessible name is the two concatenated — target the id instead.
+      await page.locator('#start-btn').click();
+      // Assets load behind the button; the HUD and first wave need a moment.
+      // Wait for the play scene, then take the shot early. A scripted pilot
+      // survives about five seconds here before something rams it and the
+      // score panel replaces the game — so the window is short by design.
+      await page.locator('#play').waitFor({ state: 'visible', timeout: 15000 });
+      await page.waitForTimeout(1400);
+      for (let i = 0; i < 4; i++) {
+        await page.keyboard.press('Space');
+        await page.waitForTimeout(230);
+      }
+    },
+  },
+  {
+    slug: 'astray',
+    path: '/play/astray/index.html',
+    // A 3D maze seen from directly above is mostly floor. Rolling into the
+    // first corridor puts the ball against lit brickwork, which is the thing
+    // worth showing.
+    prepare: async (page) => {
+      await page.waitForTimeout(2000);
+      for (const key of ['ArrowUp', 'ArrowRight', 'ArrowUp']) {
+        await page.keyboard.down(key);
+        await page.waitForTimeout(600);
+        await page.keyboard.up(key);
+        await page.waitForTimeout(200);
+      }
+      await page.waitForTimeout(500);
+    },
+  },
+  {
+    slug: 'clumsy-bird',
+    path: '/play/clumsy-bird/index.html',
+    // Enter leaves the title screen; a few taps put the bird mid-flight
+    // between pipes instead of on the ground at the start of a run.
+    prepare: async (page) => {
+      await page.waitForTimeout(1800);
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(900);
+      // Flap on a rhythm that roughly holds altitude. Too few taps and the
+      // bird is on the ground; too many and it climbs into the top pipe and
+      // the shutter catches the death fade, which is a white screen.
+      for (let i = 0; i < 5; i++) {
+        await page.keyboard.press('Space');
+        await page.waitForTimeout(340);
+      }
+    },
+  },
+  {
+    slug: 'belt-runner',
+    path: '/play/belt-runner/index.html',
+    // Vector line art on white — the game's own look. The playfield is a
+    // fixed 780x540 box, so both captures crop into it rather than keeping
+    // the page's white margin.
+    cropCapsule: [532, 399],
+    cropHero: [438, 778],
+    prepare: async (page) => {
+      await page.waitForTimeout(1200);
+      // One press leaves 'waiting'. After that the ship has a single life, so
+      // firing into the field and then flying through it ends the run and
+      // puts the start prompt back on screen — turn and shoot, don't charge.
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(700);
+      for (let i = 0; i < 6; i++) {
+        await page.keyboard.down('ArrowLeft');
+        await page.waitForTimeout(120);
+        await page.keyboard.up('ArrowLeft');
+        await page.keyboard.press('Space');
+        await page.waitForTimeout(260);
+      }
+      await page.waitForTimeout(400);
+    },
+  },
 ];
 
 function runSips(args: string[]): Promise<void> {
@@ -152,25 +303,37 @@ async function main(): Promise<void> {
   const server = await startServer();
   const browser = await chromium.launch();
 
+  // Named slugs only, when given. Re-running the whole list would rewrite
+  // covers that are already good with a differently-seeded run of the same
+  // game, which is noise in a diff and occasionally a worse screenshot.
+  const only = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+  const todo = only.length ? CAPTURES.filter((c) => only.includes(c.slug)) : CAPTURES;
+  if (only.length && todo.length !== only.length) {
+    throw new Error(`No CAPTURES entry for: ${only.filter((s) => !CAPTURES.some((c) => c.slug === s)).join(', ')}`);
+  }
+
   try {
-    for (const c of CAPTURES) {
+    for (const c of todo) {
       console.log(`  capturing ${c.slug}...`);
 
-      // Capsule (3:4) — a taller, narrower viewport so the game itself fills
-      // the frame instead of screenshotting a wide layout cropped down to a
-      // sliver.
-      const capsulePage = await browser.newPage({ viewport: CAPSULE });
-      await capsulePage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
-      await c.prepare(capsulePage, 'capsule');
       const capsulePath = `public/covers/${c.slug}-capsule.png`;
-      await capsulePage.screenshot({ path: capsulePath });
-      await capsulePage.close();
-      if (c.cropCapsule) {
-        await runSips(['-c', String(c.cropCapsule[0]), String(c.cropCapsule[1]), capsulePath]);
-        await runSips(['-z', String(CAPSULE.height), String(CAPSULE.width), capsulePath]);
+      const heroPath = `public/covers/${c.slug}-hero.png`;
+
+      if (!c.capsuleFromHero) {
+        // Capsule (3:4) — a taller, narrower viewport so the game itself fills
+        // the frame instead of screenshotting a wide layout cropped down to a
+        // sliver.
+        const capsulePage = await browser.newPage({ viewport: CAPSULE });
+        await capsulePage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
+        await c.prepare(capsulePage, 'capsule');
+        await capsulePage.screenshot({ path: capsulePath });
+        await capsulePage.close();
+        if (c.cropCapsule) {
+          await runSips(['-c', String(c.cropCapsule[0]), String(c.cropCapsule[1]), capsulePath]);
+          await runSips(['-z', String(CAPSULE.height), String(CAPSULE.width), capsulePath]);
+        }
       }
 
-      const heroPath = `public/covers/${c.slug}-hero.png`;
       if (c.padColor) {
         // Portrait game: derive the hero from the capsule capture instead of
         // a separate wide-viewport screenshot, which would render the board
@@ -191,13 +354,20 @@ async function main(): Promise<void> {
           await runSips(['-z', String(HERO.height), String(HERO.width), heroPath]);
         }
       }
+
+      if (c.capsuleFromHero) {
+        // Landscape-only game: the capsule is the middle 3:4 slice of the hero.
+        const sliceW = Math.round(HERO.height * (CAPSULE.width / CAPSULE.height));
+        await runSips(['-c', String(HERO.height), String(sliceW), heroPath, '--out', capsulePath]);
+        await runSips(['-z', String(CAPSULE.height), String(CAPSULE.width), capsulePath]);
+      }
     }
   } finally {
     await browser.close();
     server.kill();
   }
 
-  console.log(`\n  ✓ ${CAPTURES.length} game(s) captured to public/covers/\n`);
+  console.log(`\n  ✓ ${todo.length} game(s) captured to public/covers/\n`);
 }
 
 main().catch((err: unknown) => {

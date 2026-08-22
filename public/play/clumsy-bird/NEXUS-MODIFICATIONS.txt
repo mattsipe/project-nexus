@@ -1,0 +1,25 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/ellisonleao/clumsy-bird
+Licence:   GPL-3.0 (see LICENSE.md, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. Per GPL-3.0 §5(a), the changes are:
+
+  1. Removed Procfile and app.json — Heroku deployment descriptors for the
+     upstream project's own hosting. Meaningless when self-hosted, and
+     app.json names an upstream repository we are not deploying.
+
+  2. index.css — `#screen` is now a full-height centring flex container.
+     melonJS scales its 900x600 canvas to fit and then leaves it at the top
+     of the page, so in a frame taller than 2:3 the game sat above a slab of
+     flat sky. Marked "[Nexus]".
+
+No game logic, art or audio was altered. Complete corresponding source for
+this modified version is available at the Project Nexus repository, and the
+unmodified upstream remains at the URL above.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
+The theme music starts in PlayScreen, which is only reached from the title
+screen after the player presses Enter or taps — nothing sounds on load.

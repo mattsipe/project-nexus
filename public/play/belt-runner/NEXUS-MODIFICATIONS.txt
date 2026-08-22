@@ -1,0 +1,43 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/dmcinnes/HTML5-Asteroids
+Author:    Doug McInnes
+Licence:   MIT (see LICENSE, unmodified — copyright notice intact)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. RETITLED. Upstream calls this game "Asteroids". Nexus ships it as
+     "Belt Runner". The game never draws its own title on screen and the
+     upstream index.html had no <title> at all, so the whole change is one
+     added <title> element plus a "[Nexus]" comment saying why, and the name
+     used in the manifest. Internal identifiers (the Asteroid class, and so
+     on) are code, not branding, and were left alone; so was the copyright
+     header comment at the top of game.js.
+
+     Why: "Asteroids" is a live Atari trademark. Doug McInnes's code is
+     genuinely MIT and worth having, but shipping a clone under the trademark
+     would claim a relationship with Atari that does not exist — and this
+     project had already taken the same line on Tetris (see docs/CATALOG.md,
+     docs/DECISIONS.md #21). MIT permits redistribution under a different
+     name; it does not permit dropping attribution, and we have not. Doug
+     McInnes is named as the author in the manifest, on the game's page, and
+     in the untouched copyright notice in LICENSE.
+
+  2. game.js — the two bare `audio.play()` calls in the SFX preload block
+     now swallow their rejected promise. Browsers refuse even a *muted*
+     play() before the first user gesture, so every load threw an uncaught
+     NotAllowedError into the console. Guarded with a `.catch`, marked
+     "[Nexus]". The preload is an optimisation; failing it changes nothing.
+
+  3. index.html — four lines of CSS to centre the canvas in the frame.
+     Upstream pinned it top-left, leaving white gutters to its right and
+     below; inside the Nexus player that reads as a broken layout. Marked
+     "[Nexus]".
+
+No game logic, art or audio was otherwise altered. The game's sounds are
+pre-muted upstream and are only unmuted once the player starts firing.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
+Sound effects are triggered by collisions and firing, not on load.

@@ -1,0 +1,38 @@
+title: Space Huggers
+tagline: Run, gun, and blow holes in the level until nothing is left standing.
+description: >-
+  A run-and-gun roguelike where the terrain is as destructible as the enemies.
+  Shoot through a wall rather than round it, drop through the floor you just
+  made, and keep moving. Frank Force built the whole thing to fit in 13
+  kilobytes for js13kGames.
+categories: [action, arcade]
+tags: [run-and-gun, destructible, roguelike, pixel]
+delivery:
+  mode: selfhost
+  path: /play/space-huggers/index.html
+accent: "#d94fb0"
+cover:
+  capsule: /covers/space-huggers-capsule.png
+  hero: /covers/space-huggers-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's GPL-3.0 licence; no separate rights question.
+weight: 78
+added: "2026-08-21"
+controls: [keyboard, mouse]
+fullscreen: supported
+savesTo: none
+source:
+  author: Frank Force (KilledByAPixel)
+  homepage: https://killedbyapixel.github.io/SpaceHuggers/
+  repo: https://github.com/KilledByAPixel/SpaceHuggers
+  license: GPL-3.0
+  licenseUrl: https://github.com/KilledByAPixel/SpaceHuggers/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    GPL-3.0 LICENSE read at repo root on 2026-08-21. Self-hosting conveys the
+    work, which the licence permits with source availability and change
+    notices; both provided. The engine's build tooling was removed and its
+    development watermark switched off — see NEXUS-MODIFICATIONS.txt for the
+    GPL-3.0 §5(a) change record.

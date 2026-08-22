@@ -1,0 +1,38 @@
+title: Belt Runner
+tagline: Thrust, turn, and shoot rocks into smaller rocks. Vector lines, nothing else.
+description: >-
+  Doug McInnes's canvas rebuild of the vector-arcade classic, played entirely
+  in thin white lines. Rotate, thrust, fire; every rock you break becomes two
+  faster ones. Nexus ships it under its own name — the code is Doug's and the
+  attribution stays with him.
+categories: [arcade, classic]
+tags: [vector, asteroids-like, thrust, retro]
+delivery:
+  mode: selfhost
+  path: /play/belt-runner/index.html
+accent: "#aab4c4"
+cover:
+  capsule: /covers/belt-runner-capsule.png
+  hero: /covers/belt-runner-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 68
+added: "2026-08-21"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: none
+source:
+  author: Doug McInnes
+  repo: https://github.com/dmcinnes/HTML5-Asteroids
+  license: MIT
+  licenseUrl: https://github.com/dmcinnes/HTML5-Asteroids/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE read at repo root on 2026-08-21, copyright Doug McInnes 2010,
+    kept intact in the vendored bundle. Upstream calls the game "Asteroids", a
+    live Atari trademark; MIT permits redistribution under a different name but
+    not without attribution, so Nexus retitles it and credits Doug McInnes
+    everywhere the game appears. See NEXUS-MODIFICATIONS.txt and
+    docs/DECISIONS.md #21.

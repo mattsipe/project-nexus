@@ -1,0 +1,12 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/jackrugile/radius-raid
+Licence:   MIT (see LICENSE.md, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+Unmodified. The bundle is served exactly as vendored.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
+Audio is loaded through howler.js and played from js/audio.js in response to
+game events; nothing sounds before the player starts a run.

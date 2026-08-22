@@ -8,8 +8,29 @@ const GAMES = readdirSync('src/content/games')
     const src = readFileSync(`src/content/games/${f}`, 'utf8');
     const get = (k: string) =>
       src.match(new RegExp(`^\\s*${k}:\\s*(.+)$`, 'm'))?.[1]?.trim().replace(/^["']|["']$/g, '');
-    return { slug: f.replace(/\.yaml$/, ''), title: get('title')!, mode: get('mode')! };
+    const categories = (get('categories') ?? '')
+      .replace(/^\[|\]$/g, '')
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+    return { slug: f.replace(/\.yaml$/, ''), title: get('title')!, mode: get('mode')!, categories };
   });
+
+/** Playable games in a category — the grid never shows external entries. */
+function inCategory(category: string): number {
+  return GAMES.filter((g) => g.mode !== 'external' && g.categories.includes(category)).length;
+}
+
+/**
+ * Astro stamps an un-hydrated island with an `ssr` attribute and removes it
+ * once the client component mounts. Library binds its keyboard shortcuts and
+ * its grid arrow-navigation in effects, so anything that presses a key
+ * straight after `goto` is racing hydration — a race the tests won at nine
+ * games and started losing at fifteen. Wait for the real signal instead.
+ */
+async function waitForLibrary(page: Page): Promise<void> {
+  await page.locator('astro-island[component-url*="Library"]:not([ssr])').waitFor({ timeout: 10000 });
+}
 
 /** Console errors are a test failure — a broken game is the whole product failing. */
 function trackConsole(page: Page): string[] {
@@ -71,6 +92,7 @@ test('the search box is always present and narrows the grid live', async ({ page
   await expect(input).toBeVisible();
 
   // ⌘K/Ctrl-K focuses it rather than opening anything.
+  await waitForLibrary(page);
   await page.keyboard.press('Control+k');
   await expect(input).toBeFocused();
 
@@ -88,12 +110,13 @@ test('the search box is always present and narrows the grid live', async ({ page
 
 test('category chips filter in place — no navigation, URL stays in sync', async ({ page }) => {
   await page.goto('/');
+  await waitForLibrary(page);
   const urlBefore = page.url();
   await page.getByRole('button', { name: 'Puzzle', exact: true }).click();
   await expect(page).toHaveURL(/[?&]c=puzzle/);
   expect(page.url().split('?')[0]).toBe(urlBefore.split('?')[0]); // same document, just a query param
   const capsules = page.locator('[data-capsule]');
-  await expect(capsules).toHaveCount(2); // 2048, Hextris
+  await expect(capsules).toHaveCount(inCategory('puzzle'));
   await expect(capsules.first()).toBeVisible();
 
   // The back button un-filters, since the chip click pushed history.
@@ -116,6 +139,7 @@ test('a favourite survives a reload and reaches the favourites view', async ({ p
 test('launching a game inline records it in Continue, with no page navigation', async ({ page }) => {
   const errors = trackConsole(page);
   await page.goto('/');
+  await waitForLibrary(page);
   const urlBefore = page.url();
 
   const neonSerpent = page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' });
@@ -138,6 +162,7 @@ test('launching a game inline records it in Continue, with no page navigation', 
 
 test('arrow keys move focus around the library grid', async ({ page }) => {
   await page.goto('/');
+  await waitForLibrary(page);
   const capsules = page.locator('[data-capsule]');
   await capsules.nth(0).focus();
   await page.keyboard.press('ArrowRight');
@@ -172,6 +197,7 @@ test('the player covers the rail completely', async ({ page }) => {
   // Regression: `main` establishes a stacking context, so the overlay's z-index
   // alone did not lift it above the rail. It is portalled to <body> now.
   await page.goto('/');
+  await waitForLibrary(page);
   await page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' }).click();
   await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
   await waitForLaunchAnimation(page);
@@ -184,7 +210,7 @@ test('the player covers the rail completely', async ({ page }) => {
 
 test('/category deep links render pre-filtered, and /favorites pre-filters to favourites', async ({ page }) => {
   await page.goto('/category/puzzle');
-  await expect(page.locator('[data-capsule]')).toHaveCount(2);
+  await expect(page.locator('[data-capsule]')).toHaveCount(inCategory('puzzle'));
   await expect(page.getByRole('button', { name: 'Puzzle', exact: true })).toHaveAttribute('aria-pressed', 'true');
 
   await page.goto('/favorites');

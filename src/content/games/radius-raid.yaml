@@ -1,0 +1,35 @@
+title: Radius Raid
+tagline: Twin-stick survival in a grid of light. Move with one hand, shoot with the other.
+description: >-
+  Waves close in from every edge. Steer with WASD, fire with the arrow keys,
+  and keep both going at once — the difficulty is entirely in the fact that
+  your hands have to disagree with each other.
+categories: [arcade, action]
+tags: [twin-stick, shooter, waves, reflex]
+delivery:
+  mode: selfhost
+  path: /play/radius-raid/index.html
+accent: "#38a0ff"
+cover:
+  capsule: /covers/radius-raid-capsule.png
+  hero: /covers/radius-raid-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 76
+added: "2026-08-21"
+controls: [keyboard, mouse]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Jack Rugile
+  homepage: https://jackrugile.com/
+  repo: https://github.com/jackrugile/radius-raid
+  license: MIT
+  licenseUrl: https://github.com/jackrugile/radius-raid/blob/master/LICENSE.md
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE.md read at repo root on 2026-08-21. Vendored via jsDelivr with
+    the licence file intact and no modifications — see
+    NEXUS-MODIFICATIONS.txt.

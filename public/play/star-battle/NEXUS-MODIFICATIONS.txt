@@ -1,0 +1,34 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/gd4Ark/star-battle
+Licence:   MIT (see LICENSE, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. index.html — the instructions panel, the start/continue/restart buttons,
+     the name field placeholder and the high-score table headings were
+     translated from Simplified Chinese to English. Wording only; no markup,
+     ids, classes or behaviour changed.
+  2. js/utils/utils.js — one console error string translated ("id 已存在" ->
+     "id already exists").
+  3. css/common.css — two scrollbar comments translated.
+
+  4. css/style.css — two declarations on `body`: `justify-content: center`
+     and `background: #1a1a1a`. The page defaulted to white with the board
+     pinned to the top, so any frame taller than the board showed a white
+     gutter beneath it. The footer's `flex: 1` (which absorbed all spare
+     height and so pinned the board to the top) became `flex: 0 0 auto`.
+     All three sites marked "[Nexus]".
+
+Nothing else was touched. The game shipped with a Chinese-only interface and
+an English `lang="en"` attribute; Nexus ships it in one language its players
+can read rather than dropping a good game over its UI strings. MIT expressly
+permits modification, and Yang Bin (4Ark) is credited as the author in the
+manifest and on the game's page.
+
+Audit (2026-08-21): no analytics, no third-party resource loads (the two
+external links are the author's own credit links), no absolute paths. Audio
+plays only through res.play(), first reached after the player clicks
+"Start game".

@@ -1,0 +1,17 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/wwwtyro/Astray
+Licence:   Unlicense — public domain dedication (see License.md, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. index.html — three texture loads used site-root-absolute paths
+     ('/ball.png', '/concrete.png', '/brick.png'). Under /play/astray/ those
+     resolve to the wrong place and 404, and the maze rendered untextured.
+     Changed to relative paths.
+
+No game logic was altered.
+
+Audit (2026-08-21): no analytics, no third-party requests, no audio at all.

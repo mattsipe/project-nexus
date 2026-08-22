@@ -1,0 +1,36 @@
+title: Astray
+tagline: Roll a marble through a lit maze you can only see one corridor of.
+description: >-
+  A first-person marble maze in real 3D, lit so that the corridor you are in
+  is the only one you can read. Tilt the ball with the arrow keys and find the
+  way out. Rye Terrell released it into the public domain.
+categories: [puzzle, action]
+tags: [maze, 3d, marble, webgl]
+delivery:
+  mode: selfhost
+  path: /play/astray/index.html
+accent: "#c47b2e"
+cover:
+  capsule: /covers/astray-capsule.png
+  hero: /covers/astray-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. The game is public domain, so the capture carries no rights question at all.
+weight: 66
+added: "2026-08-21"
+controls: [keyboard]
+fullscreen: supported
+savesTo: none
+source:
+  author: Rye Terrell (wwwtyro)
+  homepage: https://wwwtyro.github.io/Astray/
+  repo: https://github.com/wwwtyro/Astray
+  license: Unlicense
+  licenseUrl: https://github.com/wwwtyro/Astray/blob/master/License.md
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    License.md read at repo root on 2026-08-21 — the Unlicense, a public-domain
+    dedication placing no conditions on redistribution. Vendored via jsDelivr.
+    Three texture paths were made relative so they resolve under /play/astray/;
+    see NEXUS-MODIFICATIONS.txt.

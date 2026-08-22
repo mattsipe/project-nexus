@@ -1,0 +1,25 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/KilledByAPixel/SpaceHuggers
+Licence:   GPL-3.0 (see LICENSE, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. Per GPL-3.0 §5(a), the changes are:
+
+  1. Removed engine/build/ — the LittleJS engine's own build tooling
+     (build.bat, setupBuild.bat, engineBuild.js, build.html and its
+     index.html). None of it is reachable from the game; the second
+     index.html in particular is a build artefact, not a page we serve.
+
+  2. engine/engineDebug.js — `showWatermark` 1 -> 0 and `debug` 1 -> 0.
+     The bundle shipped with LittleJS's development settings on, which drew
+     an engine-version/FPS overlay across the top-right of the game and
+     bound debug shortcuts to ordinary keys. Both sites marked "[Nexus]".
+
+No game logic, art or audio was altered. Complete corresponding source for
+this modified version is available at the Project Nexus repository, and the
+unmodified upstream remains at the URL above.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths,
+no audio before the player's first input.

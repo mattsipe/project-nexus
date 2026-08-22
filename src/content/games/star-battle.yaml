@@ -1,0 +1,37 @@
+title: Star Battle
+tagline: Fuel drains a point a second. Shoot what you must, catch what you can.
+description: >-
+  A side-on space shooter with a clock built into it: fuel starts at fifteen
+  and falls every second, so every detour to catch a canister is a real
+  decision. Enemies are worth points, friendlies cost them, and the score is
+  allowed to go negative.
+categories: [arcade, action]
+tags: [shooter, space, survival, quick]
+delivery:
+  mode: selfhost
+  path: /play/star-battle/index.html
+accent: "#ff4d6d"
+cover:
+  capsule: /covers/star-battle-capsule.png
+  hero: /covers/star-battle-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 62
+added: "2026-08-21"
+controls: [keyboard, mouse]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Yang Bin (4Ark)
+  homepage: https://4ark.me/
+  repo: https://github.com/gd4Ark/star-battle
+  license: MIT
+  licenseUrl: https://github.com/gd4Ark/star-battle/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE read at repo root on 2026-08-21. Vendored via jsDelivr with the
+    licence file intact. The interface shipped in Simplified Chinese only and
+    was translated to English, and the page was centred on a dark ground; MIT
+    permits both. Every change is listed in NEXUS-MODIFICATIONS.txt.
