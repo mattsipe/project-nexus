@@ -19,6 +19,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   puzzle: 'Puzzle',
   arcade: 'Arcade',
   action: 'Action',
+  racing: 'Racing',
   strategy: 'Strategy',
   sandbox: 'Sandbox',
   classic: 'Classic',

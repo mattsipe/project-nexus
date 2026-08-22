@@ -16,6 +16,8 @@ npm run verify:assets  # every manifest entry has real art (both formats), a rea
 npm run verify:embed   # re-probe embedded games for framing restrictions (network)
 npm run test:e2e       # Playwright, laptop + mobile, capped to 2 workers locally — see Known constraints
 npm run vendor -- <owner>/<repo>@<ref> <slug> [--subdir p] [--dry]
+node --experimental-strip-types scripts/shrink-bundle.ts <slug> [--dry]
+                       # drop/WebP a heavy vendored bundle; prints its own change log
 ```
 
 ## Hard rules — non-negotiable
@@ -29,7 +31,10 @@ npm run vendor -- <owner>/<repo>@<ref> <slug> [--subdir p] [--dry]
    the schema to get around it.
 3. **Never** bypass `X-Frame-Options` or CSP `frame-ancestors` — no proxying, no
    header stripping. A game that blocks framing becomes `mode: external`.
-4. **Never** autoplay audio.
+4. **Never** autoplay audio. For a vendored game this means: no sound before the
+   player's own launch click. A bundle that starts music on page load gets
+   patched to wait for a gesture or to start muted, and the patch is recorded
+   like any other modification. Checked per game during the vendor audit.
 5. **Never** commit credentials, or the reference-site password (session-only).
 6. When vendoring a game, strip third-party analytics and record every change in
    `NEXUS-MODIFICATIONS.txt` beside it. GPL-3.0 §5(a) requires the change

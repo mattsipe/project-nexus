@@ -34,6 +34,7 @@ export const CATEGORIES = [
   'puzzle',
   'arcade',
   'action',
+  'racing',
   'strategy',
   'sandbox',
   'classic',

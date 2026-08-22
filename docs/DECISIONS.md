@@ -359,3 +359,92 @@ looking out, not a page floating over a background.
   `skill-creator` (this file and `CLAUDE.md` already encode the design
   language). `sharp` was the one real find — already installed transitively,
   previously undocumented, now used for both the logo and the cover pass.
+
+## 20. `racing` becomes a real category
+
+The catalogue gained two racers (HexGL, Racer) and had nowhere to put them.
+`arcade` would have been a lie by omission — a racing game and a falling-block
+game are not the same shelf, and the genre tier and category bands are now the
+primary way anyone browses.
+
+Added to `CATEGORIES` in `src/content.config.ts` and to `CATEGORY_LABELS` in
+`src/lib/gameMeta.ts`. That second edit is not optional bookkeeping: the labels
+map is a `Record<Category, string>`, so `astro check` fails if it is forgotten,
+and its **key order** is what drives band order in `Library.tsx`. Racing sits
+after action, so the bands read arcade · action · racing · puzzle · strategy ·
+sandbox · classic · incremental — roughly reflex-first to patience-last.
+
+This is the case `CLAUDE.md` describes when it says adding a game should need no
+application code, and that if it seems to, the schema is the thing to extend.
+
+## 21. Clones of trademarked titles are retitled, not renamed away or shipped as-is
+
+`dmcinnes/HTML5-Asteroids` is genuinely MIT, 248KB, and good. "Asteroids" is
+also a live Atari trademark, and `CATALOG.md` had already set the opposite
+precedent for Tetris ("build an original block-stacker under a different name").
+
+Shipping it under the trademark to get the recognition would contradict that
+precedent; dropping it would throw away properly-licensed code over a naming
+problem. So: **vendor the MIT source, ship it under a Nexus title, keep the
+upstream copyright notice intact, credit the original author in
+`source.author`, and state the retitle in both `NEXUS-MODIFICATIONS.txt` and
+`source.rightsNote`.** MIT expressly permits modification and redistribution
+under a different name; what it does not permit is dropping the attribution,
+and we don't.
+
+The test for this class is "would a reasonable person think we are claiming to
+be the trademark holder", not "is the word in the title".
+
+## 22. Heavy bundles are self-hosted and shrunk, not embedded
+
+Three of the best additions ship 8–20MB (HexGL 20MB, Classic Pool 13.5MB, Racer
+8.7MB) under licences that permit redistribution. Embedding them would have kept
+`dist/` near 8MB at the cost of putting the games on someone else's host — which
+for this project's actual users means a third-party request that a school
+network may block, and saves that land in third-party storage.
+
+Self-hosting won, with `scripts/shrink-bundle.ts` (declarative drop/WebP rules,
+sharp, prints its own change log) doing the reconciling. HexGL alone loses ~5MB
+to a texture set only its max-quality path loads.
+
+DECISIONS #5 (Antimatter Dimensions, MIT but embedded) is not contradicted: that
+game ships no usable prebuilt output at all, which is a different problem from
+shipping too much.
+
+## 23. Micropolis carries a name licence on top of the GPL
+
+`micropolisJS` is GPL-3.0, but `MicropolisPublicNameLicense.md` separately
+governs the *name*: using it requires a trademark attribution on the welcome or
+title page and in credits, crediting Micropolis GmbH and linking to
+micropolis.com. Satisfied on `/games/micropolis-js` and `/credits`.
+
+Recorded here because it is the first entry whose obligations are not captured
+by the licence field alone — the schema cannot express "and you must render this
+sentence", so a human has to know.
+
+## 24. Slope runs through Y8, its publisher, and says so
+
+Coolmath's copy of Slope sends `X-Frame-Options: SAMEORIGIN`, which by itself
+would make it `external`. It is not the only route: Y8, the game's original
+publisher, ships an "iFrame Embed" snippet on its own Slope page pointing at
+`https://y8.com/embed/slope`, which returns 200 with no framing headers.
+
+That endpoint exists *because* Y8 wants the game embedded. Using it is the
+opposite of the header-stripping this project refuses to do — one publisher
+declining to be framed does not make another publisher's own embed route
+illegitimate. Y8's ads and GDPR consent UI come with it and are accepted;
+the manifest and the detail page both name Y8 as the host, because a player
+should know whose site they are actually in.
+
+Flagged as heavier than the rest of its wave: it is Unity WebGL.
+
+## 25. Nexus Elements — the definition, written down this time
+
+**Nexus Elements is a specific planned original game: a Little Alchemy-style
+combination game, architected from the start so it can later evolve into Nexus
+Infinite.** It is *not* an umbrella term for "the Nexus originals" generally.
+
+This is recorded here because the definition previously lived only in a plan
+file, that plan file was overwritten by the next phase's plan, and the name was
+then reconstructed wrongly from context. Original-game development, Nexus
+Elements included, is deferred to its own phase with its own design pass.
