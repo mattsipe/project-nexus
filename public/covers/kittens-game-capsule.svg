@@ -5,30 +5,20 @@
       <stop offset="100%" stop-color="#e8b04b" stop-opacity="0"/>
     </radialGradient>
     <rect width="600" height="800" fill="url(#g)"/>
-  <text x="60" y="78.84" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="14.352" fill="#e8b04b" letter-spacing="2">BONFIRE</text>
-     <line x1="60" y1="85.08" x2="540" y2="85.08" stroke="#4a4223"/>
+  <text x="60" y="92" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="19.2" fill="#e8b04b" letter-spacing="2">BONFIRE</text>
      
-    <text x="60" y="96" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Catnip</text>
-    <text x="540" y="96" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">4,021 (+3.8/s)</text>
-    <text x="60" y="124.08" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Wood</text>
-    <text x="540" y="124.08" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">812 (+1.1/s)</text>
-    <text x="60" y="152.16" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Minerals</text>
-    <text x="540" y="152.16" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">96 (+0.4/s)</text>
-    <text x="60" y="180.24" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Furs</text>
-    <text x="540" y="180.24" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">204</text>
-    <text x="60" y="208.32" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Ivory</text>
-    <text x="540" y="208.32" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">40</text>
-    <text x="60" y="236.39999999999998" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Kittens</text>
-    <text x="540" y="236.39999999999998" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">11 / 15</text>
-     <line x1="60" y1="255.12" x2="540" y2="255.12" stroke="#4a4223"/>
+    <circle cx="300" cy="368" r="144" fill="#e8b04b" opacity="0.07"/>
+    <path d="M 213.60000000000002 278.72 L 167.51999999999998 183.68 L 276.96 244.16 Z" fill="#e8b04b" opacity="0.1"/>
+    <path d="M 386.4 278.72 L 432.48 183.68 L 323.04 244.16 Z" fill="#e8b04b" opacity="0.1"/>
+     <text x="300" y="377.24" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="66" fill="#f2e6bf" text-anchor="middle">11 / 15</text>
+     <text x="300" y="408.92" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.416" fill="#e8b04b" text-anchor="middle" letter-spacing="3">KITTENS</text>
+     <line x1="60" y1="436.21999999999997" x2="540" y2="436.21999999999997" stroke="#4a4223"/>
      
-    <rect x="60" y="286.32" width="162" height="53.04" rx="6" fill="#2a2410" stroke="#4a4223"/>
-    <text x="72" y="325.32" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.792" fill="#cdbf94">Catnip Field</text>
-    <text x="72" y="335.46000000000004" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.792" fill="#e8b04b">×6</text>
-    <rect x="240" y="286.32" width="162" height="53.04" rx="6" fill="#2a2410" stroke="#4a4223"/>
-    <text x="252" y="325.32" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.792" fill="#cdbf94">Hut</text>
-    <text x="252" y="335.46000000000004" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.792" fill="#e8b04b">×11</text>
-     <text x="60" y="771.92" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.792" fill="#8b7f52">Winter, year 7</text>
-     <rect x="60" y="782.84" width="480" height="6.4" rx="3" fill="#2a2410"/>
-     <rect x="60" y="782.84" width="297.6" height="6.4" rx="3" fill="#e8b04b"/>
+    <text x="60" y="457.28" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Catnip</text>
+    <text x="540" y="457.28" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">4,021 (+3.8/s)</text>
+    <text x="60" y="488.47999999999996" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Wood</text>
+    <text x="540" y="488.47999999999996" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">812 (+1.1/s)</text>
+    <text x="60" y="519.68" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#cdbf94">Minerals</text>
+    <text x="540" y="519.68" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#f2e6bf" text-anchor="end">96 (+0.4/s)</text>
+     <text x="60" y="764" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.48" fill="#8b7f52">Winter, year 7</text>
 </svg>

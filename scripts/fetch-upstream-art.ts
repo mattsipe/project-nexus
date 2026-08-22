@@ -42,6 +42,22 @@ async function cropCentered(src: string, dest: string, w: number, h: number): Pr
   await sips(['-c', String(h), String(w), src, '--out', dest]);
 }
 
+/**
+ * Crop to an exact WxH region at a specific (x, y) offset — for the cases a
+ * centered crop cuts the wrong thing. sips only knows how to crop centered,
+ * so this shells out to Pillow (already used elsewhere in this project for
+ * pixel sampling) for the one thing it doesn't do.
+ */
+async function cropAt(src: string, dest: string, x: number, y: number, w: number, h: number): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const proc = spawn('python3', ['-c',
+      `from PIL import Image; Image.open("${src}").crop((${x}, ${y}, ${x + w}, ${y + h})).save("${dest}")`,
+    ], { stdio: 'ignore' });
+    proc.once('exit', (code) => (code === 0 ? resolve() : reject(new Error('cropAt (Pillow) failed'))));
+    proc.once('error', reject);
+  });
+}
+
 async function resizeExact(src: string, dest: string, w: number, h: number): Promise<void> {
   await sips(['-z', String(h), String(w), src, '--out', dest]);
 }
@@ -74,7 +90,17 @@ async function main(): Promise<void> {
       capsuleSrc,
     );
     // 600×900 native (Steam's own portrait spec) — crop to our 3:4 (600×800).
-    await cropCentered(capsuleSrc, join(OUT, 'bitburner-capsule.png'), CAPSULE.width, CAPSULE.height);
+    // A centered crop cuts straight through the "bitburner" wordmark near
+    // the bottom edge. Keeping it clears that, but then sits directly above
+    // our own card title ("Bitburner") in the library grid — the same name
+    // rendered twice, in two different typefaces, a few pixels apart. Crop
+    // to just the icon and code snippet instead and let our own title do
+    // the naming, then pad the 100px this leaves short with black — the
+    // source's own background, so the seam is invisible.
+    const iconCrop = join(TMP, 'bb-capsule-icon.png');
+    await cropAt(capsuleSrc, iconCrop, 0, 40, CAPSULE.width, 700);
+    await sips(['-p', String(CAPSULE.height), String(CAPSULE.width), '--padColor', '000000',
+      iconCrop, '--out', join(OUT, 'bitburner-capsule.png')]);
 
     const heroSrc = join(TMP, 'bb-library-hero.png');
     await fetchTo(

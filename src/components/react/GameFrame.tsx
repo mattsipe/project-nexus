@@ -120,7 +120,7 @@ export default function GameFrame({
       <button
         type="button"
         onClick={launch}
-        className="group inline-flex items-center gap-2.5 rounded-xl bg-amber px-6 py-3 font-display text-base font-extrabold text-ink transition-transform hover:scale-[1.02] active:scale-100"
+        className="btn-primary group inline-flex items-center gap-2.5 rounded-xl px-6 py-3 font-display text-base font-extrabold text-ink"
       >
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
           <path d="M8 5.5v13l11-6.5z" />

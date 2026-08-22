@@ -7,6 +7,7 @@
  */
 import { readdir, readFile, access } from 'node:fs/promises';
 import { join } from 'node:path';
+import { execSync } from 'node:child_process';
 
 const GAMES_DIR = 'src/content/games';
 const PUBLIC = 'public';
@@ -15,6 +16,27 @@ interface Problem { file: string; message: string }
 
 const problems: Problem[] = [];
 const notes: string[] = [];
+
+// A bare custom-property token inside a Tailwind arbitrary value —
+// `rounded-[--radius-card]` — compiles to an invalid declaration
+// (`border-radius:--radius-card`) that browsers silently discard. The fix is
+// always `[var(--token)]`. This exact bug has shipped twice (the rail width,
+// then every capsule's corner radius and its launch easing), so it gets a
+// permanent check rather than a third silent fix.
+{
+  const hits = execSync(
+    String.raw`grep -rnE '\[--[a-z0-9-]+\]' src --include='*.tsx' --include='*.astro' --include='*.ts' || true`,
+    { encoding: 'utf8' },
+  ).trim();
+  if (hits) {
+    problems.push({
+      file: 'src/**',
+      message:
+        `Bare custom-property token(s) in an arbitrary value — needs [var(--x)], not [--x]:\n` +
+        hits.split('\n').map((l) => `        ${l}`).join('\n'),
+    });
+  }
+}
 
 function field(src: string, name: string): string | null {
   const m = src.match(new RegExp(`^\\s*${name}:\\s*(.+)$`, 'm'));

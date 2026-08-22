@@ -63,9 +63,23 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className="fixed right-4 bottom-20 z-30 flex items-center gap-2 md:bottom-4">
-      {/* Visible whenever ambience is on. It was briefly behind a disclosure,
-          which meant that after a reload the only control was undiscoverable. */}
+    <div
+      // z-[45]: above the rail (z-40) it now visually docks into on desktop —
+      // the rail's own fixed nav spans the full column height, so anything
+      // sharing that column at an equal-or-lower z-index gets its clicks
+      // swallowed by the nav even where the nav renders nothing visible.
+      className="fixed right-4 bottom-20 z-[45] flex items-center gap-2 md:right-auto md:bottom-[4.75rem] md:left-3 md:flex-row-reverse"
+    >
+      {/* Docked into the rail's own column on desktop (a fixed offset that
+          centres the button in the rail's width, not a floating widget over
+          the game grid) — md:flex-row-reverse puts the button at that anchor
+          point and lets the volume popover extend to its right instead of
+          overflowing off the left edge of the screen. Mobile keeps the
+          original bottom-right placement, since there's no left rail there
+          to dock into — the tab bar owns the bottom edge instead.
+          Visible whenever ambience is on. It was briefly behind a
+          disclosure, which meant that after a reload the only control was
+          undiscoverable. */}
       {enabled && !unavailable && (
         <div className="flex items-center gap-2 rounded-xl border border-edge bg-surface/95 px-3 py-2 backdrop-blur-md">
           <label htmlFor="music-volume" className="sr-only">Ambience volume</label>
@@ -79,7 +93,7 @@ export default function MusicPlayer() {
               setVolume(v);
               setPrefs({ volume: v });
             }}
-            className="h-1 w-24 cursor-pointer accent-[var(--color-amber)]"
+            className="h-1 w-24 cursor-pointer accent-[var(--color-emerald)]"
           />
           <span className="tnum w-8 text-right text-[11px] text-text-faint">
             {Math.round(volume * 100)}
@@ -93,10 +107,16 @@ export default function MusicPlayer() {
         aria-pressed={enabled}
         aria-label={enabled ? 'Turn ambience off' : 'Turn ambience on'}
         title={unavailable ? 'Audio unavailable in this browser' : enabled ? 'Ambience on' : 'Ambience off'}
-        className={`grid h-10 w-10 place-items-center rounded-xl border transition-colors ${
-          enabled && !unavailable
-            ? 'border-amber/50 bg-amber-wash text-amber'
-            : 'border-edge bg-surface/95 text-text-dim backdrop-blur-md hover:text-text'
+        // Matches the rail's own item tiles (h-11 w-11, rounded-lg,
+        // text-only colour change) rather than the pill-with-wash treatment
+        // used elsewhere, since this control docks visually into the rail's
+        // own column on desktop. It still needs its own solid backing
+        // (unlike the rail's tiles, which sit on the rail's shared chassis)
+        // because on mobile it floats free above the bottom bar, over the
+        // grid itself — solid, not blurred, for the same reason the rail is
+        // solid chassis rather than glass.
+        className={`grid h-11 w-11 place-items-center rounded-lg bg-raised transition-colors ${
+          enabled && !unavailable ? 'text-emerald' : 'text-text-faint hover:text-text'
         }`}
       >
         {enabled && !unavailable ? <SpeakerOn /> : <SpeakerOff />}

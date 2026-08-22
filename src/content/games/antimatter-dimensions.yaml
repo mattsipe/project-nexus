@@ -15,8 +15,8 @@ delivery:
     frame-ancestors directive, so the author's build permits framing.
 accent: "#7c6cff"
 cover:
-  capsule: /covers/antimatter-dimensions-capsule.png
-  hero: /covers/antimatter-dimensions-hero.png
+  capsule: /covers/antimatter-dimensions-capsule.webp
+  hero: /covers/antimatter-dimensions-hero.webp
   source: upstream-official
   license: MIT
   sourceUrl: https://github.com/IvarK/AntimatterDimensionsSourceCode/blob/master/public/images/loading.png

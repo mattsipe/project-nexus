@@ -9,28 +9,47 @@ const isLibrary = path === '/' || path.startsWith('/category/') || path.startsWi
 const isFavorites = path === '/favorites';
 const isSettings = path === '/settings' || path === '/credits';
 
+// The active indicator is a thin emerald edge, not a filled chip — an
+// indicator LED, not a button state. Which edge depends on orientation: a
+// top bar on the mobile row (the bar sits below its icon like a tab
+// underline read upside-down — visually the icon's "on" light), a right bar
+// on the desktop column (the edge facing the content the rail controls).
 const itemClass = (active: boolean) =>
   [
-    'group relative grid h-11 w-11 place-items-center rounded-xl transition-colors',
-    active ? 'bg-raised text-amber' : 'text-text-faint hover:bg-raised hover:text-text',
+    'group relative grid h-11 w-11 place-items-center rounded-lg border-t-2 transition-colors md:border-t-0 md:border-r-2',
+    active ? 'border-emerald text-emerald' : 'border-transparent text-text-faint hover:bg-raised/70 hover:text-text',
   ].join(' ');
 ---
 
 <nav
-  class="chassis fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-around border-t px-2 md:inset-x-auto md:inset-y-0 md:left-0 md:h-full md:w-[var(--rail-w)] md:flex-col md:justify-start md:gap-1 md:border-t-0 md:border-r md:py-4"
+  class="chassis rail-bezel fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-around border-t px-2 md:inset-x-auto md:inset-y-0 md:left-0 md:h-full md:w-[var(--rail-w)] md:flex-col md:justify-start md:gap-1 md:border-t-0 md:border-r md:py-4"
   aria-label="Primary"
 >
   <a
     href="/"
-    class="mb-0 hidden h-9 w-9 place-items-center rounded-lg bg-amber font-display text-sm font-extrabold text-ink md:mb-3 md:grid"
+    class="mb-0 hidden h-9 w-9 place-items-center rounded-lg opacity-90 transition-opacity hover:opacity-100 md:mb-3 md:grid"
     aria-label="Nexus home"
+    title="Nexus"
   >
-    N
+    {/* The actual supplied mark (scripts/build-logo.ts derivatives), not a
+        reconstruction — it stays legible at this size, so there was no need
+        to trade the real bevelled/gradient art for a flat redraw. A raster
+        can't take currentColor; the mark is always its own emerald. */}
+    <picture>
+      <source srcset="/brand/mark-26.webp 1x, /brand/mark-52.webp 2x, /brand/mark-78.webp 3x" type="image/webp" />
+      <img
+        src="/brand/mark-26.png"
+        srcset="/brand/mark-26.png 1x, /brand/mark-52.png 2x, /brand/mark-78.png 3x"
+        width="26"
+        height="26"
+        alt=""
+      />
+    </picture>
   </a>
 
   <a href="/" class={itemClass(isLibrary)} aria-current={isLibrary ? 'page' : undefined} title="Library">
     <span class="sr-only">Library</span>
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <rect x="3" y="3" width="7" height="7" rx="1.5" />
       <rect x="14" y="3" width="7" height="7" rx="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1.5" />
@@ -40,7 +59,7 @@ const itemClass = (active: boolean) =>
 
   <a href="/#continue" class={itemClass(false)} title="Continue playing">
     <span class="sr-only">Continue playing</span>
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M3 12a9 9 0 1 1 3 6.7" />
       <path d="M3 17v-5h5" />
     </svg>
@@ -48,21 +67,31 @@ const itemClass = (active: boolean) =>
 
   <a href="/favorites" class={itemClass(isFavorites)} aria-current={isFavorites ? 'page' : undefined} title="Favourites">
     <span class="sr-only">Favourites</span>
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M12 2.5l2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.4l-5.81 3.05 1.11-6.47-4.7-4.58 6.5-.95z" />
     </svg>
   </a>
 
-  <a
-    href="/settings"
-    class={`${itemClass(isSettings)} md:mt-auto`}
-    aria-current={isSettings ? 'page' : undefined}
-    title="Settings & credits"
-  >
-    <span class="sr-only">Settings and credits</span>
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  </a>
+  {/* Settings sits below a hairline, on its own at the bottom — a control,
+      not a navigation destination like the three items above it. The mute
+      toggle (MusicPlayer.tsx, mounted separately at the layout level so it
+      survives client-side state changes) is styled to match this same
+      itemClass language and docks visually just above this divider on
+      desktop, so the two controls read as one group even though they're
+      different components. */}
+  <div class="md:mt-auto md:flex md:flex-col md:items-center md:gap-1">
+    <div class="hairline mx-1 mb-1 hidden border-t md:block" aria-hidden="true"></div>
+    <a
+      href="/settings"
+      class={itemClass(isSettings)}
+      aria-current={isSettings ? 'page' : undefined}
+      title="Settings & credits"
+    >
+      <span class="sr-only">Settings and credits</span>
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    </a>
+  </div>
 </nav>

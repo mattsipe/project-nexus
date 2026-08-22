@@ -30,7 +30,7 @@ export default function FavoriteButton({ slug, title, variant = 'icon' }: Props)
         aria-pressed={fav}
         className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${
           fav
-            ? 'border-amber/50 bg-amber-wash text-amber'
+            ? 'border-emerald/50 bg-emerald-wash text-emerald'
             : 'border-edge bg-raised text-text-dim hover:border-edge-strong hover:text-text'
         }`}
       >
@@ -47,11 +47,13 @@ export default function FavoriteButton({ slug, title, variant = 'icon' }: Props)
       aria-label={label}
       aria-pressed={fav}
       title={label}
-      className={`absolute top-2.5 left-2.5 grid h-9 w-9 place-items-center rounded-lg bg-ink/80 backdrop-blur-sm transition-all ${
+      className={`absolute top-2.5 left-2.5 grid h-8 w-8 place-items-center rounded-full border backdrop-blur-sm transition-all ${
         // Always visible once starred; otherwise it appears on hover or focus so
         // the card art stays clean. Touch devices get it permanently.
-        fav ? 'text-amber opacity-100' : 'text-text-dim opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100'
-      } ${ready ? '' : 'invisible'} hover:text-amber`}
+        fav
+          ? 'border-emerald/40 bg-ink/85 text-emerald opacity-100'
+          : 'border-white/10 bg-ink/70 text-text-dim opacity-0 group-hover:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100'
+      } ${ready ? '' : 'invisible'} hover:border-emerald/40 hover:text-emerald`}
     >
       <Star filled={fav} />
     </button>

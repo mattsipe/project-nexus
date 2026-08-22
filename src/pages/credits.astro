@@ -15,6 +15,10 @@ const byMode = {
   description="Where every game on Project Nexus came from and under what terms."
 >
   <section class="shell pt-12">
+    <div class="mb-3 flex items-center gap-2 text-text-faint">
+      <img src="/brand/mark-52.png" srcset="/brand/mark-52.png 2x, /brand/mark-78.png 3x" width="20" height="20" alt="" />
+      <span class="font-display text-[11px] font-bold tracking-[0.18em] uppercase">Project Nexus</span>
+    </div>
     <h1 class="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
       Licences and credits
     </h1>
@@ -42,7 +46,7 @@ const byMode = {
             {byMode[mode].map((g) => (
               <li class="flex flex-col gap-1.5 bg-surface p-4 sm:flex-row sm:items-start sm:gap-6">
                 <div class="sm:w-56 sm:shrink-0">
-                  <a href={`/games/${g.id}`} class="font-semibold hover:text-amber">
+                  <a href={`/games/${g.id}`} class="font-semibold hover:text-emerald">
                     {g.data.title}
                   </a>
                   <p class="text-sm text-text-dim">{g.data.source.author}</p>
@@ -59,7 +63,7 @@ const byMode = {
                       href={g.data.source.repo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="mt-1 inline-block break-all text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                      class="mt-1 inline-block break-all text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-emerald"
                     >
                       {g.data.source.repo}
                     </a>

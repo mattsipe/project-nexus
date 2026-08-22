@@ -6,45 +6,69 @@
    chassis you stand at; the nebula behind the library is the environment,
    not wallpaper — it drifts toward whatever world you're looking at.
 
-   Two accents, strictly separated by meaning, carried over from "Cabinet"
-   because the discipline is what made it work:
-     amber — interaction: hover, focus, favourite, primary action
-     cyan  — live only: "playing now", the Continue row. Nowhere else.
+   Three roles, strictly separated by meaning:
+     emerald — the system's own identity: chrome, focus rings, favourites,
+               primary actions, the mark. Phase 2's rebrand around the
+               supplied Nexus logo.
+     amber   — live only: "playing now", the Continue row. Nowhere else.
+               Carried over from "Cabinet" rather than deleted — a warm
+               colour is still the fastest-reading signal against a now-green
+               interface, so it was promoted to a narrower job instead.
+     game accent — each capsule's own colour: hover glow, border, and the
+               nebula tint. Never the system's colour, so games keep their
+               own identity inside a shared shell.
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* Lets the browser natively interpolate the nebula's hue on hover instead of
-   a JS-driven rAF tween — cheaper, and it can't drop frames under load. */
+   a JS-driven rAF tween — cheaper, and it can't drop frames under load.
+   inherits: false is deliberate — an earlier version inherited, and animating
+   it on :root meant every tick invalidated style for the ENTIRE document
+   (measured: ~4s of recalc during a hover sweep, against ~50ms of layout).
+   Scoped to .nebula alone, only that one element recalcs. */
 @property --stage-hue {
   syntax: '<number>';
-  inherits: true;
-  initial-value: 262;
+  inherits: false;
+  /* Resting hue, teal-green — sits near --color-emerald (~151) without
+     matching it exactly, so the environment reads as "at home" in the brand
+     at rest rather than needing a hover to reach it. Was 262 (violet),
+     which contradicted an emerald identity in its most-seen state. Keep in
+     sync with src/lib/stageHue.ts's DEFAULT_HUE. */
+  initial-value: 168;
 }
 
 @theme {
-  /* ── Deep indigo, not neutral black — space has colour in it. ── */
-  --color-ink: #08060f;
-  --color-surface: #0f0b1a;
-  --color-raised: #171128;
-  --color-edge: #2a2340;
-  --color-edge-strong: #3d3358;
+  /* ── Deep teal-black, not neutral black or the old indigo — the ground
+        the emerald identity sits in, not on. Matches the logo mark's own
+        backing colour (public/favicon-32.png, public/apple-touch-icon.png). ── */
+  --color-ink: #060e0f;
+  --color-surface: #0b1416;
+  --color-raised: #122220;
+  --color-edge: #1f3330;
+  --color-edge-strong: #2d4a45;
   /* The rail is solid chassis, not glass — deliberately a shade closer to
      black than the surfaces that float above the nebula. */
-  --color-rail: #0b0814;
+  --color-rail: #050b0c;
+  /* The nebula's horizon/floor plane (.nebula below) and the tint mixed into
+     card resting shadows — darker and cooler than --color-ink so the ground
+     reads as a distinct surface, not just "more background". */
+  --color-ground: #020a09;
 
-  /* ── Interaction (marquee bulbs) — unchanged; warm against a cool sky
-        reads better than it did against neutral black. ── */
+  /* ── System identity — the Nexus mark's own colour. Chrome, focus rings,
+        favourites, primary actions. Not decorative; this is the brand. ── */
+  --color-emerald: #2ada86;
+  --color-emerald-dim: #1ea968;
+  --color-emerald-wash: #2ada861a;
+
+  /* ── Live state only: "playing now", the Continue row, nowhere else.
+        Kept as amber rather than folded into emerald — a warm colour is
+        still the fastest-reading signal against a now-green interface. ── */
   --color-amber: #ffb020;
-  --color-amber-dim: #b87a12;
   --color-amber-wash: #ffb0201a;
 
-  /* ── Live state only ── */
-  --color-live: #35e0d4;
-  --color-live-wash: #35e0d41a;
-
-  /* ── Text, warmed slightly to sit on indigo rather than grey-on-black ── */
-  --color-text: #ecebf5;
-  --color-text-dim: #948fb0;
-  --color-text-faint: #5c5578;
+  /* ── Text, cooled slightly to sit on teal-black rather than grey-on-black ── */
+  --color-text: #eaf3ef;
+  --color-text-dim: #8fada3;
+  --color-text-faint: #547066;
 
   --color-danger: #ff5c5c;
 
@@ -61,9 +85,11 @@
     color-scheme: dark;
     --shell-max: 100rem;
     --rail-w: 4rem;
-    /* Set from JS (src/lib/stageHue.ts) on capsule hover/focus. The browser
-       tweens it natively via @property above. */
-    transition: --stage-hue 900ms var(--ease-out-cabinet);
+    /* The genre tier docked beside the rail on desktop (Library.tsx) — a
+       second, wider column of hardware, not a header widget. Mobile has no
+       room for it; the rail is a bottom bar there, so genres move into a
+       horizontal strip above the grid instead. */
+    --genre-w: 12rem;
   }
 
   html {
@@ -89,23 +115,27 @@
   /* Keyboard focus must be unmistakable — much of this catalogue is
      keyboard-driven, and grid navigation is a primary input path. */
   :focus-visible {
-    outline: 2px solid var(--color-amber);
+    outline: 2px solid var(--color-emerald);
     outline-offset: 3px;
     border-radius: 4px;
   }
   :focus:not(:focus-visible) { outline: none; }
 
   ::selection {
-    background: var(--color-amber);
+    background: var(--color-emerald);
     color: var(--color-ink);
   }
 }
 
 @layer utilities {
-  /* The nebula: three large radial gradients whose hue follows --stage-hue.
-     This alone must look intentional — it is what every degraded path
-     (reduced motion, no canvas support, a hidden tab) falls back to. */
+  /* The nebula: three large radial gradients whose hue follows --stage-hue,
+     plus a static horizon/floor plane underneath them. This alone must look
+     intentional — it is what every degraded path (reduced motion, no canvas
+     support, a hidden tab) falls back to. */
   .nebula {
+    /* --stage-hue is set here (src/lib/stageHue.ts), not on :root — see the
+       @property comment above for why that scoping matters for perf. */
+    transition: --stage-hue 900ms var(--ease-out-cabinet);
     background:
       radial-gradient(ellipse 60% 50% at 78% 18%,
         hsl(var(--stage-hue) 78% 58% / 0.30), transparent 65%),
@@ -113,6 +143,15 @@
         hsl(calc(var(--stage-hue) + 46) 70% 50% / 0.22), transparent 68%),
       radial-gradient(ellipse 80% 70% at 50% 105%,
         hsl(calc(var(--stage-hue) - 36) 60% 40% / 0.18), transparent 70%),
+      /* Horizon: a thin brand-emerald rim-light along a fixed line, and a
+         floor plane below it — what turns "the grid stops, the page
+         doesn't" into a floor the grid sits on. Deliberately static (no
+         --stage-hue reference): it's the environment's own identity, not a
+         per-game reaction, so it costs nothing beyond the sky tint above
+         already does and never competes with the hover signature. */
+      radial-gradient(ellipse 140% 14% at 50% 74%,
+        color-mix(in oklab, var(--color-emerald) 30%, transparent), transparent 72%),
+      linear-gradient(to top, var(--color-ground) 0%, transparent 32%),
       var(--color-ink);
   }
 
@@ -144,18 +183,38 @@
     border-color: var(--color-edge);
   }
 
-  /* Header/search surface: glass, because it floats over content that
-     genuinely moves behind it (the library scrolling, the nebula beyond
-     that) — glass only reads as glass when something moves behind it. */
-  .glass {
-    background-color: color-mix(in oklab, var(--color-ink) 72%, transparent);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  /* The rail specifically, on top of .chassis: a faint inner highlight along
+     its top edge (light from above, same cue the cards use) and its inner
+     edge (the one facing the content it controls — the right edge as a
+     desktop column, harmlessly a no-op as a mobile bottom bar since there's
+     no visible right edge there) — enough to read as a raised bezel without
+     drawing an actual panel. */
+  .rail-bezel {
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      inset -1px 0 0 0 rgba(255, 255, 255, 0.035);
   }
+
+  /* The header used to be glass (backdrop-filter over the moving starfield).
+     Measured cost: the browser must re-composite the blur every frame the
+     content behind it moves, which a sticky header over a permanently
+     animating background pays constantly. It's solid chassis now, matching
+     the rail — reads as one console instead of web chrome floating on it,
+     and costs nothing. */
 
   /* The signature: a capsule lifts and casts its own art-derived colour as a
      glow beneath it. --glow is set per-card from the game's accent. */
   .cabinet-glow {
+    /* Two-part edge — a light hairline top, a dark one at the bottom, as if
+       lit from above — plus a resting shadow tinted toward --color-ground
+       rather than pure black. A black shadow on near-black ground was
+       invisible; cards read as flat rectangles rather than objects sitting
+       above the nebula. The inset lines do most of the work here: they read
+       as an object's own bevel regardless of what's directly behind it. */
+    box-shadow:
+      inset 0 1px 0 0 rgba(234, 243, 239, 0.07),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.4),
+      0 14px 26px -16px color-mix(in oklab, var(--color-ground) 75%, black 25%);
     transition:
       transform 0.32s var(--ease-out-cabinet),
       box-shadow 0.32s var(--ease-out-cabinet),
@@ -163,15 +222,28 @@
   }
   /* :focus-within too — the glow is usually on a wrapper around the real
      interactive element (so a favourite button can sit beside it, not
-     nested inside it), and a wrapper never receives focus itself. */
+     nested inside it), and a wrapper never receives focus itself.
+     Keyboard focus additionally gets the global :focus-visible outline
+     (theme.css base layer) on top of this, which is what actually keeps it
+     visually distinct from a plain mouse hover — the lift and glow below
+     are shared, the emerald ring is not. */
   .cabinet-glow:hover,
   .cabinet-glow:focus-visible,
   .cabinet-glow:focus-within {
     transform: translateY(-4px);
-    border-color: color-mix(in oklab, var(--glow, var(--color-amber)) 55%, transparent);
+    border-color: color-mix(in oklab, var(--glow, var(--color-emerald)) 55%, transparent);
     box-shadow:
-      0 16px 36px -14px color-mix(in oklab, var(--glow, var(--color-amber)) 50%, transparent),
-      0 2px 0 0 color-mix(in oklab, var(--glow, var(--color-amber)) 30%, transparent) inset;
+      inset 0 1px 0 0 rgba(234, 243, 239, 0.12),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.4),
+      0 16px 36px -14px color-mix(in oklab, var(--glow, var(--color-emerald)) 50%, transparent),
+      0 2px 0 0 color-mix(in oklab, var(--glow, var(--color-emerald)) 30%, transparent) inset,
+      /* The reflection: a broad, low, soft cast of the card's own colour
+         beneath it — the ground picking up its light. This is the
+         signature interaction the whole pass exists to deliver. It's one
+         more layer on the box-shadow that's already transitioning, not a
+         new element or a filter — cheaper than either, and only the one
+         hovered card ever pays for it (not all 27 at once). */
+      0 46px 60px -28px color-mix(in oklab, var(--glow, var(--color-emerald)) 40%, transparent);
   }
 
   /* Numbers use tabular mono so counts don't jitter as they tick up —
@@ -183,6 +255,34 @@
   }
 
   .hairline { border-color: var(--color-edge); }
+
+  /* Primary action: a flat #2ada86 fill read as the most SaaS-looking thing
+     in the build — a dimensional treatment instead, with a lit top edge and
+     an emerald glow beneath it, in keeping with "cards are lit objects". */
+  .btn-primary {
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--color-emerald) 100%, white 10%) 0%,
+      var(--color-emerald) 55%,
+      var(--color-emerald-dim) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.35),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.15),
+      0 10px 24px -10px color-mix(in oklab, var(--color-emerald) 55%, transparent);
+    transition:
+      transform 0.2s var(--ease-out-cabinet),
+      box-shadow 0.2s var(--ease-out-cabinet),
+      filter 0.2s var(--ease-out-cabinet);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px) scale(1.02);
+    filter: brightness(1.06);
+  }
+  .btn-primary:active {
+    transform: translateY(0) scale(0.99);
+    filter: brightness(0.97);
+  }
 
   .scrim-b {
     background: linear-gradient(
@@ -208,4 +308,6 @@
   .cabinet-glow:hover,
   .cabinet-glow:focus-visible,
   .cabinet-glow:focus-within { transform: none; }
+  .btn-primary:hover,
+  .btn-primary:active { transform: none; }
 }

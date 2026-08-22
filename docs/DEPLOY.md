@@ -46,26 +46,35 @@ rename later. The name is not baked into the build; only `site` in
 
 ## Measured payload
 
-Recorded 2026-08-21 at 9 games (post-Observatory-redesign), so regressions are
-visible:
+Recorded 2026-08-21 at 9 games (post-Phase 2.5 visual-design pass), so
+regressions are visible:
 
 | | uncompressed | gzipped |
 |---|---|---|
-| All JavaScript | 219 KB | **69 KB** |
-| Home page HTML | 37 KB | 6 KB |
-| Total `dist/` | 5.0 MB | — |
+| All JavaScript | 223 KB | **75 KB** |
+| Home page HTML | 45 KB | 7 KB |
+| Total `dist/` | 4.6 MB | — |
 
-Barely moved despite the redesign being a near-total rewrite of the UI layer
-(new Galaxy/Library/GameCapsule islands, several removed) — the home page HTML
-actually shrank, since the old hero headline and stats block are gone. `dist/`
-grew from 3.6 MB to 5.0 MB from real cover art (PNG screenshots and upstream
-promotional images) replacing the old abstract SVG placeholders; still small
-enough not to matter for a static Netlify deploy.
+`dist/` dropped (5.2 MB → 4.6 MB) despite this pass adding real weight
+elsewhere (the genre tier, category bands, the ground-plane/card-shadow CSS,
+the rail-hardware markup) — cover art shrank more than all of that combined.
+JS and HTML both grew slightly from the extra markup and logic (genre tier,
+banding, arrow-nav column detection), which is expected and small.
 
-React's runtime is 176 KB of that 215 KB. If the JS budget ever becomes a real
+**`sharp` is installed** (transitively, via Astro's own image tooling) —
+correcting this doc's prior claim that no PNG optimiser was available.
+`scripts/build-logo.ts` and `scripts/optimize-covers.ts` both use it. The two
+heaviest covers (Antimatter Dimensions, Bitburner) were re-encoded from PNG to
+WebP: 278 KB → 35 KB and 386 KB → 150 KB at their worst points, no manifest
+schema change needed (`content.config.ts`'s cover fields only require a
+`/covers/` prefix, not a specific extension). The remaining PNG covers are
+small hand-authored SVGs or already-reasonable captures, not worth the same
+pass.
+
+React's runtime is 176 KB of that. If the JS budget ever becomes a real
 constraint on low-end Chromebooks, aliasing `react` → `preact/compat` would cut
 it to roughly 12 KB; the islands use only hooks and `createPortal`, both
-supported. Not done now because 67 KB gzipped is not currently a problem, and
+supported. Not done now because 69 KB gzipped is not currently a problem, and
 it would be a change to an approved stack made on speculation rather than
 measurement.
 

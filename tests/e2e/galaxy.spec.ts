@@ -60,48 +60,74 @@ test.describe('galaxy background', () => {
 
   /**
    * The redesign plan set an explicit budget: under a 4x CPU throttle (which
-   * approximates a low-end Chromebook), the galaxy's per-frame scripting cost
-   * must stay under 2ms, because it runs continuously behind everything else.
-   * If this ever regresses, the fix is to cut the canvas layer entirely and
-   * ship the CSS nebula alone — not to try to optimise a bloated frame.
+   * approximates a low-end Chromebook), sweeping the pointer across the
+   * library must stay smooth — median frame under 20ms, with fewer than a
+   * quarter of frames exceeding it.
    *
-   * Measured by instrumenting requestAnimationFrame directly rather than
-   * aggregating Chrome trace events — trace "RunTask"/"FunctionCall" events
-   * nest, so summing their durations double-counts and wildly overstates
-   * cost. Timing the callback itself with performance.now() is what the
-   * budget actually means and cannot double-count.
+   * This replaces an earlier version that instrumented requestAnimationFrame
+   * callback *duration* and passed at <2ms while the page ran at 15fps in
+   * practice. That measured scripting cost; the actual cost turned out to be
+   * style recalculation (an inherited custom property transitioned on
+   * :root — see docs/DECISIONS.md) and compositing (three oversized canvas
+   * layers), neither of which shows up inside a rAF callback's own duration.
+   * Timing the gap *between* frames is what "smooth" actually means, and
+   * it's what caught the regression the scripting-time version missed.
+   *
+   * The grid is cloned to ~27 cards before measuring — the budget has to
+   * hold as the catalogue grows past today's 9 games, not just at this size.
    */
-  test('scripting cost per frame stays under budget on a throttled CPU', async ({ page }) => {
-    await page.addInitScript(() => {
-      const durations: number[] = [];
-      const nativeRaf = window.requestAnimationFrame.bind(window);
-      window.requestAnimationFrame = (cb: FrameRequestCallback) =>
-        nativeRaf((t) => {
-          const start = performance.now();
-          cb(t);
-          durations.push(performance.now() - start);
-        });
-      (window as unknown as { __rafDurations: number[] }).__rafDurations = durations;
+  test('frame pacing stays smooth on a throttled CPU as the catalogue grows', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForTimeout(500);
+
+    await page.evaluate(() => {
+      const first = document.querySelector('[data-capsule]');
+      const grid = first?.closest('div[class*="grid"]');
+      if (!grid) return;
+      const originals = [...grid.children];
+      for (let i = 0; i < 2; i++) originals.forEach((el) => grid.appendChild(el.cloneNode(true)));
     });
 
     const client = await page.context().newCDPSession(page);
     await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
 
-    await page.goto('/');
-    await page.waitForTimeout(500);
-    // Nudge the parallax loop so it's doing its full complement of work
-    // (pointer-driven translate updates), not sitting perfectly idle.
-    await page.mouse.move(200, 200);
-    await page.mouse.move(900, 500, { steps: 10 });
-    await page.waitForTimeout(2000);
+    await page.evaluate(() => {
+      const w = window as unknown as { __frameGaps: number[]; __rafId: number };
+      w.__frameGaps = [];
+      let last = performance.now();
+      const loop = (t: number) => {
+        w.__frameGaps.push(t - last);
+        last = t;
+        w.__rafId = requestAnimationFrame(loop);
+      };
+      w.__rafId = requestAnimationFrame(loop);
+    });
 
-    const durations = await page.evaluate(
-      () => (window as unknown as { __rafDurations: number[] }).__rafDurations,
+    // The real interaction that felt laggy: sweeping the pointer across capsules.
+    const boxes = await page.locator('[data-capsule]').evaluateAll((els) =>
+      els.slice(0, 18).map((e) => {
+        const r = e.getBoundingClientRect();
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+      }),
     );
+    for (const b of boxes) {
+      await page.mouse.move(b.x, b.y, { steps: 6 });
+      await page.waitForTimeout(70);
+    }
+
+    const gaps = await page.evaluate(() => {
+      const w = window as unknown as { __frameGaps: number[]; __rafId: number };
+      cancelAnimationFrame(w.__rafId);
+      return w.__frameGaps;
+    });
     await client.detach();
 
-    expect(durations.length, 'the rAF loop should have run several frames').toBeGreaterThan(10);
-    const avgMs = durations.reduce((a, b) => a + b, 0) / durations.length;
-    expect(avgMs, `~${avgMs.toFixed(2)}ms/frame average under 4x throttle`).toBeLessThan(2);
+    const usable = gaps.slice(2).sort((a, b) => a - b); // drop the first couple of startup frames
+    expect(usable.length, 'the sweep should have produced plenty of frames').toBeGreaterThan(20);
+
+    const med = usable[Math.floor(usable.length / 2)]!;
+    const jankyPct = (100 * usable.filter((f) => f > 20).length) / usable.length;
+    expect(med, `median frame gap was ${med.toFixed(1)}ms`).toBeLessThan(20);
+    expect(jankyPct, `${jankyPct.toFixed(0)}% of frames exceeded 20ms`).toBeLessThan(25);
   });
 });

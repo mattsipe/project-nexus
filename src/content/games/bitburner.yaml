@@ -13,10 +13,10 @@ delivery:
   embedNote: >-
     HEAD request returned 200 with no X-Frame-Options and no CSP
     frame-ancestors directive on the project's official build.
-accent: "#3ddc84"
+accent: "#58dc3d"
 cover:
-  capsule: /covers/bitburner-capsule.png
-  hero: /covers/bitburner-hero.png
+  capsule: /covers/bitburner-capsule.webp
+  hero: /covers/bitburner-hero.webp
   source: upstream-official
   license: Apache-2.0
   sourceUrl: https://github.com/bitburner-official/bitburner-src/blob/master/assets/Steam/Library/Library_Capsule.png

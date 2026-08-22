@@ -43,61 +43,55 @@ function shell(w: number, h: number, accent: string, body: string): string {
 </svg>`;
 }
 
-// ── Kittens Game — a plain resource ledger, exactly its own aesthetic ──────
-// Verified against the live game: a spare, text-first UI (no flashy chrome),
-// a running resource list, and a season/year readout. Nothing here is drawn
-// from a screenshot; the layout is our own reading of that same idea.
+// ── Kittens Game — the kitten count as a headline, not a ledger ────────────
+// The first version was a dense 6-row resource ledger at ~15px font — legible
+// at the 164px cards it was built for, illegible at the bigger cards this
+// pass introduced (proportionally tiny text is still proportionally tiny
+// text no matter how crisp the vector is). Verified against the live game:
+// "kittens" (population vs. shelter capacity) is the number the whole game
+// pivots on, so it becomes the bold graphic-first headline — the same
+// pattern as Distance Incremental's gauge and Trimps' zone bars — with a
+// couple of the classic early resources kept underneath as supporting
+// detail, not the whole picture.
 function kittensGame(w: number, h: number): string {
   const accent = '#e8b04b';
+  const midY = h * 0.46;
+  // Radius keys off the smaller dimension, not `w` alone — the capsule is
+  // 3:4 (h is bigger) but the hero is 16:9 (h is much smaller), and a
+  // w-derived radius pushed the ear tips off the top of the hero canvas.
+  // Distance Incremental's gauge below uses the same min(w,h) approach for
+  // the same reason.
+  const catR = Math.min(w, h) * 0.24;
+  // A simple geometric cat-ear motif behind the headline number — two
+  // triangles on a soft circle — evoking the game's own mascot without
+  // tracing or copying any of its actual art.
+  const ears = `
+    <circle cx="${w / 2}" cy="${midY}" r="${catR}" fill="${accent}" opacity="0.07"/>
+    <path d="M ${w / 2 - catR * 0.6} ${midY - catR * 0.62} L ${w / 2 - catR * 0.92} ${midY - catR * 1.28} L ${w / 2 - catR * 0.16} ${midY - catR * 0.86} Z" fill="${accent}" opacity="0.1"/>
+    <path d="M ${w / 2 + catR * 0.6} ${midY - catR * 0.62} L ${w / 2 + catR * 0.92} ${midY - catR * 1.28} L ${w / 2 + catR * 0.16} ${midY - catR * 0.86} Z" fill="${accent}" opacity="0.1"/>`;
+  const headline = w * 0.11;
   const resources: [string, string][] = [
     ['Catnip', '4,021 (+3.8/s)'],
     ['Wood', '812 (+1.1/s)'],
     ['Minerals', '96 (+0.4/s)'],
-    ['Furs', '204'],
-    ['Ivory', '40'],
-    ['Kittens', '11 / 15'],
   ];
-  // Two, not six — a single row that reliably clears the footer at both
-  // aspect ratios beats a multi-row grid that only fit at one of them.
-  const buildings: [string, string][] = [['Catnip Field', '×6'], ['Hut', '×11']];
-  // Row rhythm is derived from the font size itself, not scaled against `h`
-  // independently — capsule (3:4) and hero (16:9) have very different w:h
-  // ratios, and sizing text from `w` while spacing rows from `h` overlapped
-  // badly on the wide hero canvas. Deriving both from `w` keeps them in step
-  // at any aspect ratio.
-  const fontSize = w * 0.026;
-  const rowH = fontSize * 1.8;
-  const top = h * 0.12;
+  const rowFont = w * 0.026;
+  const rowH = rowFont * 2;
+  const rowsTop = midY + catR * 0.62;
   const rows = resources
     .map(([label, val], i) => `
-    <text x="${w * 0.1}" y="${top + i * rowH}" ${mono} font-size="${fontSize}" fill="#cdbf94">${label}</text>
-    <text x="${w * 0.9}" y="${top + i * rowH}" ${mono} font-size="${fontSize}" fill="#f2e6bf" text-anchor="end">${val}</text>`)
-    .join('');
-  const gridTop = top + resources.length * rowH + fontSize * 1.4;
-  const cell = w * 0.27;
-  const gap = w * 0.03;
-  const cellH = fontSize * 3.4;
-  const buildingCells = buildings
-    .map(([label, count], i) => {
-      const col = i % 2, row = Math.floor(i / 2);
-      const x = w * 0.1 + col * (cell + gap);
-      const y = gridTop + row * (cellH + gap);
-      return `
-    <rect x="${x}" y="${y}" width="${cell}" height="${cellH}" rx="6" fill="#2a2410" stroke="#4a4223"/>
-    <text x="${x + 12}" y="${y + cellH - fontSize * 0.9}" ${mono} font-size="${fontSize * 0.82}" fill="#cdbf94">${label}</text>
-    <text x="${x + 12}" y="${y + cellH - fontSize * 0.25}" ${mono} font-size="${fontSize * 0.82}" fill="${accent}">${count}</text>`;
-    })
+    <text x="${w * 0.1}" y="${rowsTop + i * rowH}" ${mono} font-size="${rowFont}" fill="#cdbf94">${label}</text>
+    <text x="${w * 0.9}" y="${rowsTop + i * rowH}" ${mono} font-size="${rowFont}" fill="#f2e6bf" text-anchor="end">${val}</text>`)
     .join('');
   return shell(
     w, h, accent,
-    `<text x="${w * 0.1}" y="${top - fontSize * 1.1}" ${disp} font-size="${fontSize * 0.92}" fill="${accent}" letter-spacing="2">BONFIRE</text>
-     <line x1="${w * 0.1}" y1="${top - fontSize * 0.7}" x2="${w * 0.9}" y2="${top - fontSize * 0.7}" stroke="#4a4223"/>
+    `<text x="${w * 0.1}" y="${h * 0.115}" ${disp} font-size="${w * 0.032}" fill="${accent}" letter-spacing="2">BONFIRE</text>
+     ${ears}
+     <text x="${w / 2}" y="${midY + headline * 0.14}" ${disp} font-size="${headline}" fill="#f2e6bf" text-anchor="middle">11 / 15</text>
+     <text x="${w / 2}" y="${midY + headline * 0.62}" ${mono} font-size="${rowFont * 0.86}" fill="${accent}" text-anchor="middle" letter-spacing="3">KITTENS</text>
+     <line x1="${w * 0.1}" y1="${rowsTop - rowFont * 1.35}" x2="${w * 0.9}" y2="${rowsTop - rowFont * 1.35}" stroke="#4a4223"/>
      ${rows}
-     <line x1="${w * 0.1}" y1="${top + resources.length * rowH - fontSize * 0.6}" x2="${w * 0.9}" y2="${top + resources.length * rowH - fontSize * 0.6}" stroke="#4a4223"/>
-     ${buildingCells}
-     <text x="${w * 0.1}" y="${h - fontSize * 1.8}" ${mono} font-size="${fontSize * 0.82}" fill="#8b7f52">Winter, year 7</text>
-     <rect x="${w * 0.1}" y="${h - fontSize * 1.1}" width="${w * 0.8}" height="${h * 0.008}" rx="3" fill="#2a2410"/>
-     <rect x="${w * 0.1}" y="${h - fontSize * 1.1}" width="${w * 0.8 * 0.62}" height="${h * 0.008}" rx="3" fill="${accent}"/>`,
+     <text x="${w * 0.1}" y="${h - h * 0.045}" ${mono} font-size="${rowFont * 0.8}" fill="#8b7f52">Winter, year 7</text>`,
   );
 }
 
@@ -131,7 +125,11 @@ function trimps(w: number, h: number): string {
 
 // ── The Prestige Tree — the literal branching node tree ─────────────────────
 function prestigeTree(w: number, h: number): string {
-  const accent = '#5ad17e';
+  // Nudged off the system's emerald hue in the visual-design pass — see
+  // src/content/games/the-prestige-tree.yaml's accent field, which this
+  // must stay in sync with (the cover and the card glow are meant to be
+  // the same colour).
+  const accent = '#8cd15a';
   const rootX = w / 2, rootY = h * 0.94;
   const parts: string[] = [];
   const draw = (x: number, y: number, depth: number, spread: number, ang: number) => {
@@ -157,24 +155,59 @@ function prestigeTree(w: number, h: number): string {
   );
 }
 
-// ── Distance Incremental — the velocity HUD ──────────────────────────────────
+// ── Distance Incremental — the velocity gauge ────────────────────────────────
+// The first version used thin, low-opacity speed lines as the whole graphic
+// — legible in a hero at full size, but they read as almost nothing at
+// capsule/thumbnail size, which is most of where this art actually appears.
+// A gauge is the real HUD element this game is built around (velocity is
+// the thing you're maximising), reads instantly at any size, and gives the
+// card the same bold-graphic-first weight as its siblings here (Trimps'
+// zone bars, the Prestige Tree's literal tree) instead of being the one
+// cover that's mostly empty space with faint lines in it.
 function distanceIncremental(w: number, h: number): string {
   const accent = '#ff7a4d';
-  const lineCount = 26;
-  const lines = Array.from({ length: lineCount }, (_, i) => {
-    const y = (h / lineCount) * i + (h / lineCount) / 2;
-    const t = i / lineCount;
-    const len = w * (0.18 + Math.pow(Math.abs(Math.sin(t * 7)), 1.4) * 0.62);
-    return `<line x1="${w}" y1="${y}" x2="${w - len}" y2="${y}" stroke="${accent}" stroke-width="${h * 0.006}" opacity="${0.08 + (1 - t) * 0.22}" stroke-linecap="round"/>`;
+  const cx = w / 2, cy = h * 0.46;
+  const r = Math.min(w, h) * 0.3;
+  const startA = 145, endA = 395; // degrees, gauge sweep
+  const needleA = 300; // most of the way round — "going fast"
+  const pt = (a: number, radius: number) => {
+    const rad = (a * Math.PI) / 180;
+    return [cx + Math.cos(rad) * radius, cy + Math.sin(rad) * radius];
+  };
+  const arc = (a0: number, a1: number, radius: number) => {
+    const [x0, y0] = pt(a0, radius);
+    const [x1, y1] = pt(a1, radius);
+    const large = a1 - a0 > 180 ? 1 : 0;
+    return `M${x0} ${y0} A${radius} ${radius} 0 ${large} 1 ${x1} ${y1}`;
+  };
+  // Tick marks around the sweep — coarse, so they read as "gauge" at a glance.
+  const ticks = Array.from({ length: 13 }, (_, i) => {
+    const a = startA + ((endA - startA) / 12) * i;
+    const [ix, iy] = pt(a, r * 0.86);
+    const [ox, oy] = pt(a, r * 1.0);
+    const lit = a <= needleA;
+    return `<line x1="${ix}" y1="${iy}" x2="${ox}" y2="${oy}" stroke="${lit ? accent : darken(accent, 0.7)}" stroke-width="${w * 0.008}" stroke-linecap="round" opacity="${lit ? 0.9 : 0.4}"/>`;
+  }).join('');
+  const [needleX, needleY] = pt(needleA, r * 0.82);
+  // Motion streaks trailing off the right edge — kept, but much bolder:
+  // fewer, thicker, higher-opacity, so they still register at thumbnail size.
+  const streaks = Array.from({ length: 6 }, (_, i) => {
+    const y = h * 0.76 + i * (h * 0.028);
+    const len = w * (0.22 + ((6 - i) / 6) * 0.5);
+    return `<line x1="${w}" y1="${y}" x2="${w - len}" y2="${y}" stroke="${accent}" stroke-width="${h * 0.014}" opacity="${0.14 + (i / 6) * 0.14}" stroke-linecap="round"/>`;
   }).join('');
   return shell(
-    w, h, accent,
-    `${lines}
-     <text x="${w * 0.08}" y="${h * 0.42}" ${mono} font-size="${w * 0.015}" fill="#c98462" letter-spacing="3">DISTANCE TRAVELLED</text>
-     <text x="${w * 0.08}" y="${h * 0.42 + w * 0.06}" ${disp} font-size="${w * 0.075}" fill="#ffdac6">1.24 Gm</text>
-     <text x="${w * 0.08}" y="${h * 0.42 + w * 0.1}" ${mono} font-size="${w * 0.02}" fill="${accent}">velocity 8.9 Mm/s   ·   acceleration 220 km/s²</text>
-     <line x1="${w * 0.08}" y1="${h * 0.42 + w * 0.13}" x2="${w * 0.5}" y2="${h * 0.42 + w * 0.13}" stroke="#5c3b2c"/>
-     <text x="${w * 0.08}" y="${h - h * 0.08}" ${mono} font-size="${w * 0.017}" fill="#8a5c48">Rank 4 — reset for Time Shards</text>`,
+    w, h,
+    accent,
+    `${streaks}
+     <path d="${arc(startA, endA, r)}" fill="none" stroke="${darken(accent, 0.75)}" stroke-width="${w * 0.017}" stroke-linecap="round"/>
+     <path d="${arc(startA, needleA, r)}" fill="none" stroke="${accent}" stroke-width="${w * 0.017}" stroke-linecap="round"/>
+     ${ticks}
+     <line x1="${cx}" y1="${cy}" x2="${needleX}" y2="${needleY}" stroke="#ffdac6" stroke-width="${w * 0.012}" stroke-linecap="round"/>
+     <circle cx="${cx}" cy="${cy}" r="${w * 0.02}" fill="#ffdac6"/>
+     <text x="${cx}" y="${cy + r * 0.42}" ${disp} font-size="${w * 0.062}" fill="#ffdac6" text-anchor="middle">1.24 Gm</text>
+     <text x="${cx}" y="${cy + r * 0.42 + w * 0.032}" ${mono} font-size="${w * 0.016}" fill="${accent}" text-anchor="middle" letter-spacing="2">DISTANCE TRAVELLED</text>
+     <text x="${w * 0.08}" y="${h - h * 0.06}" ${mono} font-size="${w * 0.017}" fill="#8a5c48">Rank 4 — reset for Time Shards</text>`,
   );
 }
 

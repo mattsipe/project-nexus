@@ -44,19 +44,26 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
         alt=""
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
-        className="h-full w-full object-cover transition-transform duration-500 ease-[--ease-out-cabinet] group-hover:scale-[1.05]"
+        className="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-cabinet)] group-hover:scale-[1.05]"
       />
       {!isHero && (
-        <div className="scrim-b absolute inset-x-0 bottom-0 px-2.5 pt-8 pb-2">
-          <p className="truncate font-display text-[13px] font-bold text-balance">{doc.title}</p>
+        <div className="scrim-b absolute inset-x-0 bottom-0 px-2.5 pt-7 pb-2">
+          {/* Quiet at rest, so the art carries the card — strengthens on
+              hover/focus rather than fighting the cover permanently. */}
+          <p className="truncate font-display text-[13px] font-semibold text-text-dim/95 transition-colors duration-200 text-balance group-hover:font-bold group-hover:text-text group-focus-within:font-bold group-focus-within:text-text">
+            {doc.title}
+          </p>
         </div>
       )}
       {isHero && (
         <div className="scrim-b absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 px-4 pt-10 pb-3">
           <p className="truncate font-display text-base font-extrabold">{doc.title}</p>
           {playedBadge && (
-            // Cyan appears here and only here: it marks live/resumable state.
-            <span className="tnum shrink-0 rounded bg-ink/70 px-1.5 py-0.5 text-[10px] text-live">
+            // Amber appears here and only here: it marks live/resumable
+            // state. Everywhere else on this card is emerald (system) or
+            // the game's own accent — this is the one spot a warm colour
+            // is deliberately allowed to stand out against it.
+            <span className="tnum shrink-0 rounded bg-ink/70 px-1.5 py-0.5 text-[10px] text-amber">
               {playedBadge}
             </span>
           )}
@@ -80,7 +87,7 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
         href={doc.officialUrl ?? '#'}
         target="_blank"
         rel="noopener noreferrer"
-        className="cabinet-glow group relative block overflow-hidden rounded-[--radius-card] border border-edge bg-surface"
+        className="cabinet-glow group relative block overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface"
         style={style}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
@@ -99,7 +106,7 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
     return (
       <a
         href={`/games/${doc.slug}`}
-        className="cabinet-glow group relative block overflow-hidden rounded-[--radius-card] border border-edge bg-surface"
+        className="cabinet-glow group relative block overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface"
         style={style}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
@@ -113,7 +120,7 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
 
   return (
     <div
-      className="cabinet-glow group relative overflow-hidden rounded-[--radius-card] border border-edge bg-surface"
+      className="cabinet-glow group relative overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface"
       style={style}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -133,7 +140,7 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
         href={`/games/${doc.slug}`}
         aria-label={`About ${doc.title}`}
         title="About"
-        className="absolute top-2 right-2 grid h-7 w-7 place-items-center rounded-full bg-ink/80 text-text-dim opacity-0 backdrop-blur-sm transition-opacity hover:text-text group-hover:opacity-100 focus-visible:opacity-100"
+        className="absolute top-2.5 right-2.5 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-ink/70 text-text-dim opacity-0 backdrop-blur-sm transition-all hover:border-emerald/40 hover:text-emerald group-hover:opacity-100 focus-visible:opacity-100"
       >
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
           <circle cx="12" cy="12" r="9" />

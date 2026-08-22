@@ -103,7 +103,7 @@ export default function SaveManager() {
           <button
             type="button"
             onClick={download}
-            className="rounded-xl bg-amber px-5 py-2.5 font-display text-sm font-extrabold text-ink transition-transform hover:scale-[1.02]"
+            className="btn-primary rounded-xl px-5 py-2.5 font-display text-sm font-extrabold text-ink"
           >
             Download backup
           </button>
@@ -128,7 +128,7 @@ export default function SaveManager() {
         </div>
 
         {status && (
-          <p role="status" className="mt-4 text-sm text-live">
+          <p role="status" className="mt-4 text-sm text-emerald">
             {status}
           </p>
         )}

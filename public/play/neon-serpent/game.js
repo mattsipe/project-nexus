@@ -265,6 +265,42 @@
 
   startBtn.addEventListener('click', start);
 
+  // Read-only debug surface. Doesn't affect gameplay or scoring — it exists
+  // so tooling (scripts/capture-covers.ts, driving a real play session for
+  // cover art) can steer toward the pellet deliberately instead of
+  // wandering blindly, which is what a screenshot of an actual game in
+  // progress needs and what an outside script can't otherwise see, since
+  // everything above is private to this closure.
+  window.__neonSerpentDebug = {
+    get snake() { return snake; },
+    get pellet() { return pellet; },
+    get score() { return score; },
+    get state() { return state; },
+    // For capture tooling only (scripts/capture-covers.ts): impose a
+    // specific board state directly rather than depending on a scripted
+    // play session surviving long enough to earn it. A cover needs to show
+    // real gameplay geometry — a grown snake, a real score — and the
+    // rendering path (draw()) doesn't validate anything about `snake` that
+    // this could violate, so setting it directly is just as "real" a frame
+    // as one reached by playing, without the fragility of scripting an AI
+    // to survive against a randomly-placed pellet.
+    setForCapture(cells, scoreValue) {
+      snake = cells.map((c) => ({ x: c.x, y: c.y }));
+      prevSnake = snake.map((s) => ({ ...s }));
+      score = scoreValue;
+      if (score > best) { best = score; store.set(best); }
+      // Freeze the tick loop rather than pausing: `state` stays 'running' so
+      // the HUD and draw()'s interpolation behave exactly as normal, but
+      // tickMs=Infinity means `now - lastTick >= tickMs` can never fire
+      // again, so step() never re-runs against a synthetic snake shape it
+      // wasn't built to validate (real `dir` continuing into a body that
+      // isn't actually where gameplay put it reads as self-collision).
+      tickMs = Infinity;
+      lastTick = performance.now();
+      updateHud();
+    },
+  };
+
   resize();
   reset();
   requestAnimationFrame(loop);

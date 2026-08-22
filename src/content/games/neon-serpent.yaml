@@ -9,7 +9,7 @@ tags: [snake, reflex, keyboard, quick, original]
 delivery:
   mode: selfhost
   path: /play/neon-serpent/index.html
-accent: "#35e0d4"
+accent: "#35b2e0"
 cover:
   capsule: /covers/neon-serpent-capsule.png
   hero: /covers/neon-serpent-hero.png

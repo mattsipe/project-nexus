@@ -149,3 +149,213 @@ otherwise-reliable, condition-waited tests purely from host contention —
 confirmed by re-running the identical suite at `workers: 2` and getting a
 clean pass repeatedly. `workers` is left unset (Playwright's own default) in
 CI, where the runner's core count is known and dedicated to the job.
+
+## 15. Phase 2 — performance diagnosis: measure before guessing
+**2026-08-21.** The user reported "slight lag." Profiled with Playwright + CDP
+against the production build under a 4x CPU throttle rather than guessing —
+sweeping the pointer across the library ran at **15fps median, 96% of frames
+over 20ms**. Two causes, both measured, neither the one that looked most
+suspicious at a glance (the galaxy's star canvases):
+
+1. `@property --stage-hue` was `inherits: true`, transitioned on `:root`
+   (`src/lib/stageHue.ts` wrote to `document.documentElement`). Every frame of
+   the 900ms hover-tint tween invalidated style for the **entire document**
+   — measured at ~4s of style recalc during one hover sweep, against ~50ms of
+   layout. Fixed by scoping both the property (`inherits: false`) and the
+   write (`.nebula` element, not the root) to the one element that actually
+   uses it — recalculating one node instead of the whole tree.
+2. Three star canvases sized at `innerWidth/innerHeight * 1.5` — ~7 Mpx / 27MB
+   of permanently GPU-resident texture for a parallax range that never
+   exceeds ~120px. Cut to two layers sized to viewport + a fixed overscan
+   margin (`src/components/react/Galaxy.tsx`).
+
+Also: the sticky header's `backdrop-filter` (blur over a permanently animating
+background) forced a re-composite every frame — replaced with the same solid
+`.chassis` treatment as the rail, which reads as more "one console" anyway,
+not just faster. The galaxy's rAF loop now idles out once pointer/scroll
+settle rather than ticking forever at a fixed cost.
+
+Combined, at ~27 games in the grid (this phase's expansion target): **15fps →
+60fps, 96% janky frames → 15%.** The existing perf test
+(`tests/e2e/galaxy.spec.ts`) passed at <2ms throughout, because it measured
+rAF *callback duration* — the actual cost was style recalc and compositing,
+neither of which shows up inside a callback's own execution time. Replaced
+with a frame-*interval* budget (median ≤20ms, <25% over 20ms) measured during
+a real pointer sweep over a cloned ~27-card grid — this is what caught the
+regression the old test missed, and is what "smooth" actually means.
+
+## 16. Phase 2 — accent system: emerald identity, amber demoted to live-only
+**2026-08-21.** The supplied Nexus logo (a six-fold interlaced ring mark,
+emerald/teal) became the brand anchor. Reconstructed as a flat, single-weight
+SVG for small sizes (`public/logo-mark.svg` — the bevelled/gradient original
+turns to mush under ~32px) plus a gradient mid-fidelity version for occasional
+larger display (`public/logo-mark-gradient.svg`, `/credits`, `/settings`).
+
+Three roles, not two: **emerald** (`--color-emerald`, new) is the system's own
+identity — chrome, focus rings, favourites, primary actions, the mark itself.
+**Amber** (`--color-amber`, unchanged value) is *kept*, not deleted, but
+narrowed to exactly one job: "playing now," the Continue row's badge — a warm
+colour is still the fastest-reading signal against a now-green interface, so
+demoting it beat retiring it. **Cyan** (`--color-live`) retires outright — at
+hue 176 it sat inside the new emerald family and would have read as brand
+colour, not a distinct live-state signal. **Each game's own `accent`** is the
+third, unchanged role: capsule hover glow/border and the nebula tint, so
+individual games keep their identity inside a shared emerald shell rather than
+everything turning uniformly green. Ground shifted from indigo (`#08060f`) to
+a deep teal-black (`#060e0f`) so the emerald sits *in* the space rather than
+sitting on top of a clashing hue.
+
+## 17. Phase 2 — a real CSS bug, and a build-time guard against its class
+**2026-08-21.** `GameCapsule.tsx` used `rounded-[--radius-card]` and
+`ease-[--ease-out-cabinet]` — Tailwind arbitrary values referencing a *bare*
+custom-property token. These compile to `border-radius:--radius-card`, which
+browsers silently discard: every capsule in the library had square corners
+and default easing, unnoticed through the whole Observatory redesign. Same bug
+class as the `[--rail-w]` rail-width bug fixed last phase — evidently not a
+one-off. Fixed to `[var(--x)]`, and `scripts/verify-assets.ts` now greps `src/`
+for the bare-token pattern on every `npm run verify`, so a third occurrence
+fails the build instead of shipping silently.
+
+## 18. Phase 2 — cover art: fixing execution, not rights
+**2026-08-21.** Four covers were visually weak without any rights problem —
+tightened at the "how it's drawn/captured" level, same provenance as before:
+
+- **Neon Serpent** (ours, MIT): the scripted capture only played ~10 short
+  moves, producing a 3-cell snake and a near-empty board. Growing it
+  organically meant scripting an AI to survive against a randomly-placed
+  pellet — real effort for a screenshot. Instead, `game.js` gained a small
+  debug-only setter (`window.__neonSerpentDebug.setForCapture`, freezes the
+  tick loop via `tickMs = Infinity` rather than pausing, so the HUD/rendering
+  stay exactly as they'd look mid-game) that lets the capture script draw the
+  *same frame* a long real game reaches, without depending on one surviving
+  that long inside a scripted browser session. Doesn't affect gameplay.
+- **Hextris** (GPL-3.0, vendored): the board sits centred in a lot of the
+  game's own light page chrome at our capture viewport, and the old capture
+  waited it out too briefly for any colour to accumulate. Slower, steadier
+  scripted rotations plus a centred crop before the final resize
+  (`scripts/capture-covers.ts`, `cropCapsule`). The hero was originally a
+  separate wide-viewport capture, but the board reproducibly rendered visibly
+  sheared at 1280x720 (not a one-off animation frame — happened across
+  repeated runs) for reasons that didn't repay chasing; derived from the
+  now-good capsule instead, same technique 2048 already used.
+- **Bitburner** (Apache-2.0 art): the official Steam capsule's centred crop
+  cut through the "bitburner" wordmark near the image's bottom edge. Keeping
+  it uncropped fixed that but then duplicated our own card title a few pixels
+  above it in two typefaces — cropped to just the icon and code snippet
+  instead (`scripts/fetch-upstream-art.ts`, `cropAt`, a small Pillow shell-out
+  since `sips` only crops centred), padded with the source's own black.
+- **Distance Incremental** (original art, no upstream rights): the original
+  cover was thin, low-opacity speed lines — legible at hero size, close to
+  invisible at capsule/thumbnail size, which is most of where it's actually
+  seen. Replaced with a velocity gauge as the dominant graphic
+  (`scripts/make-original-covers.ts`) — the actual HUD element the game is
+  built around, and legible at any size, matching the bolder-graphic
+  treatment its siblings (Trimps' zone bars, the Prestige Tree's tree)
+  already had.
+
+## 19. Phase 2.5 — "The Viewport": a visual-design pass
+**2026-08-21.** Priority A shipped a working perf/accent/logo foundation, but
+reviewed against the running site it still read as a webpage on a space
+wallpaper: 164px capsules, a stock pill filter bar, a rail that was four
+lonely hairline icons, cards with a black shadow on near-black ground (i.e.
+no visible shadow at all), and — the tell — a **violet** nebula at rest under
+an emerald identity. Direction: the library is a screen inside a console,
+looking out, not a page floating over a background.
+
+- **`--stage-hue` resting value, 262 → 168.** The environment's most-seen
+  state contradicted its own brand. 168 sits near `--color-emerald` (hue
+  ~151) without matching it exactly, so hovering still visibly moves the
+  nebula rather than the resting state needing a hover just to reach the
+  brand colour. Kept in sync between `theme.css`'s `@property` and
+  `stageHue.ts`'s `DEFAULT_HUE` — a comment on each points at the other.
+- **A ground plane**, added as two more static (non-`--stage-hue`) layers in
+  `.nebula`'s existing gradient stack: a thin emerald rim-light at a fixed
+  horizon line, and a floor darkening beneath it. Static and layered into an
+  element that was already repainting on hover — it costs nothing extra and
+  turns "the grid stops, the page doesn't" into a floor the grid sits on.
+- **Cards became lit objects**: a light top hairline / dark bottom hairline
+  on `.cabinet-glow` (light from above, same cue as the ground plane), a
+  resting shadow tinted toward a new `--color-ground` token instead of pure
+  black (invisible against near-black), and — the signature — one more
+  box-shadow layer on hover, broader and lower, casting the card's own
+  `--glow` colour beneath it. Implemented as an additional shadow on the
+  property that was already transitioning, not a new element or a `filter` —
+  cheaper than either, and only the one hovered card ever pays for it.
+- **Genre navigation moved out of the header pill row into a rail-adjacent
+  tier** (`Library.tsx`, new `--genre-w` token): a fixed column on desktop
+  (`hidden md:flex`, docked at `left: var(--rail-w)`), a horizontal mono strip
+  on mobile (`flex md:hidden`) where the rail is a bottom bar. Same buttons,
+  same `setCategoryAndSync` handler, same `aria-pressed` contract in both —
+  Tailwind's `hidden` is `display:none`, which removes an element from the
+  accessibility tree entirely, so role-based queries only ever see whichever
+  variant is actually on screen at a given viewport. **Caught in testing:**
+  adding a visible count badge inside the same button changed its computed
+  accessible name from "Puzzle" to "Puzzle2" (concatenated text content),
+  breaking every exact-name assertion — fixed with an explicit `aria-label`
+  and `aria-hidden` on the decorative spans. Also caught: `.shell`'s own
+  `padding-inline` (a shorthand) silently overrides a `pl-[...]` utility
+  applied to the *same* element regardless of source order, since both target
+  the `padding-left` longhand — the genre-tier offset had to live on a
+  separate wrapper, not on `.shell` itself.
+- **Category bands**: with no filter/search active, the grid groups by each
+  game's primary category (`ARCADE · 06`) instead of one flat list; any
+  active filter or search collapses it back to a flat grid, since a "Puzzle"
+  band over an already-puzzle-only grid would be a redundant label. Column
+  count dropped 7 → 5 (164px capsules → ~235px) — "game art should dominate"
+  and 164px was thumbnail-sized. Arrow-key navigation's column-count
+  detection was rewritten to derive columns from the *focused button's own
+  row* rather than comparing against the grid's first button — bands are
+  separate CSS grids, so a global first-row comparison broke the moment two
+  bands had different widths.
+- **Rail hardware**: the active-state fill (`bg-raised`, a filled chip)
+  became a thin emerald edge instead (`border-r-2` desktop / `border-t-2`
+  mobile) — an indicator LED, not a button state, consistent with the genre
+  tier's own left-edge LED. Added `.rail-bezel` (an inset top + inner-edge
+  highlight) so the rail reads as a raised bezel without drawing an actual
+  panel. Settings moved below a hairline divider, grouped with the mute
+  toggle (`MusicPlayer.tsx`, restyled to match the rail's own item tiles —
+  solid, not blurred, same reasoning as the rail itself) — controls and
+  navigation destinations are now visibly two different things, not one flat
+  list of icons.
+- **The logo reconstruction was reversed.** Phase 2 built a flat single-weight
+  redraw on the assumption the real bevelled/gradient art would turn to mush
+  at rail/favicon sizes. Rendered from the actual supplied PNG at
+  20/26/32/48/64px, that assumption didn't hold — the interlace stayed
+  legible well below the 26px rail size. `scripts/build-logo.ts` (new,
+  `sharp`) now crops to the real alpha bounding box (found by scanning the
+  raw alpha channel directly — `sharp`'s own `trim()` compares against the
+  corner pixel and found nothing to trim on this source, whose outer glow
+  fades gradually rather than hitting zero cleanly) and derives every brand
+  asset from the actual artwork: rail glyph (1x/2x/3x, WebP+PNG), favicon,
+  apple-touch-icon, og:image. `public/logo-mark.svg` and
+  `public/logo-mark-gradient.svg` (the reconstructions) are deleted.
+- **Cover art**: `sharp` (already present transitively via Astro, contrary to
+  `DEPLOY.md`'s prior "no optimiser installed" note — corrected there too)
+  re-encoded the two heaviest covers (Antimatter Dimensions, Bitburner) to
+  WebP — 278KB→35KB and 386KB→150KB at their worst — via
+  `scripts/optimize-covers.ts`. No schema change needed: `content.config.ts`'s
+  cover fields only require a `/covers/` prefix, not a specific extension.
+  Kittens Game's cover was redrawn — the original six-row resource ledger was
+  legible at the 164px cards it was built for and illegible at this pass's
+  ~235px cards (proportionally small text stays proportionally small
+  regardless of vector crispness) — into a bold "11 / 15 KITTENS" headline
+  with a small geometric cat-ear motif, matching the bolder graphic-first
+  language the other three hand-authored covers already used.
+- **Accent de-collision**: three games' accents sat within ~25° hue of the
+  new system emerald (`#3ddc84` Bitburner, `#5ad17e` The Prestige Tree,
+  `#35e0d4` Neon Serpent — the latter also close to the new 168° resting
+  nebula hue), so hovering them barely moved anything. Nudged in the
+  manifests (`accent:` field), not special-cased in `GameCapsule.tsx`, toward
+  hues that if anything fit each game *better*: `#58dc3d` (a more matrix-green
+  for a hacking-terminal game), `#8cd15a`, `#35b2e0` (a neon blue for a
+  serpent). `scripts/make-original-covers.ts`'s hardcoded Prestige Tree accent
+  was updated to match — the cover and the card glow are meant to be the same
+  colour.
+- **Tooling assessed, nothing new adopted**: Figma MCP (source of truth is
+  `theme.css` + TSX; `generate_figma_design` would add a translation layer,
+  not capability), `claude-in-chrome` (less scriptable than the Playwright +
+  CDP harness already driving the perf gate), `DesignSync` (publishes a
+  component library to claude.ai/design; this project has one consumer),
+  `skill-creator` (this file and `CLAUDE.md` already encode the design
+  language). `sharp` was the one real find — already installed transitively,
+  previously undocumented, now used for both the logo and the cover pass.

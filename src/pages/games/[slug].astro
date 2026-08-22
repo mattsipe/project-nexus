@@ -38,9 +38,9 @@ const badges = [
 <BaseLayout title={data.title} description={data.tagline}>
   <article class="shell pt-8 pb-6">
     <nav class="mb-6 text-sm text-text-dim" aria-label="Breadcrumb">
-      <a href="/" class="hover:text-amber">← Library</a>
+      <a href="/" class="hover:text-emerald">← Library</a>
       <span class="mx-1.5 text-text-faint">/</span>
-      <a href={`/category/${data.categories[0]}`} class="hover:text-amber">
+      <a href={`/category/${data.categories[0]}`} class="hover:text-emerald">
         {CATEGORY_LABELS[data.categories[0]!]}
       </a>
     </nav>
@@ -90,7 +90,7 @@ const badges = [
                 href={official ?? '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-2.5 rounded-xl bg-amber px-6 py-3 font-display text-base font-extrabold text-ink transition-transform hover:scale-[1.02]"
+                class="btn-primary inline-flex items-center gap-2.5 rounded-xl px-6 py-3 font-display text-base font-extrabold text-ink"
               >
                 Play on the official site ↗
               </a>
@@ -123,7 +123,7 @@ const badges = [
                     href={data.source.licenseUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                    class="underline decoration-edge-strong underline-offset-4 hover:decoration-emerald"
                   >
                     {licenseLabel(data.source.license)}
                   </a>
@@ -142,7 +142,7 @@ const badges = [
                     href={official}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="block truncate text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-amber"
+                    class="block truncate text-text-dim underline decoration-edge-strong underline-offset-4 hover:decoration-emerald"
                   >
                     {official}
                   </a>

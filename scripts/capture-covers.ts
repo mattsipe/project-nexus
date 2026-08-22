@@ -27,13 +27,24 @@ const HERO = { width: 1280, height: 720 };
 interface Capture {
   slug: string;
   path: string;
-  prepare: (page: import('@playwright/test').Page) => Promise<void>;
+  /** Called once per viewport (capsule, then hero unless padColor is set). */
+  prepare: (page: import('@playwright/test').Page, kind: 'capsule' | 'hero') => Promise<void>;
   /**
    * Games with a portrait natural shape don't need a separate hero capture:
    * the capsule screenshot IS the art, just letterboxed out to 16:9 in this
    * background colour instead of cropped down to a sliver of a wide frame.
    */
   padColor?: string;
+  /**
+   * [height, width] to centre-crop to before the final resize — for games
+   * whose own page chrome leaves the actual playfield a small island in a
+   * lot of empty background at our capture viewport size. sips crops
+   * centred on the source image, which is why this only works when the
+   * board is already roughly centred in the viewport (true for both games
+   * that currently use it).
+   */
+  cropCapsule?: [number, number];
+  cropHero?: [number, number];
 }
 
 const CAPTURES: Capture[] = [
@@ -50,6 +61,16 @@ const CAPTURES: Capture[] = [
   {
     slug: 'hextris',
     path: '/play/hextris/index.html',
+    // The board sits centred with a lot of the page's own light chrome
+    // (HUD, margins) around it — crop tight to the hex before the final
+    // resize so the cover isn't mostly empty page.
+    cropCapsule: [613, 460],
+    // Derive the hero from the (already cropped) capsule rather than a
+    // separate wide-viewport capture: at 1280x720 the board occasionally
+    // rendered visibly sheared, reproducibly enough across runs that it
+    // wasn't a one-off animation frame — something about the game's own
+    // canvas transform at that viewport, not our capture logic. The capsule
+    // viewport never showed it, so it's the safer source either way.
     padColor: 'ECF0F1',
     prepare: async (page) => {
       // Hextris's title screen is canvas-drawn, not real DOM — there is no
@@ -59,24 +80,45 @@ const CAPTURES: Capture[] = [
       // The tutorial overlay fades out over the game's first ~650 frames
       // (~11s) — wait it out so the capture shows real blocks, not text.
       await page.waitForTimeout(11500);
-      for (const key of ['ArrowLeft', 'ArrowRight', 'ArrowLeft']) {
+      // A slower, steadier cadence than a real fast player, so several
+      // colours stack up around the hex before anything clears or the game
+      // ends — the previous cadence here left the board almost bare.
+      for (const key of [
+        'ArrowLeft', 'ArrowLeft', 'ArrowRight', 'ArrowRight', 'ArrowLeft',
+        'ArrowRight', 'ArrowLeft', 'ArrowRight', 'ArrowRight', 'ArrowLeft',
+      ]) {
         await page.keyboard.press(key);
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(1500);
       }
     },
   },
   {
     slug: 'neon-serpent',
     path: '/play/neon-serpent/index.html',
-    prepare: async (page) => {
+    prepare: async (page, kind) => {
       await page.getByRole('button', { name: 'Start' }).click();
-      for (const key of [
-        'ArrowRight', 'ArrowRight', 'ArrowDown', 'ArrowDown', 'ArrowRight',
-        'ArrowRight', 'ArrowUp', 'ArrowUp', 'ArrowLeft', 'ArrowLeft',
-      ]) {
-        await page.keyboard.press(key);
-        await page.waitForTimeout(220);
-      }
+      await page.waitForTimeout(300);
+      // Neon Serpent is ours (original, MIT) — scripting a snake AI to
+      // reliably survive long enough to earn a good score against a
+      // randomly-placed pellet turned out to be the wrong amount of
+      // engineering for a cover screenshot. game.js exposes a small
+      // debug-only setter for exactly this (see its own comment); this
+      // draws the SAME frame a real long game reaches, without depending on
+      // one actually surviving that long in a scripted browser session.
+      const rows = kind === 'hero' ? [9, 10, 11] : [9, 10];
+      await page.evaluate((rows) => {
+        const tailToHead: { x: number; y: number }[] = [];
+        rows.forEach((y: number, i: number) => {
+          const xs = [];
+          for (let x = 4; x <= 16; x++) xs.push(x);
+          if (i % 2 === 1) xs.reverse();
+          for (const x of xs) tailToHead.push({ x, y });
+        });
+        const headFirst = tailToHead.slice().reverse();
+        (window as unknown as { __neonSerpentDebug: { setForCapture: (c: unknown, s: number) => void } })
+          .__neonSerpentDebug.setForCapture(headFirst, headFirst.length - 3);
+      }, rows);
+      await page.waitForTimeout(300);
     },
   },
 ];
@@ -119,26 +161,35 @@ async function main(): Promise<void> {
       // sliver.
       const capsulePage = await browser.newPage({ viewport: CAPSULE });
       await capsulePage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
-      await c.prepare(capsulePage);
-      await capsulePage.screenshot({ path: `public/covers/${c.slug}-capsule.png` });
+      await c.prepare(capsulePage, 'capsule');
+      const capsulePath = `public/covers/${c.slug}-capsule.png`;
+      await capsulePage.screenshot({ path: capsulePath });
       await capsulePage.close();
+      if (c.cropCapsule) {
+        await runSips(['-c', String(c.cropCapsule[0]), String(c.cropCapsule[1]), capsulePath]);
+        await runSips(['-z', String(CAPSULE.height), String(CAPSULE.width), capsulePath]);
+      }
 
+      const heroPath = `public/covers/${c.slug}-hero.png`;
       if (c.padColor) {
         // Portrait game: derive the hero from the capsule capture instead of
         // a separate wide-viewport screenshot, which would render the board
         // tiny in a sea of empty background. Scale to fit the hero height,
         // then pad the width out with the game's own background colour.
         await runSips(['-z', String(HERO.height), String(Math.round(CAPSULE.width * (HERO.height / CAPSULE.height))),
-          `public/covers/${c.slug}-capsule.png`, '--out', `public/covers/${c.slug}-hero.png`]);
-        await runSips(['-p', String(HERO.height), String(HERO.width),
-          '--padColor', c.padColor, `public/covers/${c.slug}-hero.png`]);
+          capsulePath, '--out', heroPath]);
+        await runSips(['-p', String(HERO.height), String(HERO.width), '--padColor', c.padColor, heroPath]);
       } else {
         // Hero (16:9) — wide viewport, the game's natural landscape shape.
         const heroPage = await browser.newPage({ viewport: HERO });
         await heroPage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
-        await c.prepare(heroPage);
-        await heroPage.screenshot({ path: `public/covers/${c.slug}-hero.png` });
+        await c.prepare(heroPage, 'hero');
+        await heroPage.screenshot({ path: heroPath });
         await heroPage.close();
+        if (c.cropHero) {
+          await runSips(['-c', String(c.cropHero[0]), String(c.cropHero[1]), heroPath]);
+          await runSips(['-z', String(HERO.height), String(HERO.width), heroPath]);
+        }
       }
     }
   } finally {

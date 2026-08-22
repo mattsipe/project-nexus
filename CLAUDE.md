@@ -108,28 +108,75 @@ You're at a console at the edge of a galaxy; each game is a world. One screen,
 one grid, click to play — not a content site with a hero and sections.
 
 - **Rail** (`src/components/Rail.astro`) — solid chassis, left sidebar on
-  desktop / bottom bar on mobile. Library · Continue · Favourites · Settings.
-  Not glass — it's meant to read as hardware, not web chrome.
-- **Header** (inside `Library.tsx`) — always-visible search + category chips,
-  glass, sticky. `⌘K`/`Ctrl-K`/`/` focus the search box; there is no separate
-  search modal.
-- **Library.tsx** is the whole product surface: search, chips, the Continue
-  row, the portrait grid, and it mounts `GameFrame` directly on capsule click
-  — no navigation, no detail-page detour. `/games/[slug]` still exists as the
-  secondary "About" / deep-link surface, reached via the (i) icon on hover or
-  "About" in the player chrome.
+  desktop / bottom bar on mobile. Library · Continue · Favourites, then a
+  hairline divider, then Settings — controls (mute, settings) grouped apart
+  from navigation destinations. Not glass — it's meant to read as hardware,
+  not web chrome. `.rail-bezel` (theme.css) adds a faint inset top+inner-edge
+  highlight so it reads as a raised bezel without drawing an actual panel.
+  Active state is a thin emerald edge (`border-r-2` desktop / `border-t-2`
+  mobile) — an indicator LED, not a filled chip. The mute toggle
+  (`MusicPlayer.tsx`) is a separate component mounted at the layout level,
+  but restyled to match the rail's own item tiles (same size, same solid
+  non-blurred treatment) and positioned to dock visually into the rail's
+  column on desktop — see the z-index note in that file if repositioning it.
+- **Genre tier** (inside `Library.tsx`) — a second column docked at
+  `left: var(--rail-w)` on desktop (`hidden md:flex`, width `--genre-w`), a
+  horizontal mono strip above the grid on mobile (`flex md:hidden`) where the
+  rail is a bottom bar. Same buttons, same `setCategoryAndSync` handler, same
+  `aria-pressed` in both — Tailwind's `hidden` removes an element from the
+  accessibility tree entirely, so tests only ever see whichever variant is
+  actually on screen. **If you add anything to these buttons' visible
+  content** (a count badge, an icon), set an explicit `aria-label` — the
+  accessible name is otherwise computed from ALL child text concatenated, and
+  this has already silently broken exact-name test assertions once. Content
+  padding for the genre tier lives on a wrapper div, never on `.shell`
+  itself — `.shell`'s own `padding-inline` is a shorthand that silently wins
+  over a `pl-[...]` utility applied to the same element.
+- **Header** (inside `Library.tsx`) — search + favourites toggle only; genre
+  filtering lives in the tier above, not here. Sticky, solid `.chassis` (not
+  glass — a sticky blur over a permanently animating background forced a
+  re-composite every frame; measured cost, see DECISIONS #15). `⌘K`/`Ctrl-K`/
+  `/` focus the search box; there is no separate search modal.
+- **Library.tsx** is the whole product surface: search, the genre tier, the
+  Continue row, and the portrait grid — banded by category when no
+  filter/search is active (`ARCADE · 06`), collapsing to one flat grid the
+  moment a filter or search narrows the view. It mounts `GameFrame` directly
+  on capsule click — no navigation, no detail-page detour. `/games/[slug]`
+  still exists as the secondary "About" / deep-link surface, reached via the
+  (i) icon on hover or "About" in the player chrome. Arrow-key grid
+  navigation derives column count from the *focused button's own row*, not a
+  single global row — bands are separate CSS grids, so row width can differ
+  between them.
 - **Galaxy** (`src/components/react/Galaxy.tsx`) — the environment, not
   decoration. A CSS nebula (`.nebula` in theme.css) whose hue reads
-  `--stage-hue`; three canvas star layers drawn **once** and only ever moved
-  with `transform: translate3d`, never redrawn. Capsule hover calls
-  `setStageHue(accent)` (`src/lib/stageHue.ts`); `@property --stage-hue` in
-  theme.css makes the browser tween it natively. Pauses entirely (no rAF
-  callback at all, not just skipped work) while a game is running
-  (`src/lib/playerState.ts`) or the tab is hidden. Degrades to the static
+  `--stage-hue` (resting value 168 — near-but-not-exactly `--color-emerald`'s
+  own hue, ~151, so the environment reads as "at home" in the brand at rest
+  without a hover being required to reach it; keep `theme.css`'s
+  `@property --stage-hue` and `stageHue.ts`'s `DEFAULT_HUE` in sync if this
+  ever changes) plus a static horizon/floor plane beneath the hue-driven
+  gradients — a thin emerald rim-light and a `--color-ground`-toned floor,
+  neither of which reference `--stage-hue`, so they cost nothing beyond what
+  the sky tint above already pays. Two canvas star layers (three until
+  Phase 2 — cut for perf, see DECISIONS #15) drawn **once** and only ever
+  moved with
+  `transform: translate3d`, never redrawn, sized to viewport + a fixed
+  overscan margin (not a multiple of the viewport — that was most of the
+  cost). Capsule hover calls `setStageHue(accent)` (`src/lib/stageHue.ts`),
+  which writes `--stage-hue` **onto `.nebula` itself**, not `:root` —
+  `@property --stage-hue` has `inherits: false` specifically so that tween
+  only ever recalculates that one element. Pauses entirely (no rAF callback
+  at all, not just skipped work) while a game is running
+  (`src/lib/playerState.ts`), the tab is hidden, **or the pointer/scroll have
+  settled** — it doesn't tick forever at a fixed cost. Degrades to the static
   nebula alone under `prefers-reduced-motion` or if `getContext('2d')` fails.
-  **Budget: <2ms/frame of scripting under a 4x CPU throttle** — if a change
-  regresses this, cut the canvas layer before trying to micro-optimise it;
-  `tests/e2e/galaxy.spec.ts` enforces the budget.
+  **Budget: median frame ≤20ms, <25% of frames over 20ms, under a 4x CPU
+  throttle, measured by frame *interval* during a real pointer sweep over a
+  cloned ~27-card grid** — `tests/e2e/galaxy.spec.ts` enforces this. (An
+  earlier version of this budget measured rAF callback *duration* and missed
+  a real regression because the cost was style recalc and compositing, not
+  scripting — see DECISIONS #15 before changing the measurement approach
+  again.) If a change regresses this, cut a canvas layer before trying to
+  micro-optimise it.
 - **GameFrame.tsx** — launched from Library, it grows from the clicked
   capsule's own rect to fullscreen (`autoLaunch`/`originRect`/`coverSrc`
   props) via a CSS transform, no library needed. Launched from the detail
@@ -137,18 +184,56 @@ one grid, click to play — not a content site with a hero and sections.
   distinguishes the two: Library-launched instances call it to unmount;
   detail-page instances fall back to collapsing their own `launched` state.
 
+**Brand mark**: `public/brand/mark-{26,52,78}.{png,webp}` are derived
+directly from the supplied Nexus logo (`assets/brand/nexus-mark-source.png`,
+a six-fold interlaced ring mark) by `scripts/build-logo.ts` (`sharp`) — a
+tight crop to the real alpha bounding box, square-padded, exported at
+1x/2x/3x. Phase 2 shipped a flat single-weight *reconstruction* instead, on
+the assumption the source's bevelled gradient would turn to mush at rail
+size; rendered from the actual art at 20–64px, that assumption didn't hold,
+so the reconstruction was reversed (DECISIONS #19) — **use the real
+derivatives, don't redraw the mark again** unless a genuinely new size class
+proves illegible. `favicon-{32,64}.png`, `apple-touch-icon.png` and
+`og-image.png` all come from the same script, ink-backed. Keep the mark off
+the library screen — it belongs in the rail glyph and nowhere else there;
+`/credits` and `/settings` are the only pages that also show the wordmark.
+
 Tokens in `src/styles/theme.css`, still "Cabinet" as an internal name for the
-capsule glow/lift language, which survived the redesign:
-- Deep indigo surfaces (`--color-ink` #08060f). Never neutral black.
-- **Amber** = interaction: hover, focus, favourite, primary action.
-- **Cyan** (`--color-live`) = live state *only* — "playing now" in the
-  Continue row. Do not use it decoratively.
+capsule glow/lift language, which survived both redesigns:
+- Deep teal-black surfaces (`--color-ink` #060e0f). Never neutral black, and
+  not the old indigo — the ground the emerald identity sits *in*, not on.
+- **Emerald** (`--color-emerald`) = the system's own identity: chrome, focus
+  rings, favourites, primary actions, the mark. This is Phase 2's rebrand
+  around the supplied Nexus logo — see DECISIONS #16 before changing it.
+- **Amber** (`--color-amber`) = live state *only* — "playing now" in the
+  Continue row. Kept, not deleted, when emerald became the primary accent —
+  do not use it decoratively or promote it back to general interaction.
+- **Cyan retired** in Phase 2 — it sat inside the new emerald hue family and
+  read as brand colour rather than a distinct live-state signal. Don't
+  reintroduce `--color-live` as cyan; the live role is amber's now.
+- Each game's own `accent` field is a separate, third role — capsule
+  hover glow/border and the nebula tint. Never reassign it to emerald; that's
+  what would make every game look the same. **Keep new accents outside
+  roughly 20° of hue 151** (emerald) — three existing games collided closely
+  enough with the system colour that hovering them barely moved anything,
+  and were nudged in their manifests (DECISIONS #19).
+- `--color-ground` — the nebula's floor plane and the tint mixed into card
+  resting shadows. Distinct from `--color-ink`; a pure-black shadow was
+  invisible against near-black ground.
 - Archivo (display) · IBM Plex Sans (body) · IBM Plex Mono (all numbers, via
-  `.tnum`).
+  `.tnum` — also now genre-tier counts, band counts, and anything else that
+  reads as instrument data rather than prose).
 - `.cabinet-glow` triggers on `:hover`, `:focus-visible`, **and
   `:focus-within`** — it's usually on a wrapper around the real interactive
   element (so a favourite button can be a sibling, not nested inside another
-  button), and a wrapper never receives focus itself.
+  button), and a wrapper never receives focus itself. Its box-shadow carries
+  three jobs at once on hover: the lift, a tight glow at the card's own edge,
+  and a broader/lower "reflection" cast of `--glow` beneath it (the ground
+  picking up the card's light) — all one already-transitioning property, not
+  a separate element.
+- `.btn-primary` — the dimensional treatment for primary actions (`Play
+  <title>`, empty-state CTAs). Use it instead of a flat `bg-emerald` fill,
+  which reads as generic SaaS chrome.
 - `prefers-reduced-motion` removes transforms, not just shortens them.
 
 ## Writing
