@@ -134,6 +134,17 @@ const badges = [
             </dd>
           </div>
           {
+            data.delivery.mode === 'embed' && (
+              <div class="flex gap-3">
+                <dt class="w-20 shrink-0 text-text-faint">Runs on</dt>
+                <dd class="text-text-dim">
+                  {new URL(data.delivery.url).hostname.replace(/^www\./, '')}
+                  <span class="ml-2 text-text-faint">— their build, in a frame</span>
+                </dd>
+              </div>
+            )
+          }
+          {
             official && (
               <div class="flex gap-3">
                 <dt class="w-20 shrink-0 text-text-faint">Official</dt>
@@ -151,6 +162,27 @@ const badges = [
             )
           }
         </dl>
+
+        {
+          data.notice && (
+            <p class="mt-6 max-w-prose border-l-2 border-edge-strong pl-4 text-sm text-text-faint">
+              {data.notice.text}
+              {data.notice.url && (
+                <>
+                  {' '}
+                  <a
+                    href={data.notice.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="underline decoration-edge-strong underline-offset-4 hover:decoration-emerald"
+                  >
+                    {new URL(data.notice.url).hostname.replace(/^www\./, '')}
+                  </a>
+                </>
+              )}
+            </p>
+          )
+        }
       </div>
     </div>
   </article>

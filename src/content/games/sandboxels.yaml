@@ -1,0 +1,39 @@
+title: Sandboxels
+tagline: Drop sand, pour water, light a fire, and watch the chemistry argue.
+description: >-
+  A falling-sand sandbox with hundreds of elements and real reactions between
+  them — heat, density, electricity, combustion. There is no goal. Build a
+  forest and set it alight, or freeze a lake and see what cracks.
+categories: [sandbox]
+tags: [falling-sand, chemistry, simulation, physics]
+delivery:
+  mode: embed
+  url: https://sandboxels.r74n.com/
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    HEAD request returned 200 with no X-Frame-Options and no CSP
+    frame-ancestors directive on the author's official site.
+accent: "#c9d93c"
+cover:
+  capsule: /covers/sandboxels-capsule.svg
+  hero: /covers/sandboxels-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) as a settling grid of elements, built from the game's own element names and checked against the live game on 2026-08-22. No screenshot, art or code copied — the repository ships no licence, so nothing upstream is ours to reuse.
+weight: 76
+added: "2026-08-22"
+controls: [mouse, touch]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: R74n
+  homepage: https://sandboxels.r74n.com/
+  repo: https://github.com/R74nCom/sandboxels
+  license: unlicensed
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Repository checked on 2026-08-22 for LICENSE, LICENSE.md, LICENSE.txt and
+    COPYING — none present, and the README states no terms. No licence means
+    all rights reserved, so we do not host a copy. Embedding the author's own
+    build creates neither a copy nor a derivative.

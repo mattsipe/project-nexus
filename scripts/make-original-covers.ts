@@ -265,12 +265,239 @@ function aDarkRoom(w: number, h: number): string {
   );
 }
 
+// ── Sandboxels — a column of elements falling into a pile ──────────────────
+// The game is a grid of one-pixel elements reacting with each other, so the
+// cover is a grid of elements: sand settling on stone, water above it, a seam
+// of lava. Colours are chosen here, not sampled from the game.
+function sandboxels(w: number, h: number): string {
+  const accent = '#c9d93c';
+  const cols = 16;
+  const cell = (w * 0.82) / cols;
+  const x0 = w * 0.09;
+  const y0 = h * 0.3;
+  const rows = Math.round((h * 0.46) / cell);
+  const palette = ['#c9d93c', '#d8b45c', '#5f8fd9', '#d94f2b', '#6b6f72', '#4c8f4c'];
+  const cells: string[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      // A settled pile: dense low and to the middle, sparse at the top.
+      const depth = r / (rows - 1);
+      const centre = 1 - Math.abs(c / (cols - 1) - 0.5) * 2;
+      const fill = depth * 0.75 + centre * 0.3;
+      if (((c * 7 + r * 13) % 11) / 11 > fill) continue;
+      const colour = palette[(c * 3 + r * 5) % palette.length]!;
+      cells.push(
+        `<rect x="${x0 + c * cell}" y="${y0 + r * cell}" width="${cell * 0.9}" height="${cell * 0.9}" fill="${colour}" opacity="${0.32 + depth * 0.5}"/>`,
+      );
+    }
+  }
+  return shell(
+    w, h, accent,
+    `<text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.048}" fill="#eef3d6">SANDBOXELS</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.021}" fill="${accent}">sand · water · lava · plant · steam</text>
+     ${cells.join('')}`,
+  );
+}
+
+// ── Micropolis — the city as a zoning grid ─────────────────────────────────
+// Residential, commercial and industrial blocks on a road grid, which is
+// literally what the player paints. The trademark attribution the Micropolis
+// Public Name Licence requires lives on the game's page and in /credits, not
+// on a 235px card.
+function micropolisJs(w: number, h: number): string {
+  const accent = '#4a86e8';
+  const zoneColours = ['#4a86e8', '#3fb98a', '#e0b13d'];
+  const cols = 9, rows = 7;
+  const padX = w * 0.1;
+  const gridW = w - padX * 2;
+  const cw = gridW / cols;
+  const top = h * 0.32;
+  const ch = (h * 0.5) / rows;
+  const blocks: string[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const seed = (c * 5 + r * 11) % 13;
+      if (seed < 3) continue; // roads and parks
+      const colour = zoneColours[seed % 3]!;
+      const bh = ch * (0.35 + (seed % 5) * 0.13);
+      blocks.push(
+        `<rect x="${padX + c * cw + cw * 0.12}" y="${top + r * ch + (ch - bh)}" width="${cw * 0.76}" height="${bh}" rx="2" fill="${colour}" opacity="${0.28 + (seed % 5) * 0.13}"/>`,
+      );
+    }
+  }
+  const roads = Array.from({ length: rows + 1 }, (_, r) =>
+    `<line x1="${padX}" y1="${top + r * ch}" x2="${w - padX}" y2="${top + r * ch}" stroke="#1d2a3d" stroke-width="1.5"/>`,
+  ).concat(Array.from({ length: cols + 1 }, (_, c) =>
+    `<line x1="${padX + c * cw}" y1="${top}" x2="${padX + c * cw}" y2="${top + rows * ch}" stroke="#1d2a3d" stroke-width="1.5"/>`,
+  )).join('');
+  return shell(
+    w, h, accent,
+    `<text x="${padX}" y="${h * 0.15}" ${disp} font-size="${w * 0.048}" fill="#dfe8f7">MICROPOLIS</text>
+     <text x="${padX}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.021}" fill="${accent}">Pop. 41,220 · Funds $18,400 · R C I</text>
+     ${roads}${blocks.join('')}`,
+  );
+}
+
+// ── Untrusted — the level as source, the source as the level ──────────────
+// The whole game is an ASCII map beside the JavaScript that generated it, and
+// you edit the source to escape. Both halves, drawn.
+function untrusted(w: number, h: number): string {
+  const accent = '#e8c33d';
+  const map = [
+    '########################',
+    '#@.....#...........#...#',
+    '#.####.#.#########.#.#.#',
+    '#.#....#.........#...#.#',
+    '#.#.############.#####.#',
+    '#...#..........#.......#',
+    '###.#.########.#######.#',
+    '#...#.#......#.......#Ø#',
+    '########################',
+  ];
+  const size = Math.min(w / 30, h / 22);
+  const mx = w * 0.09;
+  const my = h * 0.34;
+  const rows = map
+    .map((row, r) =>
+      `<text x="${mx}" y="${my + r * size * 1.5}" ${mono} font-size="${size * 1.25}" fill="#8a7f4d" xml:space="preserve">${row
+        .replace(/@/g, ' ')
+        .replace(/Ø/g, ' ')}</text>`,
+    )
+    .join('');
+  // The player and the exit, picked out of the wall glyphs.
+  const glyph = (ch: string, col: number, row: number, colour: string) =>
+    `<text x="${mx + col * size * 0.6}" y="${my + row * size * 1.5}" ${mono} font-size="${size * 1.25}" fill="${colour}">${ch}</text>`;
+  return shell(
+    w, h, accent,
+    `<text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.048}" fill="#f3ecd6">UNTRUSTED</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.021}" fill="${accent}">// rewrite the level to escape it</text>
+     ${rows}
+     ${glyph('@', 1, 1, accent)}
+     ${glyph('Ø', 22, 7, '#7fd4a0')}`,
+  );
+}
+
+// ── Cube Composer — one transformation, before and after ──────────────────
+function cubeComposer(w: number, h: number): string {
+  const accent = '#e85c9e';
+  const colours = ['#e85c9e', '#f0b23d', '#4ac2e0', '#8f6fe0'];
+  const stack = (x: number, baseY: number, heights: number[], cw: number, chh: number) =>
+    heights
+      .map((n, i) =>
+        Array.from({ length: n }, (_, k) =>
+          `<rect x="${x + i * (cw + cw * 0.18)}" y="${baseY - (k + 1) * chh}" width="${cw}" height="${chh * 0.86}" rx="2" fill="${colours[(i + k) % colours.length]}" opacity="0.78"/>`,
+        ).join(''),
+      )
+      .join('');
+  const cw = w * 0.062;
+  const chh = h * 0.05;
+  const rowA = h * 0.52;
+  const rowB = h * 0.86;
+  return shell(
+    w, h, accent,
+    `<text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.044}" fill="#f8dfec">CUBE COMPOSER</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.038}" ${mono} font-size="${w * 0.021}" fill="${accent}">map · filter · fold</text>
+     ${stack(w * 0.11, rowA, [2, 1, 3, 1, 2], cw, chh)}
+     <text x="${w * 0.11}" y="${rowA + h * 0.075}" ${mono} font-size="${w * 0.026}" fill="#8f7385">↓ map (stack)</text>
+     ${stack(w * 0.11, rowB, [3, 2, 4, 2, 3], cw, chh)}`,
+  );
+}
+
+// ── Candy Box 2 — the counter, and the candies falling into it ────────────
+function candyBox2(w: number, h: number): string {
+  const accent = '#e8546a';
+  const drops = Array.from({ length: 26 }, (_, i) => {
+    const x = w * 0.08 + ((i * 137) % 84) / 100 * w * 0.84;
+    const y = h * 0.3 + ((i * 71) % 55) / 100 * h * 0.5;
+    const r = w * (0.008 + ((i * 29) % 7) / 700);
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${accent}" opacity="${0.2 + ((i * 13) % 6) / 12}"/>`;
+  }).join('');
+  return shell(
+    w, h, accent,
+    `${drops}
+     <text x="${w / 2}" y="${h * 0.56}" ${disp} font-size="${w * 0.13}" fill="#fbe6ea" text-anchor="middle">1 048 576</text>
+     <text x="${w / 2}" y="${h * 0.56 + w * 0.055}" ${mono} font-size="${w * 0.026}" fill="${accent}" text-anchor="middle">candies</text>
+     <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.044}" fill="#fbe6ea">CANDY BOX 2</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.038}" ${mono} font-size="${w * 0.021}" fill="${accent}">eat them · or throw them on the ground</text>`,
+  );
+}
+
+// ── Universal Paperclips — one paperclip, drawn very large ─────────────────
+function universalPaperclips(w: number, h: number): string {
+  const accent = '#b8c2cc';
+  const cx = w / 2, cy = h * 0.52;
+  const s = Math.min(w, h) * 0.3;
+  // Three nested rounded rectangles open at alternating ends: a paperclip.
+  const clip = `
+    <g fill="none" stroke="${accent}" stroke-linecap="round" stroke-width="${s * 0.14}">
+      <path d="M ${cx - s * 0.44} ${cy + s * 0.72}
+               L ${cx - s * 0.44} ${cy - s * 0.5}
+               A ${s * 0.44} ${s * 0.44} 0 0 1 ${cx + s * 0.44} ${cy - s * 0.5}
+               L ${cx + s * 0.44} ${cy + s * 0.34}
+               A ${s * 0.26} ${s * 0.26} 0 0 1 ${cx - s * 0.08} ${cy + s * 0.34}
+               L ${cx - s * 0.08} ${cy - s * 0.24}"
+            opacity="0.85"/>
+    </g>`;
+  return shell(
+    w, h, accent,
+    `<text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.04}" fill="#eef2f6">UNIVERSAL PAPERCLIPS</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.035}" ${mono} font-size="${w * 0.021}" fill="${accent}">Clips 30,142 · Wire 998 · Funds $12.41</text>
+     ${clip}`,
+  );
+}
+
+// ── Slope — the corridor, receding ────────────────────────────────────────
+function slope(w: number, h: number): string {
+  const accent = '#ff3b3b';
+  const cx = w / 2;
+  const horizon = h * 0.36;
+  const floor = h * 0.98;
+  const laneCount = 7;
+  const lanes = Array.from({ length: laneCount + 1 }, (_, i) => {
+    const t = i / laneCount;
+    const xNear = w * -0.15 + t * w * 1.3;
+    const xFar = cx + (t - 0.5) * w * 0.11;
+    return `<line x1="${xNear}" y1="${floor}" x2="${xFar}" y2="${horizon}" stroke="#2b3742" stroke-width="2"/>`;
+  }).join('');
+  const rungs = Array.from({ length: 7 }, (_, i) => {
+    const t = (i + 1) / 8;
+    const y = horizon + (floor - horizon) * t ** 2.3;
+    const halfW = (w * 0.055) + (w * 0.72 - w * 0.055) * t ** 2.3;
+    return `<line x1="${cx - halfW}" y1="${y}" x2="${cx + halfW}" y2="${y}" stroke="#37454f" stroke-width="${1 + t * 3}"/>`;
+  }).join('');
+  const blocks = [[-0.22, 0.62], [0.3, 0.5], [0.05, 0.78]]
+    .map(([off, t]) => {
+      const y = horizon + (floor - horizon) * (t as number) ** 2.3;
+      const halfW = (w * 0.055) + (w * 0.72 - w * 0.055) * (t as number) ** 2.3;
+      const size = w * 0.03 + w * 0.075 * (t as number);
+      return `<rect x="${cx + (off as number) * halfW * 2 - size / 2}" y="${y - size}" width="${size}" height="${size}" fill="${accent}" opacity="0.75"/>`;
+    })
+    .join('');
+  return shell(
+    w, h, accent,
+    `<rect x="0" y="0" width="${w}" height="${h}" fill="#0a1015"/>
+     <rect x="0" y="${horizon}" width="${w}" height="${h - horizon}" fill="#101a22"/>
+     <rect x="0" y="0" width="${w}" height="${horizon}" fill="#070c10"/>
+     ${lanes}${rungs}${blocks}
+     <circle cx="${cx}" cy="${floor - h * 0.14}" r="${Math.min(w, h) * 0.055}" fill="#eef4f8"/>
+     <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#eef4f8">SLOPE</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.021}" fill="${accent}">it only gets faster</text>`,
+  );
+}
+
 const GAMES: { slug: string; draw: (w: number, h: number) => string }[] = [
   { slug: 'kittens-game', draw: kittensGame },
   { slug: 'trimps', draw: trimps },
   { slug: 'the-prestige-tree', draw: prestigeTree },
   { slug: 'distance-incremental', draw: distanceIncremental },
   { slug: 'a-dark-room', draw: aDarkRoom },
+  { slug: 'sandboxels', draw: sandboxels },
+  { slug: 'micropolis-js', draw: micropolisJs },
+  { slug: 'untrusted', draw: untrusted },
+  { slug: 'cube-composer', draw: cubeComposer },
+  { slug: 'candy-box-2', draw: candyBox2 },
+  { slug: 'universal-paperclips', draw: universalPaperclips },
+  { slug: 'slope', draw: slope },
 ];
 
 await mkdir('public/covers', { recursive: true });

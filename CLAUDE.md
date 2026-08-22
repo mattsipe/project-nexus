@@ -68,7 +68,10 @@ Astro 7 (static) · TypeScript strict · Tailwind 4 · React islands · Netlify.
 
 - `src/content/games/*.yaml` — **the manifest**, one file per game. The source of truth.
 - `src/content.config.ts` — Zod schema. Enforces the licensing policy — for both
-  the game and its cover art — at build time.
+  the game and its cover art — at build time. Its optional `notice` field is for
+  text a licence *obliges* us to display (Micropolis's trademark attribution is
+  the case that introduced it); `/games/[slug]` and `/credits` both render it.
+  Not a marketing slot.
 - `src/lib/gameMeta.ts` — client-safe game helpers and the `LibraryDoc` type.
   `src/lib/games.ts` — the same, plus `astro:content`-backed fetchers
   (`allGames`, `libraryDocs`), and it re-exports gameMeta's stuff for
@@ -176,7 +179,11 @@ one grid, click to play — not a content site with a hero and sections.
   nebula alone under `prefers-reduced-motion` or if `getContext('2d')` fails.
   **Budget: median frame ≤20ms, <25% of frames over 20ms, under a 4x CPU
   throttle, measured by frame *interval* during a real pointer sweep over a
-  cloned ~27-card grid** — `tests/e2e/galaxy.spec.ts` enforces this. (An
+  grid cloned three-deep across every band (~78 capsules today)** —
+  `tests/e2e/galaxy.spec.ts` enforces this. It is tagged `@perf` and runs in
+  its own Playwright project that depends on the other two, so it gets the
+  machine to itself; a throttled measurement sharing cores with other workers
+  measures the host, not the site. (An
   earlier version of this budget measured rAF callback *duration* and missed
   a real regression because the cost was style recalc and compositing, not
   scripting — see DECISIONS #15 before changing the measurement approach
@@ -264,10 +271,19 @@ Never claim the site is official, or that a save is safe when it is not.
   and `cdn.jsdelivr.net` work regardless, which is why `scripts/vendor-game.ts`
   and `scripts/fetch-upstream-art.ts` use jsDelivr rather than `git clone`.
 - `astro check` needs TypeScript ^6; TS 7 is not yet supported by `@astrojs/check`.
+- **`scripts/serve.ts` caches on mtime, and it must stay that way.** Playwright's
+  `reuseExistingServer` is on locally, so a server left alive from a previous
+  session outlives the next `npm run build`. When the cache assumed `dist/` was
+  immutable it served the previous build to the entire suite, and every symptom
+  pointed at the site instead of the server.
 - `astro preview` **and** `astro dev` daemonise in Astro 7 (they background
   themselves and return immediately) — this is expected, not a hang; check
   `astro dev status` / `curl` rather than waiting on the command. Playwright
   uses `scripts/serve.ts` instead of `astro preview` for exactly this reason.
+- **The frame-pacing gate runs alone.** It is tagged `@perf` and lives in a
+  `perf` project that `dependencies` holds until laptop and mobile finish. Do
+  not fold it back into those projects to save a few seconds: with the machine
+  shared it failed reliably, and in isolation it passes with ~20% headroom.
 - **Playwright is capped at 2 workers locally** (`playwright.config.ts`). Two
   projects × an uncapped worker pool × one CPU-throttled test can oversubscribe
   an 8-core dev machine badly enough to fail otherwise-reliable,

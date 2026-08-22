@@ -29,15 +29,17 @@ export const REDISTRIBUTABLE_LICENSES = [
   'original',
 ] as const;
 
+/** Kept in the same order as CATEGORY_LABELS in gameMeta.ts, which is the
+ *  order the genre tier and the category bands render in. */
 export const CATEGORIES = [
-  'incremental',
-  'puzzle',
   'arcade',
   'action',
   'racing',
+  'puzzle',
   'strategy',
   'sandbox',
   'classic',
+  'incremental',
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -133,6 +135,21 @@ const games = defineCollection({
       /** Higher sorts earlier in the library grid. */
       weight: z.number().default(0),
       added: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      /**
+       * A notice we are *obliged* to display, as distinct from the licence we
+       * are obliged to respect. Micropolis is the case that forced this: its
+       * GPL-3.0 code carries a separate trademark licence requiring a specific
+       * attribution wherever the name is used. The schema cannot express "and
+       * you must render this sentence", so the sentence lives in the manifest
+       * and the detail page and /credits both render it. Add one whenever a
+       * licence asks for visible credit — never as a place for marketing copy.
+       */
+      notice: z
+        .object({
+          text: z.string().min(10),
+          url: z.url().optional(),
+        })
+        .optional(),
       controls: z.array(z.enum(['mouse', 'keyboard', 'touch'])).default(['mouse']),
       fullscreen: z.enum(['supported', 'unsupported']).default('supported'),
       /**

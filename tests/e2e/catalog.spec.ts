@@ -87,6 +87,7 @@ test('self-hosted game bundles are actually served', async ({ request }) => {
 
 test('the search box is always present and narrows the grid live', async ({ page }) => {
   await page.goto('/');
+  const playable = GAMES.filter((g) => g.mode !== 'external');
   const input = page.getByRole('searchbox', { name: 'Search games' });
   // No modal to open — search-first means the box is already on screen.
   await expect(input).toBeVisible();
@@ -96,16 +97,19 @@ test('the search box is always present and narrows the grid live', async ({ page
   await page.keyboard.press('Control+k');
   await expect(input).toBeFocused();
 
-  // Subsequence matching: "srpnt" is not a substring of "Neon Serpent".
+  // Subsequence matching: "srpnt" is not a substring of "Neon Serpent", and a
+  // title hit outranks the tagline hits the same query picks up elsewhere
+  // (searchGames penalises those by 300). Asserting on the *ranking* rather
+  // than on an exact result count, because the count is a function of how many
+  // games happen to be in the catalogue.
   await input.fill('srpnt');
-  await expect(page.locator('[data-capsule]')).toHaveCount(1);
-  await expect(page.locator('[data-capsule]')).toContainText('Neon Serpent');
+  const hits = page.locator('[data-capsule]');
+  await expect(hits.first()).toContainText('Neon Serpent');
+  expect(await hits.count()).toBeLessThan(playable.length / 3);
 
   // Clearing the query restores the full grid.
   await input.fill('');
-  await expect(page.locator('[data-capsule]')).toHaveCount(
-    GAMES.filter((g) => g.mode !== 'external').length,
-  );
+  await expect(page.locator('[data-capsule]')).toHaveCount(playable.length);
 });
 
 test('category chips filter in place — no navigation, URL stays in sync', async ({ page }) => {

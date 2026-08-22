@@ -1,0 +1,41 @@
+title: Cube Composer
+tagline: Turn one stack of cubes into another, using only the functions you are given.
+description: >-
+  Each level shows a starting arrangement of coloured cubes and a target, and
+  hands you a small set of transformations to chain together. It is a
+  functional-programming exercise wearing a very good disguise.
+categories: [puzzle]
+tags: [functional, transformation, logic, thinky]
+delivery:
+  mode: embed
+  url: https://david-peter.de/cube-composer/
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    Request returned 200 with no X-Frame-Options and no CSP frame-ancestors
+    directive on the author's official site.
+accent: "#e85c9e"
+cover:
+  capsule: /covers/cube-composer-capsule.svg
+  hero: /covers/cube-composer-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — an original before-and-after pair of cube stacks in the game's idiom, using its real function names, checked against the live game on 2026-08-22. Not traced from any level.
+weight: 62
+added: "2026-08-22"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: David Peter (sharkdp)
+  homepage: https://david-peter.de/cube-composer/
+  repo: https://github.com/sharkdp/cube-composer
+  license: MIT
+  licenseUrl: https://github.com/sharkdp/cube-composer/blob/master/LICENSE
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    MIT LICENSE read at repo root on 2026-08-22. The licence would permit
+    self-hosting; the repository is PureScript source with no compiled output
+    committed, so building it is a toolchain we do not otherwise need. Embedded
+    for that reason, not a licensing one — the same call as Antimatter
+    Dimensions (docs/DECISIONS.md #5).

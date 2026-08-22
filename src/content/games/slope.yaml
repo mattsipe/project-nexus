@@ -1,0 +1,49 @@
+title: Slope
+tagline: A ball, a neon corridor, and a speed that never stops climbing.
+description: >-
+  Steer a ball down an endless downhill run, dodging red blocks and holes while
+  the whole thing accelerates. Two keys, no learning curve, and a difficulty
+  that comes entirely from how fast it eventually goes.
+categories: [arcade, action]
+tags: [endless, reflex, three-d, high-score]
+delivery:
+  mode: embed
+  url: https://www.y8.com/embed/slope
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    Y8, the game's publisher, offers this exact URL as an "iFrame Embed"
+    snippet on its own Slope page. Verified 2026-08-22: y8.com/games/slope
+    sends X-Frame-Options SAMEORIGIN, while y8.com/embed/slope returns 200 with
+    no X-Frame-Options and no CSP frame-ancestors — a route the publisher
+    provides deliberately.
+accent: "#ff3b3b"
+notice:
+  text: >-
+    Slope runs here through Y8, the game's publisher, using the embed URL Y8
+    publishes for the purpose. It is Y8's build on Y8's servers, so Y8's own
+    advertising and cookie-consent prompts appear inside the frame and are not
+    ours to remove.
+  url: https://www.y8.com/games/slope
+cover:
+  capsule: /covers/slope-capsule.svg
+  hero: /covers/slope-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — a receding corridor with the game's red obstacles, checked against the live game on 2026-08-22. The game is proprietary; no screenshot or promotional art was used.
+weight: 66
+added: "2026-08-22"
+controls: [keyboard]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Rob Kay, published by Y8
+  homepage: https://www.y8.com/games/slope
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Proprietary, no redistribution grant, so we host no copy. Y8 publishes an
+    embed endpoint for this game on its own game page and that is the route
+    used — not a workaround for the SAMEORIGIN header its ordinary game page
+    sends. It is a Unity WebGL build and noticeably heavier than the rest of
+    the catalogue. See docs/DECISIONS.md #24.

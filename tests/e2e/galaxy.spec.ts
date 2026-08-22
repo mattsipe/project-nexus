@@ -73,20 +73,39 @@ test.describe('galaxy background', () => {
    * Timing the gap *between* frames is what "smooth" actually means, and
    * it's what caught the regression the scripting-time version missed.
    *
-   * The grid is cloned to ~27 cards before measuring — the budget has to
-   * hold as the catalogue grows past today's 9 games, not just at this size.
+   * Every band's grid is cloned three-deep before measuring — the budget has
+   * to hold as the catalogue grows, not just at today's size.
+   *
+   * Tagged @perf, which puts it in its own Playwright project that waits for
+   * every other test to finish (see playwright.config.ts). A 4x-throttled
+   * measurement sharing the machine with other workers measures the host, not
+   * the site: this test passes with roughly 20% headroom in isolation and
+   * failed reliably alongside even one other worker. Every other galaxy test
+   * still runs on both viewports, in parallel, as before.
    */
-  test('frame pacing stays smooth on a throttled CPU as the catalogue grows', async ({ page }) => {
+  test('frame pacing stays smooth on a throttled CPU as the catalogue grows @perf', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    await page.evaluate(() => {
-      const first = document.querySelector('[data-capsule]');
-      const grid = first?.closest('div[class*="grid"]');
-      if (!grid) return;
-      const originals = [...grid.children];
-      for (let i = 0; i < 2; i++) originals.forEach((el) => grid.appendChild(el.cloneNode(true)));
+    // Clone every band's grid, not just the first one. Before Phase 2.5 the
+    // library was a single grid and `closest('div[class*="grid"]')` from the
+    // first capsule reached all of it; with category bands that only reached
+    // the first band, so the gate had been quietly measuring a fraction of the
+    // page it was meant to stress.
+    const capsuleCount = await page.evaluate(() => {
+      const grids = new Set<Element>();
+      document.querySelectorAll('[data-capsule]').forEach((c) => {
+        const g = c.closest('div[class*="grid"]');
+        if (g) grids.add(g);
+      });
+      for (const grid of grids) {
+        const originals = [...grid.children];
+        for (let i = 0; i < 2; i++) originals.forEach((el) => grid.appendChild(el.cloneNode(true)));
+      }
+      return document.querySelectorAll('[data-capsule]').length;
     });
+    expect(capsuleCount, 'the sweep needs a grid big enough to be worth measuring')
+      .toBeGreaterThan(40);
 
     const client = await page.context().newCDPSession(page);
     await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });

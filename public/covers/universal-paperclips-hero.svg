@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#121314"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#b8c2cc" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#b8c2cc" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="1280" height="720" fill="url(#g)"/>
+  <text x="115.19999999999999" y="108" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="51.2" fill="#eef2f6">UNIVERSAL PAPERCLIPS</text>
+     <text x="115.19999999999999" y="152.8" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#b8c2cc">Clips 30,142 · Wire 998 · Funds $12.41</text>
+     
+    <g fill="none" stroke="#b8c2cc" stroke-linecap="round" stroke-width="30.240000000000002">
+      <path d="M 544.96 529.9200000000001
+               L 544.96 266.40000000000003
+               A 95.04 95.04 0 0 1 735.04 266.40000000000003
+               L 735.04 447.84000000000003
+               A 56.160000000000004 56.160000000000004 0 0 1 622.72 447.84000000000003
+               L 622.72 322.56000000000006"
+            opacity="0.85"/>
+    </g>
+</svg>

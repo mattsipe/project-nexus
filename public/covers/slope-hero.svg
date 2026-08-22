@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#190606"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#ff3b3b" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#ff3b3b" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="1280" height="720" fill="url(#g)"/>
+  <rect x="0" y="0" width="1280" height="720" fill="#0a1015"/>
+     <rect x="0" y="259.2" width="1280" height="460.8" fill="#101a22"/>
+     <rect x="0" y="0" width="1280" height="259.2" fill="#070c10"/>
+     <line x1="-192" y1="705.6" x2="569.6" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="45.714285714285694" y1="705.6" x2="589.7142857142857" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="283.4285714285714" y1="705.6" x2="609.8285714285714" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="521.1428571428571" y1="705.6" x2="629.9428571428572" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="758.8571428571428" y1="705.6" x2="650.0571428571428" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="996.5714285714287" y1="705.6" x2="670.1714285714286" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="1234.2857142857142" y1="705.6" x2="690.2857142857143" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="1472" y1="705.6" x2="710.4" y2="259.2" stroke="#2b3742" stroke-width="2"/><line x1="562.4727064741337" y1="262.9378099505953" x2="717.5272935258663" y2="262.9378099505953" stroke="#37454f" stroke-width="1.375"/><line x1="534.501089573441" y1="277.60713535528186" x2="745.498910426559" y2="277.60713535528186" stroke="#37454f" stroke-width="1.75"/><line x1="480.4125944117546" y1="305.973094284061" x2="799.5874055882455" y2="305.973094284061" stroke="#37454f" stroke-width="2.125"/><line x1="396.7526900553931" y1="349.8473674333559" x2="883.247309944607" y2="349.8473674333559" stroke="#37454f" stroke-width="2.5"/><line x1="280.82761826847707" y1="410.64265884040395" x2="999.1723817315229" y2="410.64265884040395" stroke="#37454f" stroke-width="2.875"/><line x1="130.38969547721808" y1="489.5377348907071" x2="1149.610304522782" y2="489.5377348907071" stroke="#37454f" stroke-width="3.25"/><line x1="-56.50927436258985" y1="587.5542999006816" x2="1336.5092743625898" y2="587.5542999006816" stroke="#37454f" stroke-width="3.625"/><rect x="435.32990589369746" y="309.95059234303835" width="97.91999999999999" height="97.91999999999999" fill="#ff3b3b" opacity="0.75"/><rect x="742.7483859667641" y="263.4473674333559" width="86.4" height="86.4" fill="#ff3b3b" opacity="0.75"/><rect x="638.4672416927954" y="398.0019630129681" width="113.28" height="113.28" fill="#ff3b3b" opacity="0.75"/>
+     <circle cx="640" cy="604.8" r="39.6" fill="#eef4f8"/>
+     <text x="115.19999999999999" y="108" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="64" fill="#eef4f8">SLOPE</text>
+     <text x="115.19999999999999" y="161.76" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#ff3b3b">it only gets faster</text>
+</svg>

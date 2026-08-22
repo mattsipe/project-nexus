@@ -1,0 +1,37 @@
+title: Candy Box 2
+tagline: You have candies. That is the whole premise, and it is a lie.
+description: >-
+  It opens as a counter ticking upward in plain text and turns into a
+  full role-playing game with a map, a forge and genuinely hard fights — all
+  still drawn in ASCII. The joke is that none of it is a joke.
+categories: [incremental, classic]
+tags: [ascii, rpg, idle, surprising]
+delivery:
+  mode: embed
+  url: https://candybox2.net/
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    Request returned 200 with no X-Frame-Options and no CSP frame-ancestors
+    directive on the author's official site.
+accent: "#e8546a"
+cover:
+  capsule: /covers/candy-box-2-capsule.svg
+  hero: /covers/candy-box-2-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) from the game's own opening counter and its instruction to eat the candies or throw them on the ground, checked against the live game on 2026-08-22. No art copied — the game is proprietary.
+weight: 50
+added: "2026-08-22"
+controls: [mouse, keyboard]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: aniwey
+  homepage: https://candybox2.net/
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    No public redistribution grant — the game is published only on the author's
+    own site, with no source repository and no licence. Checked 2026-08-22. We
+    host no copy; the frame shows the author's own build.

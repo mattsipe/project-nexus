@@ -1,0 +1,40 @@
+title: Untrusted
+tagline: The level is a JavaScript file. Edit it, and walk out.
+description: >-
+  You are trapped in a maze whose source code sits open beside it. Every level
+  hands you a different function to rewrite — move a wall, redefine a monster,
+  change what a key does — and the game runs whatever you write. A programming
+  puzzle that never feels like a tutorial.
+categories: [puzzle]
+tags: [programming, roguelike, ascii, clever]
+delivery:
+  mode: embed
+  url: https://untrustedgame.com/
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    Request returned 200 with no X-Frame-Options and no CSP frame-ancestors
+    directive on the authors' official site.
+accent: "#e8c33d"
+cover:
+  capsule: /covers/untrusted-capsule.svg
+  hero: /covers/untrusted-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — an original ASCII maze in the game's own idiom, not a copy of any of its levels, checked against the live game on 2026-08-22. The repository ships no licence, so nothing upstream is ours to reuse.
+weight: 68
+added: "2026-08-22"
+controls: [keyboard, mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Alex Nisnevich and Greg Shuflin
+  homepage: https://untrustedgame.com/
+  repo: https://github.com/AlexNisnevich/untrusted
+  license: unlicensed
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Repository checked on 2026-08-22 for LICENSE, LICENSE.md, LICENSE.txt and
+    COPYING — none present. No licence means all rights reserved, so we do not
+    host a copy. Embedding the authors' own build creates neither a copy nor a
+    derivative.

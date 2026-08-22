@@ -14,15 +14,21 @@ import type { Category } from '../content.config.ts';
  */
 export type GameData = CollectionEntry<'games'>['data'];
 
+/**
+ * Key order is load-bearing: it sets the order of the genre tier and of the
+ * category bands in Library.tsx. Roughly reflex-first to patience-last, which
+ * also keeps the incremental games — the bulk of the early catalogue, and the
+ * slowest thing to look at — off the top of the grid.
+ */
 export const CATEGORY_LABELS: Record<Category, string> = {
-  incremental: 'Incremental',
-  puzzle: 'Puzzle',
   arcade: 'Arcade',
   action: 'Action',
   racing: 'Racing',
+  puzzle: 'Puzzle',
   strategy: 'Strategy',
   sandbox: 'Sandbox',
   classic: 'Classic',
+  incremental: 'Incremental',
 };
 
 /**
@@ -45,7 +51,11 @@ export function frameSrc(data: GameData): string | null {
 
 /** The author's own page, for attribution and the "Open official site" action. */
 export function officialUrl(data: GameData): string | null {
-  if (data.delivery.mode !== 'selfhost') return data.delivery.url;
+  // The author's own page for the game, which is not always the URL we frame:
+  // Slope is embedded from y8.com/embed/slope, a bare player, while the page a
+  // person would actually want to visit is y8.com/games/slope. Prefer the
+  // declared homepage and fall back to the delivery URL.
+  if (data.delivery.mode !== 'selfhost') return data.source.homepage ?? data.delivery.url;
   return data.source.homepage ?? data.source.repo ?? null;
 }
 

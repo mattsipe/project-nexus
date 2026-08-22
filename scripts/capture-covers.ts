@@ -320,6 +320,10 @@ const CAPTURES: Capture[] = [
   {
     slug: 'pocket-pool',
     path: '/play/pocket-pool/index.html',
+    // The table is a wide fixed-ratio canvas, so a portrait capture is mostly
+    // black. Crop into it — a partial table reads better on a 235px card than
+    // a whole one the size of a stamp.
+    cropCapsule: [440, 330],
     prepare: async (page) => {
       const vp = page.viewportSize()!;
       await page.waitForTimeout(2500);

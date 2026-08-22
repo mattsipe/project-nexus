@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect width="600" height="800" fill="#171306"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#e8c33d" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#e8c33d" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="600" height="800" fill="url(#g)"/>
+  <text x="54" y="120" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="28.8" fill="#f3ecd6">UNTRUSTED</text>
+     <text x="54" y="144" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.600000000000001" fill="#e8c33d">// rewrite the level to escape it</text>
+     <text x="54" y="272" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">########################</text><text x="54" y="302" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve"># .....#...........#...#</text><text x="54" y="332" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">#.####.#.#########.#.#.#</text><text x="54" y="362" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">#.#....#.........#...#.#</text><text x="54" y="392" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">#.#.############.#####.#</text><text x="54" y="422" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">#...#..........#.......#</text><text x="54" y="452" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">###.#.########.#######.#</text><text x="54" y="482" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">#...#.#......#.......# #</text><text x="54" y="512" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#8a7f4d" xml:space="preserve">########################</text>
+     <text x="66" y="302" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#e8c33d">@</text>
+     <text x="318" y="482" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25" fill="#7fd4a0">Ø</text>
+</svg>

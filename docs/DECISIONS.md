@@ -448,3 +448,52 @@ This is recorded here because the definition previously lived only in a plan
 file, that plan file was overwritten by the next phase's plan, and the name was
 then reconstructed wrongly from context. Original-game development, Nexus
 Elements included, is deferred to its own phase with its own design pass.
+
+## 26. A manifest field for notices a licence obliges us to display
+
+Micropolis forced the question (#23) and it will not be the last: a licence can
+require that a *specific sentence* appear wherever the work is used. The schema
+can express "this licence permits redistribution"; it cannot express "and you
+must render this".
+
+So `notice: { text, url? }` is now an optional manifest field, rendered on
+`/games/[slug]` under the provenance list and again on `/credits` beside the
+game's rights note. Two games carry one today — Micropolis's trademark
+attribution, and Slope's statement that it runs on Y8's servers with Y8's
+advertising.
+
+It is deliberately not a description field. If a licence does not ask for it,
+it does not go here.
+
+## 27. The frame-pacing gate runs alone
+
+The perf budget is a 4x CPU-throttled measurement, and the local worker cap
+(#14) was not enough to protect it once the catalogue grew: with the machine
+shared it failed reliably, and in isolation the same test passed with roughly
+20% headroom (median 16.7ms against a 20ms budget, 11% of frames over 20ms
+against a 25% allowance).
+
+Two changes. The test is tagged `@perf` and lives in its own Playwright project
+that `dependencies` holds until laptop and mobile have finished, so it has the
+machine to itself. And its grid cloning was fixed: it took
+`closest('div[class*="grid"]')` from the first capsule, which reached the whole
+library before Phase 2.5 and only the first *band* after it — the gate had been
+quietly measuring a fraction of the page it was written to stress. It now
+clones every band and measures ~78 capsules.
+
+A throttled measurement sharing cores with other workers measures the host. A
+gate that measures the host is worse than no gate, because it produces failures
+nobody believes and successes nobody has checked.
+
+## 28. serve.ts caches on mtime
+
+`scripts/serve.ts` cached every file forever, on the reasonable-sounding
+grounds that `dist/` does not change while the server runs. It does: Playwright's
+`reuseExistingServer` is on locally, so a server started in one session outlives
+the next `npm run build`.
+
+The result was eight test failures that all pointed at the site — a nineteen-game
+manifest answered by nine games' worth of HTML — and none of which pointed at
+the server. The cache is keyed on mtime now, and the route memo is cleared
+whenever `dist/` itself changes. One `stat` per request is a rounding error next
+to the `readFile` it avoids.

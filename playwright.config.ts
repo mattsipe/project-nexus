@@ -22,8 +22,25 @@ export default defineConfig({
   projects: [
     // The primary target is a school-issue laptop, so that viewport is the
     // default rather than an afterthought.
-    { name: 'laptop', use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    {
+      name: 'laptop',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } },
+      grepInvert: /@perf/,
+    },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, grepInvert: /@perf/ },
+    // The frame-pacing gate runs a 4x CPU-throttled measurement, which is only
+    // meaningful with the machine to itself: sharing it with even one other
+    // worker cost enough of the budget to fail a test that passes with ~20%
+    // headroom in isolation. `dependencies` holds it back until everything else
+    // has finished, so the number it reports is the site's, not the host's.
+    // It measures at the laptop viewport because that is where CLAUDE.md
+    // defines the budget.
+    {
+      name: 'perf',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } },
+      grep: /@perf/,
+      dependencies: ['laptop', 'mobile'],
+    },
   ],
   webServer: {
     command: 'npm run serve',

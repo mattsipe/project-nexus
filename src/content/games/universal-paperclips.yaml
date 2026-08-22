@@ -1,0 +1,37 @@
+title: Universal Paperclips
+tagline: Make a paperclip. Make another. Do not think too hard about where this ends.
+description: >-
+  You run a paperclip factory, and then you run rather more than that. Frank
+  Lantz's game is the clearest thing ever written about optimisation pressure,
+  and it takes about four hours to make its point.
+categories: [incremental, strategy]
+tags: [idle, decision-making, escalation, famous]
+delivery:
+  mode: embed
+  url: https://www.decisionproblem.com/paperclips/
+  embedVerifiedOn: "2026-08-22"
+  embedNote: >-
+    Request returned 200 with no X-Frame-Options and no CSP frame-ancestors
+    directive on the author's official site.
+accent: "#b8c2cc"
+cover:
+  capsule: /covers/universal-paperclips-capsule.svg
+  hero: /covers/universal-paperclips-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — a paperclip and the game's own opening readouts (clips, wire, funds), checked against the live game on 2026-08-22. The game is proprietary and ships no art we could reuse anyway; this is drawn from scratch.
+weight: 48
+added: "2026-08-22"
+controls: [mouse]
+fullscreen: supported
+savesTo: thirdparty
+source:
+  author: Frank Lantz
+  homepage: https://www.decisionproblem.com/paperclips/
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    No public redistribution grant and no source repository — published on the
+    author's own site. Checked 2026-08-22. We host no copy; the frame shows the
+    author's own build.

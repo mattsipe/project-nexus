@@ -58,6 +58,24 @@ const byMode = {
                     verified {g.data.source.verifiedOn}
                   </p>
                   <p class="mt-1 text-text-faint">{g.data.source.rightsNote}</p>
+                  {g.data.notice && (
+                    <p class="mt-2 border-l-2 border-edge-strong pl-3 text-text-faint">
+                      {g.data.notice.text}
+                      {g.data.notice.url && (
+                        <>
+                          {' '}
+                          <a
+                            href={g.data.notice.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="underline decoration-edge-strong underline-offset-4 hover:decoration-emerald"
+                          >
+                            {new URL(g.data.notice.url).hostname.replace(/^www\./, '')}
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  )}
                   {g.data.source.repo && (
                     <a
                       href={g.data.source.repo}
