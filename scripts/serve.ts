@@ -37,24 +37,43 @@ const MIME: Record<string, string> = {
 };
 
 /**
- * dist/ is immutable while the server runs, so every file is cached on first
- * read. Without this the server becomes the bottleneck under parallel test
- * workers and slow responses look like hydration bugs.
+ * Files are cached on first read — without it the server becomes the
+ * bottleneck under parallel test workers, and slow responses look like
+ * hydration bugs.
+ *
+ * The cache is keyed on mtime, not just path. Playwright's `reuseExistingServer`
+ * is on locally, so a server left running from an earlier session survives the
+ * next `npm run build` — and a cache that assumed dist/ was immutable then
+ * served the *previous* build to the whole suite. That cost a full debugging
+ * detour: nine games' worth of HTML answering a nineteen-game manifest, with
+ * every symptom pointing at the site rather than at the server. A stat per
+ * request is a rounding error next to a read; correctness is not.
  */
-const cache = new Map<string, Buffer>();
+const cache = new Map<string, { mtimeMs: number; buf: Buffer }>();
 
 async function load(file: string): Promise<Buffer> {
-  let buf = cache.get(file);
-  if (!buf) {
-    buf = await readFile(file);
-    cache.set(file, buf);
-  }
+  const { mtimeMs } = await stat(file);
+  const hit = cache.get(file);
+  if (hit && hit.mtimeMs === mtimeMs) return hit.buf;
+  const buf = await readFile(file);
+  cache.set(file, { mtimeMs, buf });
   return buf;
 }
 
+/**
+ * Path resolution is memoised the same way, but a rebuild can add or remove
+ * routes as well as change them, so the memo is dropped whenever dist/ itself
+ * changes — which it does on every build, since Astro rewrites the directory.
+ */
 const resolved = new Map<string, string | null>();
+let rootMtime = 0;
 
 async function resolve(urlPath: string): Promise<string | null> {
+  const { mtimeMs } = await stat(ROOT);
+  if (mtimeMs !== rootMtime) {
+    resolved.clear();
+    rootMtime = mtimeMs;
+  }
   const memo = resolved.get(urlPath);
   if (memo !== undefined) return memo;
   const found = await resolveUncached(urlPath);

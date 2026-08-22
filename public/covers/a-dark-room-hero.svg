@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#161412"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#d9cdb8" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#d9cdb8" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="1280" height="720" fill="url(#g)"/>
+  <text x="128" y="108" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="64" fill="#efe7da">A DARK ROOM</text>
+     <text x="128" y="161.76" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="28.159999999999997" fill="#d9cdb8">the fire is burning.</text>
+     <circle cx="640" cy="374.4" r="216" fill="#d9cdb8" opacity="0.05"/>
+     <path d="M 640 187.2 C 748 309.59999999999997 729.28 446.4 640 446.4 C 550.72 446.4 532 309.59999999999997 640 187.2 Z" fill="#d9cdb8" opacity="0.13"/>
+     <path d="M 640 241.92 C 706.96 317.808 695.3536 402.624 640 402.624 C 584.6464 402.624 573.04 317.808 640 241.92 Z" fill="#d9cdb8" opacity="0.28"/>
+     <path d="M 640 288 C 672.4 324.71999999999997 666.784 365.76 640 365.76 C 613.216 365.76 607.6 324.71999999999997 640 288 Z" fill="#d9cdb8" opacity="0.6"/>
+     <line x1="128" y1="486" x2="704" y2="486" stroke="#3a3630" stroke-width="2"/>
+     <text x="128" y="473.76" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25.6" fill="#6d665d">STORES</text>
+     <text x="128" y="518.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#8f877c">wood</text>
+        <text x="537.6" y="518.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#d9cdb8" text-anchor="end">74</text><text x="128" y="555.8399999999999" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#8f877c">fur</text>
+        <text x="537.6" y="555.8399999999999" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#d9cdb8" text-anchor="end">12</text><text x="128" y="593.28" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#8f877c">meat</text>
+        <text x="537.6" y="593.28" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="33.28" fill="#d9cdb8" text-anchor="end">5</text>
+</svg>

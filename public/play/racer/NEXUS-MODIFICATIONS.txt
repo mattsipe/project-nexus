@@ -1,0 +1,31 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/jakesgordon/javascript-racer
+Author:    Jake Gordon
+Licence:   MIT (see LICENSE, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+The repository is the companion code to Jake Gordon's write-up on pseudo-3D
+road rendering, so it ships four progressively more complete versions of the
+game plus a tuning harness. Nexus ships the finished game. The changes:
+
+  1. v4.final.html is now index.html; v1/v2/v3 and the chooser page they were
+     linked from are removed, along with the Rakefile.
+
+  2. Removed music/ (7.8MB of an 8.6MB bundle). The soundtrack started on page
+     load, which Nexus does not do. The <audio> element and its mute toggle go
+     with it, and common.js's playMusic() returns early when the element is
+     absent.
+
+  3. index.html — the write-up's tuning panel (resolution, lane count, road
+     width, camera height, draw distance, field of view, fog density) and its
+     FPS meter are hidden rather than deleted: common.js reads their values
+     for the starting configuration, and a display:none element still answers
+     those reads. The canvas is centred on a dark ground instead of floating
+     beside the panel, and the page title becomes "Racer".
+
+All edits are marked "[Nexus]". No game logic or rendering was altered.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths,
+no audio at all.

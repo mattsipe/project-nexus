@@ -1,0 +1,37 @@
+title: HexGL
+tagline: Anti-gravity racing at three hundred miles an hour, in a browser tab.
+description: >-
+  A futuristic hover racer built on WebGL — magnetic track, boost pads, and a
+  ship that scrapes the walls if you take a corner badly. Thibaut Despoulain
+  wrote it to show what the open web could do in 2012, and it still holds up.
+categories: [racing, action]
+tags: [3d, webgl, hover, speed]
+delivery:
+  mode: selfhost
+  path: /play/hexgl/index.html
+accent: "#ff6a1f"
+cover:
+  capsule: /covers/hexgl-capsule.png
+  hero: /covers/hexgl-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build mid-race, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 82
+added: "2026-08-21"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: none
+source:
+  author: Thibaut Despoulain (BKcore)
+  homepage: https://hexgl.bkcore.com/play/
+  repo: https://github.com/BKcore/HexGL
+  license: MIT
+  licenseUrl: https://github.com/BKcore/HexGL/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE read at repo root on 2026-08-21, covering the repository's art
+    and audio as well as its code. Vendored via jsDelivr at 17MB and reduced to
+    7.6MB: Google Analytics stripped, the level editor and a duplicate copy of
+    three.js dropped, and every texture re-encoded to WebP. All of it listed in
+    NEXUS-MODIFICATIONS.txt.

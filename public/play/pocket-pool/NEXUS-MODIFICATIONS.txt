@@ -1,0 +1,36 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/henshmi/Classic-Pool-Game
+Author:    Chen Shmilovich
+Licence:   MIT (see LICENSE.txt, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. RETITLED to "Pocket Pool". Upstream calls it "Classic 8-Ball"; the name
+     is Nexus's, the game and the credit are Chen Shmilovich's, and the
+     on-canvas title the game draws itself is left alone.
+
+  2. Removed assets/sounds/Bossa Antigua.mp3 (9MB). It is "Bossa Antigua" by
+     Kevin MacLeod, licensed CC-BY 3.0 — a third-party work the repository's
+     own MIT licence does not cover, shipped with the attribution in a source
+     comment rather than anywhere a listener would see it. Redistributing it
+     would mean taking on an attribution obligation for a track we do not need;
+     it also played the instant the menu opened, which Nexus does not do.
+
+     script/Assets.js and script/menu/Menu.js were adjusted so the menu works
+     without it (`sounds.jazzTune` is undefined, and every call site is
+     guarded). script/Assets.js's `sounds.fadeOut` returns early on a missing
+     sound. All marked "[Nexus]". Sound effects — cue strike, cushion, pot —
+     are the repo's own and are kept.
+
+  3. Removed assets/sounds/BallsCollide-old1.wav, an unreferenced duplicate.
+
+  4. All 60 sprites re-encoded from PNG to WebP.
+
+Together these take the bundle from 13.5MB to 1.1MB. No game logic or physics
+was altered.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths,
+no audio before the player's first click.

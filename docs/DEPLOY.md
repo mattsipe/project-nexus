@@ -46,35 +46,43 @@ rename later. The name is not baked into the build; only `site` in
 
 ## Measured payload
 
-Recorded 2026-08-21 at 9 games (post-Phase 2.5 visual-design pass), so
-regressions are visible:
+Recorded 2026-08-22 at 19 games (Phase 2 expansion, waves 1-2), so regressions
+are visible:
 
 | | uncompressed | gzipped |
 |---|---|---|
-| All JavaScript | 223 KB | **75 KB** |
-| Home page HTML | 45 KB | 7 KB |
-| Total `dist/` | 4.6 MB | — |
+| All JavaScript | 223 KB | **70 KB** |
+| Home page HTML | 75 KB | 9 KB |
+| Total `dist/` | 38 MB | — |
 
-`dist/` dropped (5.2 MB → 4.6 MB) despite this pass adding real weight
-elsewhere (the genre tier, category bands, the ground-plane/card-shadow CSS,
-the rail-hardware markup) — cover art shrank more than all of that combined.
-JS and HTML both grew slightly from the extra markup and logic (genre tier,
-banding, arrow-nav column detection), which is expected and small.
+`dist/` went 4.6 MB -> 38 MB, and essentially all of it is ten new game
+bundles. That number is only meaningful per game: nothing a visitor loads got
+bigger, because a bundle is only fetched when someone launches that game. The
+home page grew from 45 KB to 75 KB (7 KB -> 9 KB gzipped) purely from ten more
+capsules' worth of markup and inlined search data.
+
+The four heavy bundles were shrunk rather than embedded (DECISIONS #22), by
+`scripts/shrink-bundle.ts`:
+
+| bundle | vendored | shipped | what went |
+|---|---|---|---|
+| HexGL | 17 MB | 7.6 MB | level editor, duplicate three.js, all textures to WebP |
+| A Dark Room | 10 MB | 6.1 MB | 25 translation bundles |
+| Pocket Pool | 13.5 MB | 1.1 MB | a 9 MB CC-BY menu track, sprites to WebP |
+| Racer | 8.7 MB | 0.8 MB | 7.8 MB soundtrack, three superseded versions |
 
 **`sharp` is installed** (transitively, via Astro's own image tooling) —
-correcting this doc's prior claim that no PNG optimiser was available.
-`scripts/build-logo.ts` and `scripts/optimize-covers.ts` both use it. The two
-heaviest covers (Antimatter Dimensions, Bitburner) were re-encoded from PNG to
-WebP: 278 KB → 35 KB and 386 KB → 150 KB at their worst points, no manifest
-schema change needed (`content.config.ts`'s cover fields only require a
-`/covers/` prefix, not a specific extension). The remaining PNG covers are
-small hand-authored SVGs or already-reasonable captures, not worth the same
-pass.
+correcting this doc's prior claim that no PNG optimiser was available. It backs
+`scripts/build-logo.ts`, `scripts/optimize-covers.ts` and
+`scripts/shrink-bundle.ts`. The two heaviest covers (Antimatter Dimensions,
+Bitburner) were re-encoded from PNG to WebP: 278 KB -> 35 KB and 386 KB ->
+150 KB. No schema change was needed — `content.config.ts`'s cover fields only
+require a `/covers/` prefix, not a specific extension.
 
 React's runtime is 176 KB of that. If the JS budget ever becomes a real
 constraint on low-end Chromebooks, aliasing `react` → `preact/compat` would cut
 it to roughly 12 KB; the islands use only hooks and `createPortal`, both
-supported. Not done now because 69 KB gzipped is not currently a problem, and
+supported. Not done now because 70 KB gzipped is not currently a problem, and
 it would be a change to an approved stack made on speculation rather than
 measurement.
 

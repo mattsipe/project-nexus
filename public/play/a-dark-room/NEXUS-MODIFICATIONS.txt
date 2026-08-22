@@ -1,0 +1,31 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/doublespeakgames/adarkroom
+Licence:   MPL-2.0 (see LICENSE.md, unmodified; file headers intact)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. index.html — removed the Google Analytics tag (gtag.js, property
+     G-606P6J79WH).
+
+  2. index.html — jQuery was loaded from ajax.googleapis.com with a local
+     copy behind an `if(!window.jQuery)` fallback. Now it loads the bundled
+     lib/jquery.min.js directly: no third-party request, and on the networks
+     this site is built for the fallback was the real load path anyway.
+
+  3. Removed 25 translation bundles (lang/<code>/), the gettext template and
+     babel config, doc/, tools/ and dev-server.js — 4MB of the 10MB. The game
+     runs in English and only fetches a translation bundle when one is
+     requested.
+
+  4. lang/langs.js — rewritten to list English only, to match. A language menu
+     whose entries 404 is worse than a menu with one entry.
+
+All three edits are marked "[Nexus]". No game logic, art or audio was altered.
+Complete corresponding source for this modified version is available at the
+Project Nexus repository.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
+The game asks before it makes any sound — nothing plays on load.

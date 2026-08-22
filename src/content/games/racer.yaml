@@ -1,0 +1,38 @@
+title: Racer
+tagline: Pseudo-3D road racing, the way arcade cabinets did it before polygons.
+description: >-
+  No 3D engine — just a stack of scaled sprites and a curved road drawn one
+  segment at a time, exactly how the coin-op racers of the eighties faked
+  depth. Jake Gordon built it as a write-up of the technique, and it plays
+  like the thing it explains.
+categories: [racing, arcade]
+tags: [retro, pseudo-3d, road, arcade-racer]
+delivery:
+  mode: selfhost
+  path: /play/racer/index.html
+accent: "#f2b21c"
+cover:
+  capsule: /covers/racer-capsule.png
+  hero: /covers/racer-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build at speed, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 64
+added: "2026-08-21"
+controls: [keyboard]
+fullscreen: supported
+savesTo: none
+source:
+  author: Jake Gordon
+  homepage: https://codeincomplete.com/articles/javascript-racer/
+  repo: https://github.com/jakesgordon/javascript-racer
+  license: MIT
+  licenseUrl: https://github.com/jakesgordon/javascript-racer/blob/master/LICENSE
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE read at repo root on 2026-08-21. Vendored via jsDelivr at 8.6MB
+    and reduced to 0.8MB. The repository ships four progressive versions of the
+    write-up; only the final one is vendored, and its 7.8MB soundtrack — which
+    started on page load — was removed. The article's tuning-slider harness is
+    hidden. See NEXUS-MODIFICATIONS.txt.

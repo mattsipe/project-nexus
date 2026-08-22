@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect width="600" height="800" fill="#161412"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#d9cdb8" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#d9cdb8" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="600" height="800" fill="url(#g)"/>
+  <text x="60" y="120" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="30" fill="#efe7da">A DARK ROOM</text>
+     <text x="60" y="145.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.2" fill="#d9cdb8">the fire is burning.</text>
+     <circle cx="300" cy="404" r="180" fill="#d9cdb8" opacity="0.05"/>
+     <path d="M 300 248 C 390 350 374.4 464 300 464 C 225.6 464 210 350 300 248 Z" fill="#d9cdb8" opacity="0.13"/>
+     <path d="M 300 293.6 C 355.8 356.84 346.128 427.52 300 427.52 C 253.872 427.52 244.2 356.84 300 293.6 Z" fill="#d9cdb8" opacity="0.28"/>
+     <path d="M 300 332 C 327 362.6 322.32 396.8 300 396.8 C 277.68 396.8 273 362.6 300 332 Z" fill="#d9cdb8" opacity="0.6"/>
+     <line x1="60" y1="540" x2="330" y2="540" stroke="#3a3630" stroke-width="2"/>
+     <text x="60" y="526.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12" fill="#6d665d">STORES</text>
+     <text x="60" y="576" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#8f877c">wood</text>
+        <text x="252" y="576" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#d9cdb8" text-anchor="end">74</text><text x="60" y="617.6" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#8f877c">fur</text>
+        <text x="252" y="617.6" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#d9cdb8" text-anchor="end">12</text><text x="60" y="659.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#8f877c">meat</text>
+        <text x="252" y="659.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#d9cdb8" text-anchor="end">5</text>
+</svg>

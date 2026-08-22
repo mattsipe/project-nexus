@@ -1,0 +1,38 @@
+title: A Dark Room
+tagline: A fire, a room, and the dark outside. It does not stay that way.
+description: >-
+  It begins with one button and a cold room. What it becomes is best not
+  spoiled — but it is a strategy game, it is much longer than it looks, and it
+  is one of the few games that uses plain text as a deliberate choice rather
+  than a limitation.
+categories: [strategy, incremental]
+tags: [text, survival, long-haul, exploration]
+delivery:
+  mode: selfhost
+  path: /play/a-dark-room/index.html
+accent: "#d9cdb8"
+cover:
+  capsule: /covers/a-dark-room-capsule.svg
+  hero: /covers/a-dark-room-hero.svg
+  source: original
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) from the game's real opening vocabulary — the fire's states, the stores panel, the notification log — checked against the live game on 2026-08-21. MPL-2.0 would have permitted a screenshot; the game is 14px serif text on near-black and a real capture is unreadable at capsule size, so it was drawn rather than captured.
+weight: 74
+added: "2026-08-21"
+controls: [mouse, keyboard]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Michael Townsend (Doublespeak Games)
+  homepage: https://adarkroom.doublespeakgames.com/
+  repo: https://github.com/doublespeakgames/adarkroom
+  license: MPL-2.0
+  licenseUrl: https://github.com/doublespeakgames/adarkroom/blob/master/LICENSE.md
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MPL-2.0 LICENSE.md read at repo root on 2026-08-21 — file-level copyleft,
+    which permits redistribution with licence headers intact. Vendored via
+    jsDelivr. Google Analytics removed, a googleapis jQuery load pointed at the
+    bundled copy, and 25 translation bundles dropped. See
+    NEXUS-MODIFICATIONS.txt.

@@ -1,0 +1,38 @@
+title: Pocket Pool
+tagline: Eight-ball on a full-size table, against a friend or against the computer.
+description: >-
+  Proper eight-ball physics — spin off the cushions, snookers, and a black ball
+  that will end your game early if you are careless. Play both sides yourself
+  or set the computer to anything from easy to insane.
+categories: [classic, arcade]
+tags: [billiards, physics, two-player, cue-sports]
+delivery:
+  mode: selfhost
+  path: /play/pocket-pool/index.html
+accent: "#b8332e"
+cover:
+  capsule: /covers/pocket-pool-capsule.png
+  hero: /covers/pocket-pool-hero.png
+  source: captured
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    Screenshot of our own self-hosted build at the break, captured via scripts/capture-covers.ts on 2026-08-21. Inherits the game's MIT licence; no separate rights question.
+weight: 70
+added: "2026-08-21"
+controls: [mouse]
+fullscreen: supported
+savesTo: none
+source:
+  author: Chen Shmilovich
+  repo: https://github.com/henshmi/Classic-Pool-Game
+  license: MIT
+  licenseUrl: https://github.com/henshmi/Classic-Pool-Game/blob/master/LICENSE.txt
+  verifiedOn: "2026-08-21"
+  rightsNote: >-
+    MIT LICENSE.txt read at repo root on 2026-08-21. Vendored via jsDelivr at
+    13.5MB and reduced to 1.1MB, almost all of it a 9MB menu track: "Bossa
+    Antigua" by Kevin MacLeod, CC-BY 3.0, which the repo's MIT licence does not
+    cover and which shipped without the attribution that licence requires — so
+    it was removed rather than redistributed. Sprites re-encoded to WebP. See
+    NEXUS-MODIFICATIONS.txt. Nexus retitles the game "Pocket Pool"; upstream
+    calls it "Classic 8-Ball", and Chen Shmilovich is credited throughout.

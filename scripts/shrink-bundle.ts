@@ -35,27 +35,63 @@ interface Rule {
 
 const RULES: Record<string, Rule> = {
   hexgl: {
-    // HexGL ships two complete texture sets and picks between them with its
-    // own quality setting; the "full" set is only reachable at max quality.
-    // Editor_files is the level editor's own vendored copy of three.js.
-    drop: ['textures.full/', 'libs/Editor_files/', 'replays/'],
+    // Both texture sets stay — the quality setting is the player's, and
+    // dropping the high set would silently downgrade the default. Re-encoding
+    // them costs nothing visible and is most of the bundle.
+    drop: [
+      'libs/Editor_files/', 'libs/Editor.html', 'libs/Three.r53.js',
+      'replays/', 'cache.appcache', 'launch.coffee', 'manifest.webapp',
+    ],
+    webp: { under: ['textures/', 'textures.full/', 'css/'], quality: 82 },
     why: {
-      'textures.full/': 'high-quality texture set; the game falls back to textures/ at normal quality',
-      'libs/Editor_files/': 'level-editor dependency, not reachable from the game',
-      'replays/': 'recorded ghost replays, not used by the standalone build',
+      'libs/Editor_files/': 'the level editor\'s own vendored dependencies; the editor is not shipped',
+      'libs/Editor.html': 'the level editor, not reachable from the game',
+      'libs/Three.r53.js': 'unused second copy of three.js — index.html loads Three.dev.js',
+      'replays/': 'recorded ghost replays for a mode the standalone build does not expose',
+      'cache.appcache': 'AppCache manifest — removed from every browser years ago, and it listed files by name',
+      'launch.coffee': 'CoffeeScript source for launch.js, which ships compiled',
+      'manifest.webapp': 'Firefox OS app manifest',
+      'textures/': 'track, ship and HUD textures re-encoded from JPEG/PNG to WebP',
+      'textures.full/': 'the high-quality texture set, same re-encode',
+      'css/': 'menu and mobile-control artwork, same re-encode',
     },
   },
   'a-dark-room': {
-    drop: ['lang/'],
-    why: { 'lang/': 'translation bundles for languages Nexus does not offer; the game defaults to English' },
+    // The game runs in English by default and only fetches a translation
+    // bundle when one is asked for. Shipping 27 of them triples the bundle.
+    drop: [
+      'lang/cs/', 'lang/de/', 'lang/el/', 'lang/eo/', 'lang/es/', 'lang/fr/',
+      'lang/gl/', 'lang/id/', 'lang/it/', 'lang/ja/', 'lang/ko/', 'lang/lt_LT/',
+      'lang/lv/', 'lang/nb/', 'lang/pl/', 'lang/pt/', 'lang/pt_br/', 'lang/ru/',
+      'lang/sv/', 'lang/th/', 'lang/tr/', 'lang/uk/', 'lang/vi/', 'lang/zh_cn/',
+      'lang/zh_tw/', 'lang/adarkroom.pot', 'lang/babel.cfg',
+      'doc/', 'tools/', 'dev-server.js',
+    ],
+    why: {
+      'lang/': 'translation bundles for languages Nexus does not offer; langs.js is trimmed to English to match',
+      'doc/': 'design notes and spreadsheets from the upstream project',
+      'tools/': 'upstream translation tooling',
+      'dev-server.js': 'the upstream project\'s local dev server',
+    },
   },
   'pocket-pool': {
-    webp: { under: ['assets/'], quality: 82 },
-    why: { 'assets/': 'PNG sprites and table art re-encoded to WebP' },
+    drop: ['assets/sounds/Bossa Antigua.mp3', 'assets/sounds/BallsCollide-old1.wav'],
+    webp: { under: ['assets/sprites/'], quality: 82 },
+    why: {
+      'assets/sounds/Bossa Antigua.mp3': 'a Kevin MacLeod track under CC-BY, not covered by the repo\'s MIT licence and shipped with no attribution file — and the menu played it on load',
+      'assets/sounds/BallsCollide-old1.wav': 'superseded duplicate of BallsCollide.wav, unreferenced',
+      'assets/sprites/': 'table, menu and ball artwork re-encoded from PNG to WebP',
+    },
   },
   racer: {
-    drop: ['music/'],
-    why: { 'music/': 'soundtrack removed — size, and Nexus does not autoplay audio' },
+    drop: ['music/', 'Rakefile', 'v1.straight.html', 'v2.curves.html', 'v3.hills.html'],
+    why: {
+      'music/': 'the soundtrack, which the game starts on load — size, and Nexus does not autoplay audio',
+      'Rakefile': 'upstream build task file',
+      'v1.straight.html': 'tutorial stage of the upstream write-up, superseded by v4',
+      'v2.curves.html': 'tutorial stage of the upstream write-up, superseded by v4',
+      'v3.hills.html': 'tutorial stage of the upstream write-up, superseded by v4',
+    },
   },
 };
 
@@ -127,10 +163,11 @@ async function main(): Promise<void> {
     }
     if (hits.length) {
       console.log(`  webp ${hits.length} images — saved ${Math.round(saved / 1024)}KB`);
-      log.push(
-        `Re-encoded ${hits.length} images under ${under.join(', ')} to WebP ` +
-          `(${Math.round(saved / 1024)}KB saved) — ${Object.values(rule.why).join('; ')}`,
-      );
+      for (const u of under) {
+        const n = hits.filter((f) => f.startsWith(u)).length;
+        if (n) log.push(`Re-encoded ${n} images under ${u} to WebP — ${rule.why[u] ?? ''}`);
+      }
+      log.push(`WebP re-encode saved ${Math.round(saved / 1024)}KB in total.`);
       // Rewrite references. Bundles reference assets by relative path from a
       // handful of text files; rewriting all of them is cheaper and safer than
       // guessing which one owns each sprite.

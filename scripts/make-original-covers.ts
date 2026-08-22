@@ -1,11 +1,20 @@
 /**
- * Hand-authored cover art for games with no reusable licence: Kittens Game
+ * Hand-authored cover art. Two reasons a game ends up here:
+ *
+ *  1. No reusable licence, so a screenshot is not ours to ship — Kittens Game
  * ("WET PAWS", no derivatives/commercial use), Trimps and The Prestige Tree
  * and Distance Incremental (no public licence at all). We may not use their
  * screenshots or promotional art, so these are original UI mock-ups built
- * from each game's real terminology and colour language — checked against
- * the live game, not copied from it — so someone who plays it recognises it
- * immediately without a single borrowed pixel.
+ *     ("WET PAWS", no derivatives or commercial use), Trimps, The Prestige
+ *     Tree and Distance Incremental (no public licence at all).
+ *  2. The screenshot is rights-clean but unreadable at capsule size — A Dark
+ *     Room is a text game in 14px serif; at 235px wide, a real capture of it
+ *     is a grey smudge.
+ *
+ * Either way these are original mock-ups built from each game's real
+ * terminology and colour language — checked against the live game, not copied
+ * from it — so someone who plays it recognises it immediately without a
+ * single borrowed pixel.
  *
  * Usage: node --experimental-strip-types scripts/make-original-covers.ts
  */
@@ -211,11 +220,57 @@ function distanceIncremental(w: number, h: number): string {
   );
 }
 
+// ── A Dark Room — one fire in the dark, and the log beside it ──────────────
+// The only game here whose art is withheld by legibility rather than by
+// licence: it is self-hosted under MPL-2.0, so a screenshot would be ours to
+// use, but the game is 14px serif text on a near-black field and a real
+// capture reads as a grey smudge on a 235px card. Drawn instead from what the
+// game actually puts on screen in its first minute — the fire's states, the
+// stores panel, and the notification log's own sentences.
+function aDarkRoom(w: number, h: number): string {
+  const accent = '#d9cdb8';
+  const cx = w / 2;
+  const fireY = h * 0.46;
+  const r = Math.min(w, h) * 0.2;
+  // A fire built out of three nested triangles — the game never draws one, so
+  // there is nothing to copy; this is the idea of a fire, in its palette.
+  const flame = (scale: number, opacity: number) => {
+    const s = r * scale;
+    return `<path d="M ${cx} ${fireY - s} C ${cx + s * 0.75} ${fireY - s * 0.15} ${cx + s * 0.62} ${fireY + s * 0.8} ${cx} ${fireY + s * 0.8} C ${cx - s * 0.62} ${fireY + s * 0.8} ${cx - s * 0.75} ${fireY - s * 0.15} ${cx} ${fireY - s} Z" fill="${accent}" opacity="${opacity}"/>`;
+  };
+  const rows: [string, string][] = [
+    ['wood', '74'],
+    ['fur', '12'],
+    ['meat', '5'],
+  ];
+  const rowY = h * 0.72;
+  const stores = rows
+    .map(([k, v], i) => {
+      const y = rowY + i * h * 0.052;
+      return `<text x="${w * 0.1}" y="${y}" ${mono} font-size="${w * 0.026}" fill="#8f877c">${k}</text>
+        <text x="${w * 0.42}" y="${y}" ${mono} font-size="${w * 0.026}" fill="${accent}" text-anchor="end">${v}</text>`;
+    })
+    .join('');
+  return shell(
+    w, h, accent,
+    `<text x="${w * 0.1}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#efe7da">A DARK ROOM</text>
+     <text x="${w * 0.1}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.022}" fill="${accent}">the fire is burning.</text>
+     <circle cx="${cx}" cy="${fireY + r * 0.3}" r="${r * 1.5}" fill="${accent}" opacity="0.05"/>
+     ${flame(1, 0.13)}
+     ${flame(0.62, 0.28)}
+     ${flame(0.3, 0.6)}
+     <line x1="${w * 0.1}" y1="${rowY - h * 0.045}" x2="${w * 0.55}" y2="${rowY - h * 0.045}" stroke="#3a3630" stroke-width="2"/>
+     <text x="${w * 0.1}" y="${rowY - h * 0.062}" ${mono} font-size="${w * 0.02}" fill="#6d665d">STORES</text>
+     ${stores}`,
+  );
+}
+
 const GAMES: { slug: string; draw: (w: number, h: number) => string }[] = [
   { slug: 'kittens-game', draw: kittensGame },
   { slug: 'trimps', draw: trimps },
   { slug: 'the-prestige-tree', draw: prestigeTree },
   { slug: 'distance-incremental', draw: distanceIncremental },
+  { slug: 'a-dark-room', draw: aDarkRoom },
 ];
 
 await mkdir('public/covers', { recursive: true });

@@ -1,0 +1,38 @@
+Project Nexus — record of modifications to this vendored game
+=============================================================
+
+Upstream:  https://github.com/BKcore/HexGL
+Licence:   MIT (see LICENSE, unmodified)
+Vendored:  2026-08-21, via cdn.jsdelivr.net
+
+This is a modified version. The changes are:
+
+  1. index.html — removed the inline Google Analytics snippet (ga.js,
+     property UA-26274524-4). Marked "[Nexus]".
+
+  2. Removed, as unreachable from the game:
+       libs/Editor_files/   (23 files) the level editor's own dependencies
+       libs/Editor.html                 the level editor
+       libs/Three.r53.js                a second copy of three.js; index.html
+                                        loads Three.dev.js
+       replays/                         recorded ghost replays for a mode this
+                                        build does not expose
+       cache.appcache                   AppCache manifest, unsupported in every
+                                        current browser, and it listed assets
+                                        by name
+       launch.coffee                    CoffeeScript source for launch.js,
+                                        which ships compiled
+       manifest.webapp                  Firefox OS app manifest
+
+  3. All 88 textures and interface images re-encoded from JPEG/PNG to WebP
+     (textures/, textures.full/, css/). Both quality settings still work; the
+     player's Quality menu is untouched. Two reference sites build their paths
+     at runtime and so were edited by hand, both marked "[Nexus]":
+       bkcore/hexgl/tracks/Cityscape.js — the "%1.jpg" skybox templates
+       launch.js                        — the "css/help-N.png" template
+
+Together these take the bundle from 17MB to 7.6MB. No game logic, geometry or
+audio was altered, and the licence file is intact.
+
+Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
+Music and engine noise start when a race starts, not on load.

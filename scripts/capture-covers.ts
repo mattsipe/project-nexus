@@ -272,6 +272,87 @@ const CAPTURES: Capture[] = [
       await page.waitForTimeout(400);
     },
   },
+  {
+    slug: 'hexgl',
+    path: '/play/hexgl/index.html',
+    prepare: async (page) => {
+      await page.locator('#start').click();
+      // step-2 is a "click to continue" gate, step-3 is the asset loader.
+      await page.locator('#step-2').waitFor({ state: 'visible', timeout: 15000 });
+      await page.mouse.click(page.viewportSize()!.width / 2, page.viewportSize()!.height / 2);
+      await page.locator('#step-4').waitFor({ state: 'visible', timeout: 60000 });
+      // Hold the throttle so the shot has speed blur, a lit track and a HUD
+      // reading something other than zero.
+      await page.keyboard.down('ArrowUp');
+      await page.waitForTimeout(6000);
+      await page.keyboard.up('ArrowUp');
+      await page.waitForTimeout(200);
+    },
+  },
+  {
+    slug: 'a-dark-room',
+    path: '/play/a-dark-room/index.html',
+    // Every button here wraps a nested cooldown bar and a cost tooltip, so its
+    // label is never the element's whole text content and getByText misses it
+    // entirely. Locate by id.
+    prepare: async (page) => {
+      // The game opens by asking whether it may make noise — decline, so the
+      // capture shows the game and not its consent dialog. It only asks on
+      // some loads, hence the catch.
+      await page.waitForTimeout(2000);
+      await page.getByText('disable audio', { exact: true })
+        .click({ timeout: 3000 }).catch(() => {});
+      // The game's own dark theme: how most people play it, and the only
+      // version of this page that belongs in a Nexus capsule.
+      await page.locator('.lightsOff').first().click({ timeout: 5000 }).catch(() => {});
+      await page.locator('#lightButton').click({ timeout: 15000 });
+      // Stoking and gathering is what turns a bare page into a room with a
+      // stores panel, a builder, and a growing column of choices.
+      for (let i = 0; i < 10; i++) {
+        for (const id of ['#stokeButton', '#gatherButton']) {
+          await page.locator(id).click({ timeout: 1200 }).catch(() => {});
+        }
+        await page.waitForTimeout(600);
+      }
+      await page.waitForTimeout(600);
+    },
+  },
+  {
+    slug: 'pocket-pool',
+    path: '/play/pocket-pool/index.html',
+    prepare: async (page) => {
+      const vp = page.viewportSize()!;
+      await page.waitForTimeout(2500);
+      // Canvas-drawn menu: "PLAYER vs COM." then a difficulty, both on the
+      // left third of the frame.
+      await page.mouse.click(vp.width * 0.29, vp.height * 0.55);
+      await page.waitForTimeout(1200);
+      await page.mouse.click(vp.width * 0.29, vp.height * 0.4);
+      await page.waitForTimeout(2000);
+      // Break, so the capture is a spread table rather than a rack.
+      await page.mouse.move(vp.width * 0.5, vp.height * 0.5);
+      await page.mouse.down();
+      await page.waitForTimeout(700);
+      await page.mouse.up();
+      await page.waitForTimeout(2500);
+    },
+  },
+  {
+    slug: 'racer',
+    path: '/play/racer/index.html',
+    prepare: async (page) => {
+      // The keys hint belongs on the page, not on the cover.
+      await page.addStyleTag({ content: '#instructions { display: none; }' });
+      await page.waitForTimeout(2500);
+      await page.keyboard.down('ArrowUp');
+      await page.waitForTimeout(5000);
+      await page.keyboard.down('ArrowRight');
+      await page.waitForTimeout(900);
+      await page.keyboard.up('ArrowRight');
+      await page.waitForTimeout(600);
+      await page.keyboard.up('ArrowUp');
+    },
+  },
 ];
 
 function runSips(args: string[]): Promise<void> {
