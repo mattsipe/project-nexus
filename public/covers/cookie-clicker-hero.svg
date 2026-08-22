@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#140e07"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#c98b4a" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#c98b4a" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="1280" height="720" fill="url(#g)"/>
+  <circle cx="640" cy="338.4" r="187.20000000000002" fill="#c98b4a" opacity="0.9"/>
+     <circle cx="640" cy="338.4" r="187.20000000000002" fill="none" stroke="#8a5c2c" stroke-width="11.232000000000001"/>
+     <circle cx="640" cy="338.4" r="14.040000000000001" fill="#5c3a1e"/><circle cx="610.0605918596285" cy="365.88003721422456" r="18.158400000000004" fill="#5c3a1e"/><circle cx="644.9142362062872" cy="281.1383942532989" r="22.2768" fill="#5c3a1e"/><circle cx="682.9884294250298" cy="394.1364938872365" r="14.040000000000001" fill="#5c3a1e"/><circle cx="559.9106922347472" cy="324.5513465619847" r="18.158400000000004" fill="#5c3a1e"/><circle cx="716.437398981893" cy="289.2580926058273" r="22.2768" fill="#5c3a1e"/><circle cx="614.7138081804374" cy="434.67944813826955" r="14.040000000000001" fill="#5c3a1e"/><circle cx="589.800835088716" cy="243.3174670202456" r="18.158400000000004" fill="#5c3a1e"/><circle cx="748.2701523430406" cy="376.9971365821616" r="22.2768" fill="#5c3a1e"/><circle cx="527.714324191919" cy="385.89328851680756" r="14.040000000000001" fill="#5c3a1e"/><circle cx="693.3454026656461" cy="221.48347394252096" r="18.158400000000004" fill="#5c3a1e"/>
+     <text x="115.19999999999999" y="108" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="58.879999999999995" fill="#f3e3cf">COOKIE CLICKER</text>
+     <text x="115.19999999999999" y="159.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#c98b4a">cursors · grandmas · portals · time machines</text>
+     <text x="640" y="597.6" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="40.96" fill="#f3e3cf" text-anchor="middle">1.4 million</text>
+     <text x="640" y="643.6800000000001" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="28.159999999999997" fill="#c98b4a" text-anchor="middle">cookies per second</text>
+</svg>

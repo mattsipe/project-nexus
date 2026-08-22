@@ -485,6 +485,88 @@ function slope(w: number, h: number): string {
   );
 }
 
+// ── Cookie Clicker — the cookie, and the rate under it ────────────────────
+function cookieClicker(w: number, h: number): string {
+  const accent = '#c98b4a';
+  const cx = w / 2, cy = h * 0.47;
+  const r = Math.min(w, h) * 0.26;
+  // Chips placed on a fixed spiral so the cover is identical run to run.
+  const chips = Array.from({ length: 11 }, (_, i) => {
+    const a = i * 2.399;
+    const d = r * 0.72 * Math.sqrt(i / 11);
+    return `<circle cx="${cx + Math.cos(a) * d}" cy="${cy + Math.sin(a) * d}" r="${r * (0.075 + (i % 3) * 0.022)}" fill="#5c3a1e"/>`;
+  }).join('');
+  return shell(
+    w, h, accent,
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${accent}" opacity="0.9"/>
+     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8a5c2c" stroke-width="${r * 0.06}"/>
+     ${chips}
+     <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.046}" fill="#f3e3cf">COOKIE CLICKER</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.021}" fill="${accent}">cursors · grandmas · portals · time machines</text>
+     <text x="${w / 2}" y="${cy + r + h * 0.1}" ${mono} font-size="${w * 0.032}" fill="#f3e3cf" text-anchor="middle">1.4 million</text>
+     <text x="${w / 2}" y="${cy + r + h * 0.1 + w * 0.036}" ${mono} font-size="${w * 0.022}" fill="${accent}" text-anchor="middle">cookies per second</text>`,
+  );
+}
+
+// ── Run 3 — the tunnel, and the hole you have to go round ─────────────────
+function run3(w: number, h: number): string {
+  const accent = '#a06ff0';
+  const cx = w / 2, cy = h * 0.55;
+  const rings = Array.from({ length: 7 }, (_, i) => {
+    const t = (i + 1) / 8;
+    const rad = Math.min(w, h) * 0.42 * (1 - t * 0.86);
+    const pts = Array.from({ length: 6 }, (_, k) => {
+      const a = (k / 6) * Math.PI * 2 + Math.PI / 6;
+      return `${cx + Math.cos(a) * rad},${cy + Math.sin(a) * rad}`;
+    }).join(' ');
+    return `<polygon points="${pts}" fill="none" stroke="${accent}" stroke-width="${2 + (1 - t) * 3}" opacity="${0.15 + (1 - t) * 0.5}"/>`;
+  }).join('');
+  return shell(
+    w, h, accent,
+    `${rings}
+     <circle cx="${cx - Math.min(w, h) * 0.11}" cy="${cy + Math.min(w, h) * 0.16}" r="${Math.min(w, h) * 0.035}" fill="#f0ecfa"/>
+     <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#efe7fb">RUN 3</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.021}" fill="${accent}">the floor is optional</text>`,
+  );
+}
+
+// ── Duck Life — the four things you train ─────────────────────────────────
+function duckLife(w: number, h: number): string {
+  const accent = '#a8d13c';
+  const stats: [string, number][] = [
+    ['running', 0.86],
+    ['flying', 0.62],
+    ['swimming', 0.41],
+    ['jumping', 0.73],
+  ];
+  const barX = w * 0.1;
+  const barW = w * 0.8;
+  const top = h * 0.6;
+  const rowH = h * 0.075;
+  const bars = stats
+    .map(([label, v], i) => {
+      const y = top + i * rowH;
+      return `<text x="${barX}" y="${y - h * 0.012}" ${mono} font-size="${w * 0.02}" fill="#9aa87a">${label}</text>
+        <rect x="${barX}" y="${y}" width="${barW}" height="${h * 0.018}" rx="${h * 0.009}" fill="#2b3320"/>
+        <rect x="${barX}" y="${y}" width="${barW * v}" height="${h * 0.018}" rx="${h * 0.009}" fill="${accent}" opacity="${0.55 + v * 0.4}"/>`;
+    })
+    .join('');
+  // A duckling: body, head, beak. Geometry only, no traced art.
+  const bx = w / 2, by = h * 0.38, s = Math.min(w, h) * 0.14;
+  const duck = `
+    <ellipse cx="${bx}" cy="${by + s * 0.35}" rx="${s * 1.05}" ry="${s * 0.72}" fill="${accent}" opacity="0.85"/>
+    <circle cx="${bx + s * 0.72}" cy="${by - s * 0.45}" r="${s * 0.52}" fill="${accent}"/>
+    <circle cx="${bx + s * 0.86}" cy="${by - s * 0.58}" r="${s * 0.1}" fill="#1f2714"/>
+    <path d="M ${bx + s * 1.18} ${by - s * 0.42} L ${bx + s * 1.72} ${by - s * 0.3} L ${bx + s * 1.16} ${by - s * 0.12} Z" fill="#e0a53d"/>`;
+  return shell(
+    w, h, accent,
+    `${duck}
+     <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#eef5dc">DUCK LIFE</text>
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.021}" fill="${accent}">train it, race it, win the cup</text>
+     ${bars}`,
+  );
+}
+
 const GAMES: { slug: string; draw: (w: number, h: number) => string }[] = [
   { slug: 'kittens-game', draw: kittensGame },
   { slug: 'trimps', draw: trimps },
@@ -498,6 +580,9 @@ const GAMES: { slug: string; draw: (w: number, h: number) => string }[] = [
   { slug: 'candy-box-2', draw: candyBox2 },
   { slug: 'universal-paperclips', draw: universalPaperclips },
   { slug: 'slope', draw: slope },
+  { slug: 'cookie-clicker', draw: cookieClicker },
+  { slug: 'run-3', draw: run3 },
+  { slug: 'duck-life', draw: duckLife },
 ];
 
 await mkdir('public/covers', { recursive: true });

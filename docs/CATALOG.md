@@ -37,18 +37,20 @@ URL, checking `X-Frame-Options` and CSP `frame-ancestors`.
 | Candy Box 2 | aniwey | proprietary | embed | No source repository and no licence — published only on the author's own site | 2026-08-22 |
 | Universal Paperclips | Frank Lantz | proprietary | embed | No source repository and no licence — published only on the author's own site | 2026-08-22 |
 | Slope | Rob Kay, published by Y8 | proprietary | embed | Y8 publishes an "iFrame Embed" snippet for `y8.com/embed/slope` on its own Slope page. Verified 2026-08-22: the ordinary game page sends `X-Frame-Options: SAMEORIGIN`, the embed endpoint sends no framing headers at all — a route the publisher provides deliberately. Y8's ads and consent UI come with it. See DECISIONS #24 | 2026-08-22 |
+| Cookie Clicker | Orteil (Julien Thiennot) | proprietary | external | No licence, no source repository. `orteil.dashnet.org` answers non-browser clients with 403 behind a Cloudflare challenge, and Orteil has objected to the game being embedded | 2026-08-22 |
+| Run 3 | Joseph Cloutier (Player 03) | proprietary | external | `coolmathgames.com` sends `X-Frame-Options: SAMEORIGIN`. Y8 checked for a publisher embed endpoint (as used for Slope) — it does not carry this game | 2026-08-22 |
+| Duck Life | Wix Games | proprietary | external | Same: SAMEORIGIN at Coolmath, no Y8 embed endpoint | 2026-08-22 |
 
 ## Assessed, not yet added
 
 | Game | Finding | Disposition |
 |---|---|---|
-| Cookie Clicker | `orteil.dashnet.org` answers 403 behind a Cloudflare challenge, and Orteil has historically objected to embedding | `external` |
-| Run 3, Duck Life | Coolmath sends `X-Frame-Options: SAMEORIGIN`; proprietary, and no publisher embed route found | `external`. Slope is in the catalogue via Y8's own embed endpoint — a different publisher offering a different route, not a workaround for Coolmath's header |
-| DodecaDragons | No `LICENSE` upstream; official URL not yet resolved | Resolve URL, then embed if permitted |
-| Incremental Mass Rewritten | No `LICENSE` upstream; official URL not yet resolved | Resolve URL, then embed if permitted |
+| DodecaDragons | No `LICENSE` upstream. The URL previously noted (`dodecadragons.netlify.app`) 404s as of 2026-08-22 | Resolve the current URL, then embed if permitted |
+| Incremental Mass Rewritten | No `LICENSE` upstream. `incremental-mass-rewritten.github.io` 404s as of 2026-08-22 | Resolve the current URL, then embed if permitted |
 | One Trillion Free Draws, Calculator Evolution, Fundamental, Celestial Incremental | Author-uploaded to **galaxy.click**, which permits framing (verified 2026-08-21) | Still open. Deliberately not taken up in the Phase 2 expansion: all four are incremental, and the catalogue was already incremental-heavy |
 | Minecraft-style | Eaglercraft and similar are infringing repackagings | Build an original three.js voxel sandbox |
 | Tetris-style | "Tetris" is a trademark of the Tetris Company | Build an original block-stacker under a different name |
+| Asteroids-style | Doug McInnes's HTML5 rebuild is genuinely MIT, but "Asteroids" is an Atari trademark | **Done.** Vendored under the MIT modification grant and shipped as Belt Runner, attribution intact — see DECISIONS #21 |
 
 ## Cover art provenance
 
@@ -63,6 +65,7 @@ rather than assumed.
 | HexGL, Pocket Pool, Racer | `captured` | Screenshot of our own self-hosted build, `scripts/capture-covers.ts`, 2026-08-21. Each inherits its game's own MIT licence. |
 | A Dark Room | `original` | Hand-authored (`scripts/make-original-covers.ts`), 2026-08-21. MPL-2.0 would have permitted a screenshot; the game is small serif text on near-black and a real capture is unreadable at capsule size, so it was drawn from the game's own opening vocabulary instead. |
 | Sandboxels, Micropolis, Untrusted, Cube Composer, Candy Box 2, Universal Paperclips, Slope | `original` | Hand-authored (`scripts/make-original-covers.ts`), 2026-08-22. Built from each game's real vocabulary and checked against the live game. None of these grant asset redistribution, and Cube Composer's MIT grant was not leaned on for art either. |
+| Cookie Clicker, Run 3, Duck Life | `original` | Hand-authored (`scripts/make-original-covers.ts`), 2026-08-22. All three are proprietary; the covers use each game's real vocabulary — Cookie Clicker's cookies-per-second, Run 3's tunnel, Duck Life's four training stats — and copy nothing. |
 | Antimatter Dimensions | `upstream-official` | Official loading-screen art, MIT source repo (`public/images/loading.png`), fetched via jsDelivr 2026-08-21. |
 | Bitburner | `upstream-official` | Official Steam Library capsule/hero art, Apache-2.0 source repo, fetched via jsDelivr 2026-08-21. Apache-2.0 covers the repo's assets; it does not grant trademark rights, so this is nominative use to identify the game, not a brand claim. |
 | Kittens Game, Trimps, The Prestige Tree, Distance Incremental | `original` | Hand-authored UI mock-up (`scripts/make-original-covers.ts`), built from each game's real terminology and checked against the live game, 2026-08-21. No screenshot or art copied — none of these four grant redistribution rights. |

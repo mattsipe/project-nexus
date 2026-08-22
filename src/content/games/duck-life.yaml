@@ -1,0 +1,38 @@
+title: Duck Life
+tagline: Train a duck. Race the duck. Discover you have under-trained the duck.
+description: >-
+  Four skills — running, flying, swimming, jumping — each with its own
+  minigame, and a tournament that will find whichever one you neglected. A
+  training loop disguised as a game about a duck.
+categories: [arcade, racing]
+tags: [training, racing, minigames, progression]
+delivery:
+  mode: external
+  url: https://www.coolmathgames.com/0-duck-life
+  reason: >-
+    Proprietary with no redistribution grant, and coolmathgames.com sends
+    X-Frame-Options SAMEORIGIN. Y8 was checked for a publisher-provided embed
+    endpoint, as used for Slope, and does not carry this game. Verified
+    2026-08-22.
+accent: "#a8d13c"
+cover:
+  capsule: /covers/duck-life-capsule.svg
+  hero: /covers/duck-life-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — a geometric duckling and the game's four real training stats, checked against the live game on 2026-08-22. No screenshot or art copied.
+weight: 26
+added: "2026-08-22"
+controls: [keyboard, mouse]
+fullscreen: unsupported
+savesTo: none
+source:
+  author: Wix Games
+  homepage: https://www.coolmathgames.com/0-duck-life
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    No redistribution grant. Its host sends X-Frame-Options SAMEORIGIN, which
+    settles the question — we do not work around a framing header. Checked
+    2026-08-22.

@@ -1,0 +1,38 @@
+title: Run 3
+tagline: Run through a tunnel in space, where the walls are also the floor.
+description: >-
+  Sprint down a broken tunnel and rotate it under you — any surface becomes the
+  ground the moment you jump onto it. The disorientation is the game, and it
+  gets very good at it.
+categories: [arcade, action]
+tags: [runner, gravity, tunnel, reflex]
+delivery:
+  mode: external
+  url: https://www.coolmathgames.com/0-run-3
+  reason: >-
+    Proprietary with no redistribution grant, and coolmathgames.com sends
+    X-Frame-Options SAMEORIGIN. Y8 was checked for a publisher-provided embed
+    endpoint, as used for Slope, and does not carry this game. Verified
+    2026-08-22.
+accent: "#a06ff0"
+cover:
+  capsule: /covers/run-3-capsule.svg
+  hero: /covers/run-3-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — a receding hexagonal tunnel in the game's idiom, checked against the live game on 2026-08-22. No screenshot or art copied.
+weight: 28
+added: "2026-08-22"
+controls: [keyboard]
+fullscreen: unsupported
+savesTo: none
+source:
+  author: Joseph Cloutier (Player 03)
+  homepage: https://www.coolmathgames.com/0-run-3
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    No redistribution grant. Its host sends X-Frame-Options SAMEORIGIN, which
+    settles the question — we do not work around a framing header. Checked
+    2026-08-22.

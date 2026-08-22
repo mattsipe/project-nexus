@@ -70,7 +70,10 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
         </div>
       )}
       {!playable && (
-        <span className="absolute top-2 right-2 rounded-md bg-ink/85 px-2 py-1 text-[10px] font-medium text-text-dim backdrop-blur-sm">
+        // Above the title strip on the left, because top-right is the (i)
+        // affordance on every card and top-left is the favourite. It reads as
+        // a property of the card rather than a control, which is what it is.
+        <span className="absolute bottom-10 left-2.5 rounded-md bg-ink/85 px-2 py-1 text-[10px] font-medium text-text-dim backdrop-blur-sm">
           Official site ↗
         </span>
       )}
@@ -81,21 +84,42 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
   const onEnter = () => setStageHue(doc.accent);
   const onLeave = () => setStageHue(null);
 
+  // An external card opens the developer's site, but it still needs a route to
+  // its own page: that is where we explain *why* it is a link-out rather than
+  // a game, and that explanation is the point of listing it at all. Same (i)
+  // affordance as a playable card, sitting beside the "Official site" badge
+  // rather than on top of it.
   if (!playable) {
     return (
-      <a
-        href={doc.officialUrl ?? '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="cabinet-glow group relative block overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface"
+      <div
+        className="cabinet-glow group relative overflow-hidden rounded-[var(--radius-card)] border border-edge bg-surface"
         style={style}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
-        onFocus={onEnter}
-        onBlur={onLeave}
       >
-        {art}
-      </a>
+        <a
+          href={doc.officialUrl ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block focus:outline-none"
+          onFocus={onEnter}
+          onBlur={onLeave}
+        >
+          {art}
+        </a>
+        <a
+          href={`/games/${doc.slug}`}
+          aria-label={`About ${doc.title}`}
+          title="About"
+          className="absolute top-2.5 right-2.5 grid h-8 w-8 place-items-center rounded-full border border-white/10 bg-ink/70 text-text-dim opacity-0 backdrop-blur-sm transition-all hover:border-emerald/40 hover:text-emerald group-hover:opacity-100 focus-visible:opacity-100"
+        >
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5M12 8v.01" strokeLinecap="round" />
+          </svg>
+        </a>
+        <FavoriteButton slug={doc.slug} title={doc.title} />
+      </div>
     );
   }
 

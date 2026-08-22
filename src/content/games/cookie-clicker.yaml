@@ -1,0 +1,38 @@
+title: Cookie Clicker
+tagline: Click the cookie. Then buy something that clicks it for you.
+description: >-
+  The game that defined the whole idle genre. One cookie, one click, and a
+  purchasing tree that ends somewhere much stranger than it starts. Orteil has
+  kept it updated for over a decade.
+categories: [incremental, classic]
+tags: [idle, clicker, famous, long-haul]
+delivery:
+  mode: external
+  url: https://orteil.dashnet.org/cookieclicker/
+  reason: >-
+    The game is proprietary with no redistribution grant, and orteil.dashnet.org
+    answers non-browser clients with a 403 behind a Cloudflare challenge.
+    Orteil has also objected to the game being embedded elsewhere. Verified
+    2026-08-22.
+accent: "#c98b4a"
+cover:
+  capsule: /covers/cookie-clicker-capsule.svg
+  hero: /covers/cookie-clicker-hero.svg
+  source: original
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Hand-drawn (scripts/make-original-covers.ts) — a cookie and the game's own cookies-per-second readout, using its real building names, checked against the live game on 2026-08-22. No screenshot or art copied.
+weight: 30
+added: "2026-08-22"
+controls: [mouse]
+fullscreen: unsupported
+savesTo: none
+source:
+  author: Orteil (Julien Thiennot)
+  homepage: https://orteil.dashnet.org/cookieclicker/
+  license: proprietary
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    No redistribution grant and no licence — published on the author's own
+    site. Checked 2026-08-22. Framing is blocked in practice and the author has
+    objected to it, so this is a link to the original and nothing more.

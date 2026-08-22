@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <rect width="600" height="800" fill="#140e07"/>
+    <radialGradient id="g" cx="72%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#c98b4a" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#c98b4a" stop-opacity="0"/>
+    </radialGradient>
+    <rect width="600" height="800" fill="url(#g)"/>
+  <circle cx="300" cy="376" r="156" fill="#c98b4a" opacity="0.9"/>
+     <circle cx="300" cy="376" r="156" fill="none" stroke="#8a5c2c" stroke-width="9.36"/>
+     <circle cx="300" cy="376" r="11.7" fill="#5c3a1e"/><circle cx="275.0504932163571" cy="398.9000310118538" r="15.132" fill="#5c3a1e"/><circle cx="304.0951968385727" cy="328.2819952110824" r="18.564" fill="#5c3a1e"/><circle cx="335.8236911875249" cy="422.44707823936375" r="11.7" fill="#5c3a1e"/><circle cx="233.25891019562266" cy="364.45945546832064" r="15.132" fill="#5c3a1e"/><circle cx="363.69783248491086" cy="335.0484105048561" r="18.564" fill="#5c3a1e"/><circle cx="278.92817348369783" cy="456.23287344855794" r="11.7" fill="#5c3a1e"/><circle cx="258.16736257393006" cy="296.7645558502047" r="15.132" fill="#5c3a1e"/><circle cx="390.2251269525339" cy="408.16428048513467" r="18.564" fill="#5c3a1e"/><circle cx="206.42860349326588" cy="415.577740430673" r="11.7" fill="#5c3a1e"/><circle cx="344.45450222137174" cy="278.56956161876747" r="15.132" fill="#5c3a1e"/>
+     <text x="54" y="120" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="27.599999999999998" fill="#f3e3cf">COOKIE CLICKER</text>
+     <text x="54" y="144" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.600000000000001" fill="#c98b4a">cursors · grandmas · portals · time machines</text>
+     <text x="300" y="612" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="19.2" fill="#f3e3cf" text-anchor="middle">1.4 million</text>
+     <text x="300" y="633.6" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.2" fill="#c98b4a" text-anchor="middle">cookies per second</text>
+</svg>

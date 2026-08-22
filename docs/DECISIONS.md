@@ -497,3 +497,17 @@ manifest answered by nine games' worth of HTML — and none of which pointed at
 the server. The cache is keyed on mtime now, and the route memo is cleared
 whenever `dist/` itself changes. One `stat` per request is a rounding error next
 to the `readFile` it avoids.
+
+## 29. External cards get an "About" link, and the badge moves off it
+
+Adding the first `external` games exposed a gap nobody had hit: the library's
+external card was a bare link to the developer's site, with no route to
+`/games/<slug>`. That page is where we explain *why* the game is a link-out
+rather than something you can play here — which is the only reason listing it
+is honest rather than decorative.
+
+External cards now carry the same (i) affordance as playable ones, in the same
+top-right corner, and the "Official site ↗" badge moved to sit above the title
+strip so it stops competing with it. A test had asserted this contract since
+before any external game existed ("every game, playable or not, gets an About
+info link") and had simply never been able to fail.

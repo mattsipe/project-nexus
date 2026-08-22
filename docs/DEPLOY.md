@@ -46,20 +46,26 @@ rename later. The name is not baked into the build; only `site` in
 
 ## Measured payload
 
-Recorded 2026-08-22 at 19 games (Phase 2 expansion, waves 1-2), so regressions
+Recorded 2026-08-22 at 29 games (Phase 2 expansion, waves 1-4), so regressions
 are visible:
 
 | | uncompressed | gzipped |
 |---|---|---|
 | All JavaScript | 223 KB | **70 KB** |
-| Home page HTML | 75 KB | 9 KB |
-| Total `dist/` | 38 MB | — |
+| Home page HTML | 104 KB | 11 KB |
+| Total `dist/` | 39 MB | — |
 
-`dist/` went 4.6 MB -> 38 MB, and essentially all of it is ten new game
-bundles. That number is only meaningful per game: nothing a visitor loads got
-bigger, because a bundle is only fetched when someone launches that game. The
-home page grew from 45 KB to 75 KB (7 KB -> 9 KB gzipped) purely from ten more
-capsules' worth of markup and inlined search data.
+`dist/` went 4.6 MB -> 39 MB, and essentially all of it is ten new self-hosted
+game bundles. That number is only meaningful per game: nothing a visitor loads
+got bigger, because a bundle is only fetched when someone launches that game.
+JavaScript did not move at all — twenty new games needed no application code
+beyond one category and one optional manifest field.
+
+The home page grew from 45 KB to 104 KB (7 KB -> 11 KB gzipped), purely from
+twenty more capsules' worth of markup and inlined search data. That is the
+number to watch: it scales with the catalogue and every visitor pays it. At
+gzip it is still small, but the search index is inlined into every page, and
+this is the growth curve the note at the bottom of this file is about.
 
 The four heavy bundles were shrunk rather than embedded (DECISIONS #22), by
 `scripts/shrink-bundle.ts`:
@@ -87,5 +93,8 @@ it would be a change to an approved stack made on speculation rather than
 measurement.
 
 The search index is inlined into every page. At this catalogue size that is
-cheaper than a runtime fetch, but it scales with the number of games — revisit
-somewhere north of 50.
+still cheaper than a runtime fetch, but it is now the main driver of page
+weight: 9 games -> 29 games took the home page from 45 KB to 104 KB, roughly
+2 KB per game, and every page carries it. Revisit somewhere north of 50 —
+that is when the inlined index passes the point where fetching it once and
+caching it wins.
