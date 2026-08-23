@@ -9,6 +9,11 @@ tags: [one-button, reflex, endless, quick]
 delivery:
   mode: selfhost
   path: /play/clumsy-bird/index.html
+player:
+  # melonJS scales a 900x600 stage to fit width, leaving a 297px top gap on a
+  # phone. Constraining the box to 3:2 keeps it centred and full-height.
+  aspect: "3/2"
+  orientation: landscape
 accent: "#f2d33f"
 cover:
   capsule: /covers/clumsy-bird-capsule.png

@@ -9,6 +9,9 @@ tags: [hexagon, colour-match, reflex, quick]
 delivery:
   mode: selfhost
   path: /play/hextris/index.html
+player:
+  # Overflows its own container by 8px, which showed as a scrollbar.
+  aspect: "1/1"
 accent: "#2fc4d6"
 cover:
   capsule: /covers/hextris-capsule.png

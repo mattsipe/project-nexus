@@ -9,6 +9,11 @@ tags: [twin-stick, shooter, waves, reflex]
 delivery:
   mode: selfhost
   path: /play/radius-raid/index.html
+player:
+  # Fixed 880x660 playfield; overflowed a 412px phone by 194px.
+  nativeWidth: 880
+  nativeHeight: 660
+  orientation: landscape
 accent: "#38a0ff"
 cover:
   capsule: /covers/radius-raid-capsule.png

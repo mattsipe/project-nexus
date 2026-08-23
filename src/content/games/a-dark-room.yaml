@@ -10,6 +10,10 @@ tags: [text, survival, long-haul, exploration]
 delivery:
   mode: selfhost
   path: /play/a-dark-room/index.html
+player:
+  # A fluid text UI that overflowed a 412px phone by 508px. It has no canvas,
+  # so it scales down from its narrowest usable width instead.
+  minWidth: 700
 accent: "#d9cdb8"
 cover:
   capsule: /covers/a-dark-room-capsule.svg

@@ -10,6 +10,11 @@ tags: [vector, asteroids-like, thrust, retro]
 delivery:
   mode: selfhost
   path: /play/belt-runner/index.html
+player:
+  # Fixed 780x540 playfield, previously 41% of a desktop frame's width.
+  nativeWidth: 780
+  nativeHeight: 540
+  orientation: landscape
 accent: "#aab4c4"
 cover:
   capsule: /covers/belt-runner-capsule.png

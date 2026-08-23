@@ -15,6 +15,13 @@ import type { Category } from '../content.config.ts';
 export type GameData = CollectionEntry<'games'>['data'];
 
 /**
+ * Per-game player sizing, straight off the manifest. Undefined for the
+ * majority of games, which size themselves correctly against a plain
+ * full-bleed iframe — see the `player` block in content.config.ts.
+ */
+export type PlayerConfig = NonNullable<GameData['player']>;
+
+/**
  * Key order is load-bearing: it sets the order of the genre tier and of the
  * category bands in Library.tsx. Roughly reflex-first to patience-last, which
  * also keeps the incremental games — the bulk of the early catalogue, and the
@@ -117,4 +124,6 @@ export interface LibraryDoc {
   sameOrigin: boolean;
   officialUrl: string | null;
   savesThirdParty: boolean;
+  /** Undefined means "the default full-bleed iframe is already correct". */
+  player?: PlayerConfig;
 }

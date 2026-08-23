@@ -10,6 +10,12 @@ tags: [retro, pseudo-3d, road, arcade-racer]
 delivery:
   mode: selfhost
   path: /play/racer/index.html
+player:
+  # Upstream CSS-pinned the canvas to 640x480 regardless of frame size (33% of
+  # a 1920 display). The bundle now stretches the canvas to fill, so the player
+  # only has to hand it a correctly-shaped box.
+  aspect: "4/3"
+  orientation: landscape
 accent: "#f2b21c"
 cover:
   capsule: /covers/racer-capsule.png

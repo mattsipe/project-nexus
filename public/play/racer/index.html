@@ -17,7 +17,21 @@
     /* common.css pushes #racer past the panel with margin-left: 20em and
        floats the instructions; with the panel gone, both just need centring. */
     #racer { margin-left: 0; }
-    #instructions { float: none; clear: none; width: auto; color: #ddd; background: none; border: 0; box-shadow: none; margin: 0 0 14px; padding: 0; font-size: 0.85em; }
+    /* [Nexus] common.css pins the canvas to 640x480, so at 1366px it filled
+       under half the frame and at 1920px barely a third. The canvas keeps its
+       1024x768 backing resolution (the game's projection maths read the
+       attributes, not the CSS box) and is stretched to fill instead; the
+       player frame is declared 4/3 in the manifest so this never distorts. */
+    body { position: relative; }
+    /* #racer keeps position:relative from common.css — #hud and #canvas are
+       both absolutely positioned against it — so it only needs to stop being
+       640x480 and start being the frame. */
+    #racer { width: 100%; height: 100%; border: 0; }
+    #canvas { inset: 0; width: 100% !important; height: 100% !important; display: block; }
+    /* common.css gives #hud a hard 640px width and no top, so once #racer grew
+       it drifted into the middle of the road. Pin it to the top, full width. */
+    #hud { top: 0; left: 0; right: 0; width: auto !important; }
+    #instructions { position: absolute; bottom: 8px; left: 0; right: 0; z-index: 2; pointer-events: none; float: none; clear: none; width: auto; text-align: center; color: #ddd; background: none; border: 0; box-shadow: none; margin: 0; padding: 0; font-size: 0.85em; text-shadow: 0 1px 3px #000; }
   </style>
 </head> 
 

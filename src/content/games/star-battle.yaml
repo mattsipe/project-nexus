@@ -10,6 +10,11 @@ tags: [shooter, space, survival, quick]
 delivery:
   mode: selfhost
   path: /play/star-battle/index.html
+player:
+  # A fixed 960x480 board; unscaled it overflowed a 412px phone by 548px.
+  nativeWidth: 960
+  nativeHeight: 480
+  orientation: landscape
 accent: "#ff4d6d"
 cover:
   capsule: /covers/star-battle-capsule.png

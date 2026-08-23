@@ -9,6 +9,11 @@ tags: [billiards, physics, two-player, cue-sports]
 delivery:
   mode: selfhost
   path: /play/pocket-pool/index.html
+player:
+  # A 2:1 table. It scales by width, so on a portrait phone it collapsed to a
+  # 26%-tall strip — hence the rotate hint rather than a native size.
+  aspect: "2/1"
+  orientation: landscape
 accent: "#b8332e"
 cover:
   capsule: /covers/pocket-pool-capsule.png

@@ -44,5 +44,6 @@ export async function libraryDocs(): Promise<LibraryDoc[]> {
     sameOrigin: g.data.delivery.mode === 'selfhost',
     officialUrl: officialUrl(g.data),
     savesThirdParty: g.data.savesTo === 'thirdparty',
+    player: g.data.player,
   }));
 }

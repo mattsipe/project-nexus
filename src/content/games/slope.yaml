@@ -16,6 +16,10 @@ delivery:
     sends X-Frame-Options SAMEORIGIN, while y8.com/embed/slope returns 200 with
     no X-Frame-Options and no CSP frame-ancestors — a route the publisher
     provides deliberately.
+player:
+  # Unity WebGL in Y8's shell; overflowed a 412px phone by 556px.
+  aspect: "16/9"
+  orientation: landscape
 accent: "#ff3b3b"
 notice:
   text: >-

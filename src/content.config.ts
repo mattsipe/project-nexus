@@ -115,6 +115,49 @@ const delivery = z.discriminatedUnion('mode', [
   }),
 ]);
 
+/**
+ * Per-game player behaviour. Optional, and deliberately so: a game that
+ * declares nothing keeps the default full-bleed iframe, which is correct for
+ * anything that already sizes itself to its container (astray, space-huggers).
+ *
+ * This exists because most of the catalogue does NOT do that. Measured across
+ * 1366x768 / 1920x1080 / 412x915, eleven of thirteen self-hosted games either
+ * pinned a fixed-resolution canvas to the top-left of the frame (racer renders
+ * 640x480 in a 1920 box) or overflowed a phone entirely (star-battle by 548px).
+ * The fix has to be per-game — a single global rule that scaled everything
+ * would break the games that are already right.
+ */
+const player = z
+  .object({
+    /**
+     * A legacy fixed-resolution game's real pixel size. When set, the player
+     * renders the iframe at exactly these dimensions and CSS-scales the whole
+     * thing to fit, so the game never learns it isn't at its native size.
+     */
+    nativeWidth: z.number().int().positive().optional(),
+    nativeHeight: z.number().int().positive().optional(),
+    /**
+     * Natural aspect ratio as "w/h". The player letterboxes the iframe box to
+     * this ratio and centres it; the game's own responsive code then fills a
+     * correctly-shaped box instead of a mis-shaped one.
+     */
+    aspect: z
+      .string()
+      .regex(/^\d+(\.\d+)?\/\d+(\.\d+)?$/, 'aspect must look like "4/3"')
+      .optional(),
+    /** Below this width the frame scales down rather than letting the game clip. */
+    minWidth: z.number().int().positive().optional(),
+    /**
+     * Games that are unplayable in a portrait phone strip (a 2:1 table at
+     * 412px is 26% tall) get a dismissible rotate hint. It never blocks play.
+     */
+    orientation: z.enum(['landscape', 'portrait']).optional(),
+  })
+  .refine((p) => (p.nativeWidth === undefined) === (p.nativeHeight === undefined), {
+    message: 'nativeWidth and nativeHeight must be set together.',
+  })
+  .optional();
+
 const games = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: './src/content/games' }),
   schema: z
@@ -125,6 +168,7 @@ const games = defineCollection({
       categories: z.array(z.enum(CATEGORIES)).min(1),
       tags: z.array(z.string()).default([]),
       delivery,
+      player,
       cover,
       /**
        * Drives the card glow and the galaxy nebula's hover tint — required,

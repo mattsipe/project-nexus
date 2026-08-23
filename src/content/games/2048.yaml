@@ -9,6 +9,9 @@ tags: [tiles, numbers, merge, quick]
 delivery:
   mode: selfhost
   path: /play/2048/index.html
+player:
+  # The board plus its header is taller than the frame, so the player scrolled.
+  aspect: "3/4"
 accent: "#f0a93b"
 cover:
   capsule: /covers/2048-capsule.png
