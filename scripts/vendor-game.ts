@@ -13,7 +13,7 @@
  *   npm run vendor -- gabrielecirulli/2048@master 2048
  */
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 const LIST_API = 'https://data.jsdelivr.com/v1/packages/gh';
@@ -51,6 +51,46 @@ function shouldKeep(name: string, subdir: string): boolean {
   if (subdir && !name.startsWith(subdir)) return false;
   if (ALWAYS_KEEP.test(name)) return true;
   return !SKIP_PATTERNS.some((re) => re.test(name));
+}
+
+/**
+ * Warn about anything index.html asks for that we did not vendor.
+ *
+ * The skip list assumes a source repo, where /src/ is TypeScript nobody
+ * should serve. On a build-output branch that assumption inverts: micropolisJS
+ * ships its whole 449KB bundle at /src/micropolis.js, which was silently
+ * dropped, and the vendor step still reported success — the game only failed
+ * once someone pressed Play. Cheap to detect, expensive to find by hand.
+ */
+async function checkReferences(dest: string): Promise<void> {
+  let html: string;
+  try {
+    html = await readFile(join(dest, 'index.html'), 'utf8');
+  } catch {
+    return; // Some bundles are reached by another entry point; not our business.
+  }
+  const refs = [...html.matchAll(/(?:src|href)="([^"#?:]+)(?:\?[^"]*)?"/g)]
+    .map((m) => m[1]!)
+    .filter((r) => !r.startsWith('/') && !r.startsWith('data:') && r !== '');
+
+  const missing: string[] = [];
+  for (const ref of new Set(refs)) {
+    try {
+      await stat(join(dest, ref));
+    } catch {
+      missing.push(ref);
+    }
+  }
+  if (missing.length) {
+    console.warn(
+      `\n  ⚠ index.html references ${missing.length} file(s) that were not vendored:`,
+    );
+    for (const m of missing) console.warn(`      ${m}`);
+    console.warn(
+      '    They were probably caught by SKIP_PATTERNS. Re-fetch them by hand, or\n' +
+        '    re-run with --subdir, before writing the manifest.\n',
+    );
+  }
 }
 
 async function main(): Promise<void> {
@@ -105,7 +145,8 @@ async function main(): Promise<void> {
   });
   await Promise.all(workers);
 
-  console.log(`\n  ✓ ${done} files written to ${dest}\n`);
+  console.log(`\n  ✓ ${done} files written to ${dest}`);
+  await checkReferences(dest);
 }
 
 main().catch((err: unknown) => {

@@ -8,12 +8,8 @@ description: >-
 categories: [strategy, sandbox]
 tags: [city-builder, simulation, zoning, long-haul]
 delivery:
-  mode: embed
-  url: https://graememcc.github.io/micropolisJS/
-  embedVerifiedOn: "2026-08-22"
-  embedNote: >-
-    HEAD request returned 200 with no X-Frame-Options and no CSP
-    frame-ancestors directive on the author's official GitHub Pages build.
+  mode: selfhost
+  path: /play/micropolis-js/index.html
 accent: "#4a86e8"
 notice:
   text: >-
@@ -32,7 +28,7 @@ weight: 72
 added: "2026-08-22"
 controls: [mouse]
 fullscreen: supported
-savesTo: thirdparty
+savesTo: origin
 source:
   author: Graeme McCutcheon
   homepage: https://graememcc.github.io/micropolisJS/
@@ -42,8 +38,13 @@ source:
   verifiedOn: "2026-08-22"
   rightsNote: >-
     LICENSE and MicropolisPublicNameLicense.md both read at repo root on
-    2026-08-22. GPL-3.0 would permit self-hosting, but the repository ships
-    TypeScript source with no compiled build, so we embed the author's own.
-    Separately, the name "Micropolis" is trademarked and its licence requires
-    an attribution wherever the name is used — rendered on this page and on
+    2026-08-22. GPL-3.0 permits redistribution with source availability and
+    change notices, both provided. Previously embedded on the assumption that
+    the repo shipped only TypeScript source; re-checked on 2026-08-22, the
+    author maintains a built gh-pages branch, so Nexus now serves the game from
+    its own origin and saves land in our storage rather than a third party's.
+    Two third-party requests were removed from the bundle — see
+    NEXUS-MODIFICATIONS.txt for the GPL-3.0 s5(a) change record. Separately,
+    the name "Micropolis" is trademarked and its licence requires an
+    attribution wherever the name is used — rendered on this page and on
     /credits. See docs/DECISIONS.md #23.

@@ -1,0 +1,35 @@
+Nexus modifications to micropolisJS
+===================================
+
+Upstream:  https://github.com/graememcc/micropolisJS
+Branch:    gh-pages (the author's own built, servable output)
+Licence:   GPL-3.0, plus the Micropolis Public Name Licence
+Vendored:  2026-08-22
+
+micropolisJS is GPL-3.0. GPL-3.0 s5(a) requires that modified versions carry
+prominent notices stating that they were changed and when. This file is that
+record. The unmodified LICENSE, COPYING and name_license.html ship alongside
+the game, and the Micropolis Public Name Licence attribution is additionally
+rendered on /games/micropolis-js and /credits.
+
+Previously this game was delivered as an iframe embed of the author's GitHub
+Pages build. It is now served from Nexus's own origin, which the GPL permits
+and which means saves land in our origin's storage rather than a third party's.
+
+Changes
+-------
+
+1. css/style.css — removed
+       @import url(https://fonts.googleapis.com/css?family=Open+Sans:...);
+   A third-party request on every load. The declared font stack falls back
+   without it. Reason: privacy, and Google Fonts is commonly blocked on the
+   school networks this site is meant to work on.
+
+2. index.html — removed the inline Twitter widget loader, which injected
+   https://platform.twitter.com/widgets.js on every load, and the associated
+   twitter-share anchor. Reason: same as above. The author's own Twitter link
+   remains as a plain hyperlink, which issues no request.
+
+Nothing else was altered. No game logic, no assets, no licence text. Remaining
+external references in the bundle are ordinary <a href> links (the author's
+site, GitHub, micropolis.com, donation links) and make no network request.
