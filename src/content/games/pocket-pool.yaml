@@ -1,4 +1,4 @@
-title: Pocket Pool
+title: Classic 8-Ball
 tagline: Eight-ball on a full-size table, against a friend or against the computer.
 description: >-
   Proper eight-ball physics — spin off the cushions, snookers, and a black ball
@@ -39,5 +39,4 @@ source:
     Antigua" by Kevin MacLeod, CC-BY 3.0, which the repo's MIT licence does not
     cover and which shipped without the attribution that licence requires — so
     it was removed rather than redistributed. Sprites re-encoded to WebP. See
-    NEXUS-MODIFICATIONS.txt. Nexus retitles the game "Pocket Pool"; upstream
-    calls it "Classic 8-Ball", and Chen Shmilovich is credited throughout.
+    NEXUS-MODIFICATIONS.txt.

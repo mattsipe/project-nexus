@@ -511,3 +511,137 @@ top-right corner, and the "Official site ↗" badge moved to sit above the title
 strip so it stops competing with it. A test had asserted this contract since
 before any external game existed ("every game, playable or not, gets an About
 info link") and had simply never been able to fail.
+
+## 30. Use the upstream name unless there is a concrete reason not to
+
+Nexus had started inventing catalogue names on style grounds — "Pocket Pool"
+for a game that calls itself Classic 8-Ball, because the upstream title seemed
+plain. That is the wrong trade. An invented name costs recognisability, makes
+provenance harder to trace, and (in that particular case) landed on crude
+slang without anyone noticing.
+
+The rule: **use the game's actual official/upstream name wherever legally
+permissible.** Rename only for a concrete reason — trademark or IP exposure, a
+licensing requirement, misleading impersonation of a commercial title, or no
+usable upstream title at all. When we do rename, the upstream name is
+preserved prominently in `source.rightsNote` and on /credits.
+
+Belt Runner stays renamed: "Asteroids" is a live Atari mark. Racer keeps its
+apparently-generic name because that *is* what Jake Gordon called it. Pocket
+Pool reverts to Classic 8-Ball.
+
+A recognisable generic name beats a developer-y upstream one where the generic
+name is not a trademark: patorjk's "JavaScript Snake" ships as **Snake**. The
+catalogue should not read like a GitHub listing.
+
+## 31. Per-game player sizing, opt-in
+
+Measured every self-hosted game inside the player's real content box at
+1366x768, 1920x1080 and 412x915. Eleven of thirteen were wrong somewhere:
+racer drew its 640x480 canvas at 33% of a 1920 frame, star-battle overflowed a
+412px phone by 548px, a-dark-room by 508px, and belt-runner and hexgl painted
+white gutters inside a near-black player.
+
+Two causes, both systemic: content pinned top-left instead of centred, and
+fixed-resolution canvases that never scaled to the box.
+
+The fix is an **optional** `player` block in the manifest. A game that declares
+nothing keeps the previous full-bleed iframe exactly — astray and space-huggers
+were already correct and are untouched — so no global rule can regress a game
+that already worked. GameFrame centres the frame on an always-ink stage and
+applies one of three strategies: native pixel size plus a uniform scale (legacy
+fixed-resolution games), a letterboxed aspect box, or a minimum width it scales
+down from. Games unplayable as a portrait strip get a dismissible rotate hint
+that never blocks play.
+
+Where a bundle's own CSS was the cause, the bundle was fixed rather than worked
+around: racer's canvas was CSS-pinned to 640x480 and its HUD had a hard 640px
+width, so the HUD drifted into the road once the frame grew.
+
+## 32. Delivery mode is told on the card, and external is a warning
+
+The grid gave an external game a grey "Official site" badge, which reads as a
+helpful extra link rather than "clicking this leaves Nexus". Embedded games
+said nothing about running on someone else's origin.
+
+One treatment per mode: self-hosted says nothing, because playing here is the
+default; embedded shows its host on hover only; external carries a persistent
+emerald-outlined "Opens externally ↗", visible before the click. The detail
+page names the destination host and renders the manifest's own
+`delivery.reason`, which differs per game.
+
+## 33. The external re-audit, and why Y8 does not rescue Run 3 or Duck Life
+
+Re-checked all three external games in a real browser rather than by curl.
+
+**Cookie Clicker** cannot be embedded, and the reason previously recorded (a
+403) was the wrong one. `orteil.dashnet.org` sits behind a Cloudflare bot
+challenge, and *the challenge page itself* sends `X-Frame-Options: SAMEORIGIN`
+— so a challenged visitor gets an empty frame whatever the game page allows.
+Sites that appear to embed Cookie Clicker are serving their own copied build,
+which hard rule 2 forbids us from doing. Orteil has also objected to embedding.
+
+**Run 3 and Duck Life**: the previous audit checked hyphenated Y8 slugs and
+concluded Y8 does not carry them. Y8 uses underscores, and both exist and
+answer without framing headers. They are still unusable, for two reasons: both
+are Flash uploads played through Ruffle rather than the publishers' current
+builds, and — decisively — neither Y8 page publishes the iFrame Embed snippet
+that #24 made the whole basis of the Slope decision. An unblocked URL is not an
+offered route.
+
+All three stay external. The lesson worth keeping: when a probe returns "not
+found", check the site's own slug convention before recording a negative.
+
+## 34. Micropolis moves in-house; Cube Composer and Antimatter Dimensions do not
+
+The ladder is self-hosted > authorised embed > external, but it is a preference
+weighed against engineering cost, not a rule that every embed must be
+eliminated. The hard requirement is minimising *external* launches.
+
+Micropolis was embedded on a mistaken premise — its note claimed the repo ships
+only TypeScript source. It maintains a built `gh-pages` branch, so GPL-3.0
+self-hosting was available all along. Now self-hosted, saving to our own origin,
+with two third-party requests (Google Fonts, a Twitter widget) stripped.
+
+Cube Composer (MIT, PureScript) and Antimatter Dimensions (MIT, a large Vue
+app) stay embedded and are recorded in CATALOG.md as future candidates.
+Rebuilding a working embed is not worth turning a cleanup pass into a build
+project.
+
+## 35. Replacing our own weak games, and substituting assets to do it legally
+
+Neon Serpent and Clumsy Bird were the two weakest games in the catalogue.
+
+**Snake** replaces Neon Serpent: patorjk/JavaScript-Snake, MIT, the author's
+own block art, genuinely classic. Its board was sized to the window — a 67x35
+grid of fixed 20px blocks at 1366px, which plays nothing like the game people
+remember — and is pinned to 34x20. 720px wide rather than tighter because
+snake.js hides the author's in-game credit links below 700px.
+
+**Flappy** replaces Clumsy Bird, and needed a decision with teeth.
+nebez/floppybird has the faithful physics — gravity 0.25, jump -4.6, a 90px
+gap — and those are code, which its Apache-2.0 licence covers. Its `assets/`
+directory is the original Flappy Bird sprite and sound set, which it does not
+cover: the README calls the project a "vintage knockoff" and Dong Nguyen
+granted nothing. An Apache-2.0 licence on a repository conveys no rights over
+material its author did not own.
+
+So: **vendor the code, delete every asset before the first commit, and draw a
+replacement set.** scripts/make-flappy-art.ts generates all of it at the exact
+dimensions the CSS and JS expect. This extends #21 (retitle, keep attribution)
+from titles to assets — the principle is the same, that the permissively
+licensed part can be kept and the unlicensed part must be replaced rather than
+quietly shipped.
+
+The generator refuses to render a label wider than its panel, after "GET READY"
+first shipped as "ET READ".
+
+## 36. Continue is a section, not a destination
+
+The rail's Continue item linked to `/#continue`, which only scrolls the page
+you are already on. The rail is for destinations (Library, Favourites) and
+controls (Settings, mute); a link that does neither does not belong in it. The
+Continue row itself is unchanged, and `/#continue` still resolves.
+
+The mark also went from 26px to 40px in the 64px rail — the brand slot was
+visibly undersized. The rail width is unchanged; only the mark grew.

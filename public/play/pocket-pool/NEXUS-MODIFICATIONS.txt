@@ -8,9 +8,16 @@ Vendored:  2026-08-21, via cdn.jsdelivr.net
 
 This is a modified version. The changes are:
 
-  1. RETITLED to "Pocket Pool". Upstream calls it "Classic 8-Ball"; the name
-     is Nexus's, the game and the credit are Chen Shmilovich's, and the
-     on-canvas title the game draws itself is left alone.
+  1. NOT retitled. An earlier Nexus pass listed this game as "Pocket Pool";
+     that was reverted on 2026-08-22. The game titles itself "Classic 8-Ball"
+     and that is what Nexus lists it as, per docs/DECISIONS.md #30 — upstream
+     names are used unless there is a concrete legal reason not to, and there
+     is none here. The upstream repository is henshmi/Classic-Pool-Game and
+     Chen Shmilovich is credited throughout. The on-canvas title the game
+     draws itself was never altered.
+
+     The Nexus slug remains `pocket-pool`, so this directory path, the cover
+     filenames and any saved links keep working. The mismatch is deliberate.
 
   2. Removed assets/sounds/Bossa Antigua.mp3 (9MB). It is "Bossa Antigua" by
      Kevin MacLeod, licensed CC-BY 3.0 — a third-party work the repository's

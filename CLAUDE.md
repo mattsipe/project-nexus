@@ -18,6 +18,9 @@ npm run test:e2e       # Playwright, laptop + mobile, capped to 2 workers locall
 npm run vendor -- <owner>/<repo>@<ref> <slug> [--subdir p] [--dry]
 node --experimental-strip-types scripts/shrink-bundle.ts <slug> [--dry]
                        # drop/WebP a heavy vendored bundle; prints its own change log
+node --experimental-strip-types scripts/make-flappy-art.ts
+                       # regenerate Flappy's sprite set — all of it original to
+                       # Nexus, because upstream's was the real Flappy Bird's
 ```
 
 ## Hard rules — non-negotiable
@@ -28,7 +31,11 @@ node --experimental-strip-types scripts/shrink-bundle.ts <slug> [--dry]
    we deliberately do not.
 2. **Never** self-host a game (or its cover art) without a verified redistributable
    licence. The build enforces this (`src/content.config.ts`), so do not weaken
-   the schema to get around it.
+   the schema to get around it. **A permissive licence on a repository grants
+   nothing over material its author did not own** — floppybird is Apache-2.0
+   and its `assets/` folder was still the original Flappy Bird sprite and sound
+   set. Check what is actually in the bundle, not just the LICENSE file; the
+   remedy is to keep the code and replace the assets (DECISIONS #35).
 3. **Never** bypass `X-Frame-Options` or CSP `frame-ancestors` — no proxying, no
    header stripping. A game that blocks framing becomes `mode: external`.
 4. **Never** autoplay audio. For a vendored game this means: no sound before the
@@ -88,6 +95,17 @@ Astro 7 (static) · TypeScript strict · Tailwind 4 · React islands · Netlify.
 
 **`/play/*` is game bundles; `/games/*` is our detail routes.** They were the
 same path once and collided — do not merge them again.
+
+### Per-game player sizing
+
+Most games do not size themselves correctly against a plain full-bleed iframe.
+An **optional** `player` block in the manifest (`nativeWidth`/`nativeHeight`,
+`aspect`, `minWidth`, `orientation`) tells `GameFrame` how to fit one. A game
+that declares nothing keeps the default, so nothing already-correct can
+regress — do not turn any of this into a global rule. Where the bundle's own
+CSS is the cause, fix the bundle and record it. See DECISIONS #31, and re-run
+the three-viewport measurement (1366x768 / 1920x1080 / 412x915) after touching
+it.
 
 ### Delivery modes
 | mode | meaning | savesTo |
@@ -247,6 +265,17 @@ capsule glow/lift language, which survived both redesigns:
   <title>`, empty-state CTAs). Use it instead of a flat `bg-emerald` fill,
   which reads as generic SaaS chrome.
 - `prefers-reduced-motion` removes transforms, not just shortens them.
+
+## Naming games
+
+Use the game's actual official/upstream name wherever legally permissible.
+Do **not** invent a Nexus name because an upstream one seems generic, dated or
+awkward. Rename only for a concrete reason — trademark/IP exposure, a licensing
+requirement, misleading impersonation of a commercial title, or no usable
+upstream title — and preserve the upstream name prominently in provenance and
+on `/credits`. A recognisable generic name beats a developer-y upstream one
+where the generic name is not a trademark ("Snake", not "JavaScript Snake").
+See DECISIONS #30.
 
 ## Writing
 

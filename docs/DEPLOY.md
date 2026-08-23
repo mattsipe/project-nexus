@@ -46,14 +46,22 @@ rename later. The name is not baked into the build; only `site` in
 
 ## Measured payload
 
-Recorded 2026-08-22 at 29 games (Phase 2 expansion, waves 1-4), so regressions
-are visible:
+Re-recorded 2026-08-22 after the post-expansion quality pass, still at 29
+games, so regressions are visible:
 
-| | uncompressed | gzipped |
-|---|---|---|
-| All JavaScript | 223 KB | **70 KB** |
-| Home page HTML | 104 KB | 11 KB |
-| Total `dist/` | 39 MB | — |
+| | uncompressed | gzipped | vs. end of wave 4 |
+|---|---|---|---|
+| All JavaScript | 231 KB | **70 KB** | +8 KB (the player sizer) |
+| Home page HTML | 115 KB | 12 KB | +11 KB (manifest `player` blocks) |
+| Total `dist/` | 37 MB | — | −2 MB |
+
+The pass added the `player` block to twelve manifests and a sizer to
+GameFrame, which is the 8 KB of JavaScript and most of the extra HTML — the
+manifest is inlined into every page. `dist/` went *down* 2 MB despite Micropolis
+moving in-house (+1.3 MB), because Clumsy Bird (3.9 MB) and Neon Serpent were
+retired and their replacements are small: Snake is 180 KB and Flappy 416 KB
+(most of that jQuery and jquery.transit, which its code depends on — its own
+generated sprite set is a few dozen KB).
 
 `dist/` went 4.6 MB -> 39 MB, and essentially all of it is ten new self-hosted
 game bundles. That number is only meaningful per game: nothing a visitor loads
@@ -74,7 +82,7 @@ The four heavy bundles were shrunk rather than embedded (DECISIONS #22), by
 |---|---|---|---|
 | HexGL | 17 MB | 7.6 MB | level editor, duplicate three.js, all textures to WebP |
 | A Dark Room | 10 MB | 6.1 MB | 25 translation bundles |
-| Pocket Pool | 13.5 MB | 1.1 MB | a 9 MB CC-BY menu track, sprites to WebP |
+| Classic 8-Ball | 13.5 MB | 1.1 MB | a 9 MB CC-BY menu track, sprites to WebP |
 | Racer | 8.7 MB | 0.8 MB | 7.8 MB soundtrack, three superseded versions |
 
 **`sharp` is installed** (transitively, via Astro's own image tooling) —
