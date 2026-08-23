@@ -234,8 +234,13 @@ function aDarkRoom(w: number, h: number): string {
   const r = Math.min(w, h) * 0.2;
   // A fire built out of three nested triangles — the game never draws one, so
   // there is nothing to copy; this is the idea of a fire, in its palette.
+  // Warm, and bright enough to survive a 235px card. The first pass drew the
+  // flame at 0.13-0.6 opacity in the parchment accent, which on a near-black
+  // ground left the whole cover reading as an empty rectangle.
+  const emberFor = (scale: number) => (scale > 0.9 ? '#c2551f' : scale > 0.5 ? '#e08b2a' : '#ffd27a');
   const flame = (scale: number, opacity: number) => {
     const s = r * scale;
+    const accent = emberFor(scale);
     return `<path d="M ${cx} ${fireY - s} C ${cx + s * 0.75} ${fireY - s * 0.15} ${cx + s * 0.62} ${fireY + s * 0.8} ${cx} ${fireY + s * 0.8} C ${cx - s * 0.62} ${fireY + s * 0.8} ${cx - s * 0.75} ${fireY - s * 0.15} ${cx} ${fireY - s} Z" fill="${accent}" opacity="${opacity}"/>`;
   };
   const rows: [string, string][] = [
@@ -255,10 +260,11 @@ function aDarkRoom(w: number, h: number): string {
     w, h, accent,
     `<text x="${w * 0.1}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#efe7da">A DARK ROOM</text>
      <text x="${w * 0.1}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.022}" fill="${accent}">the fire is burning.</text>
-     <circle cx="${cx}" cy="${fireY + r * 0.3}" r="${r * 1.5}" fill="${accent}" opacity="0.05"/>
-     ${flame(1, 0.13)}
-     ${flame(0.62, 0.28)}
-     ${flame(0.3, 0.6)}
+     <circle cx="${cx}" cy="${fireY + r * 0.3}" r="${r * 1.9}" fill="#b8632a" opacity="0.14"/>
+     <circle cx="${cx}" cy="${fireY + r * 0.3}" r="${r * 1.1}" fill="#d4772e" opacity="0.18"/>
+     ${flame(1.05, 0.55)}
+     ${flame(0.66, 0.85)}
+     ${flame(0.32, 1)}
      <line x1="${w * 0.1}" y1="${rowY - h * 0.045}" x2="${w * 0.55}" y2="${rowY - h * 0.045}" stroke="#3a3630" stroke-width="2"/>
      <text x="${w * 0.1}" y="${rowY - h * 0.062}" ${mono} font-size="${w * 0.02}" fill="#6d665d">STORES</text>
      ${stores}`,
@@ -488,43 +494,107 @@ function slope(w: number, h: number): string {
 // ── Cookie Clicker — the cookie, and the rate under it ────────────────────
 function cookieClicker(w: number, h: number): string {
   const accent = '#c98b4a';
-  const cx = w / 2, cy = h * 0.47;
-  const r = Math.min(w, h) * 0.26;
-  // Chips placed on a fixed spiral so the cover is identical run to run.
+  // The real screen is a cookie on the left and a buy list on the right, and
+  // it is the buy list that makes it a game rather than a button. The first
+  // version drew only the cookie, which read as a flat brown disc.
+  const cx = w * 0.31, cy = h * 0.46;
+  const r = Math.min(w, h) * 0.2;
   const chips = Array.from({ length: 11 }, (_, i) => {
     const a = i * 2.399;
     const d = r * 0.72 * Math.sqrt(i / 11);
     return `<circle cx="${cx + Math.cos(a) * d}" cy="${cy + Math.sin(a) * d}" r="${r * (0.075 + (i % 3) * 0.022)}" fill="#5c3a1e"/>`;
   }).join('');
+
+  const shop: [string, string, string][] = [
+    ['cursor', '218', '15'],
+    ['grandma', '1.1K', '8'],
+    ['farm', '12K', '3'],
+    ['mine', '130K', '1'],
+  ];
+  const sx = w * 0.56;
+  const sw = w * 0.36;
+  const top = h * 0.34;
+  const rowH = h * 0.082;
+  const rows = shop
+    .map(([name, price, owned], i) => {
+      const y = top + i * rowH;
+      return `<rect x="${sx}" y="${y}" width="${sw}" height="${rowH * 0.82}" rx="${w * 0.008}" fill="#2a1a0d" stroke="#4a3018" stroke-width="1"/>
+        <rect x="${sx}" y="${y}" width="${w * 0.006}" height="${rowH * 0.82}" fill="${accent}" opacity="0.8"/>
+        <text x="${sx + w * 0.028}" y="${y + rowH * 0.36}" ${mono} font-size="${w * 0.021}" fill="#f3e3cf">${name}</text>
+        <text x="${sx + w * 0.028}" y="${y + rowH * 0.66}" ${mono} font-size="${w * 0.017}" fill="${accent}">${price}</text>
+        <text x="${sx + sw - w * 0.022}" y="${y + rowH * 0.52}" ${mono} font-size="${w * 0.027}" fill="#8a5c2c" text-anchor="end">${owned}</text>`;
+    })
+    .join('');
+
   return shell(
     w, h, accent,
-    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${accent}" opacity="0.9"/>
-     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8a5c2c" stroke-width="${r * 0.06}"/>
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${accent}" opacity="0.92"/>
+     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8a5c2c" stroke-width="${r * 0.07}"/>
      ${chips}
+     ${rows}
      <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.046}" fill="#f3e3cf">COOKIE CLICKER</text>
-     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.021}" fill="${accent}">cursors · grandmas · portals · time machines</text>
-     <text x="${w / 2}" y="${cy + r + h * 0.1}" ${mono} font-size="${w * 0.032}" fill="#f3e3cf" text-anchor="middle">1.4 million</text>
-     <text x="${w / 2}" y="${cy + r + h * 0.1 + w * 0.036}" ${mono} font-size="${w * 0.022}" fill="${accent}" text-anchor="middle">cookies per second</text>`,
+     <text x="${w * 0.09}" y="${h * 0.15 + w * 0.04}" ${mono} font-size="${w * 0.02}" fill="${accent}">1.4 million per second</text>
+     <text x="${cx}" y="${cy + r + h * 0.075}" ${mono} font-size="${w * 0.022}" fill="#8a5c2c" text-anchor="middle">click</text>`,
   );
 }
 
-// ── Run 3 — the tunnel, and the hole you have to go round ─────────────────
+// ── Run 3 — the tunnel floor, and the holes you have to go round ─────────
+// The first version drew concentric hexagon outlines, which said "abstract
+// tunnel" but nothing about the game. Run 3 is a perspective floor of square
+// tiles with gaps in it: fall through one and you lose. So: the floor, the
+// gaps, and the runner about to meet them.
 function run3(w: number, h: number): string {
   const accent = '#a06ff0';
-  const cx = w / 2, cy = h * 0.55;
-  const rings = Array.from({ length: 7 }, (_, i) => {
-    const t = (i + 1) / 8;
-    const rad = Math.min(w, h) * 0.42 * (1 - t * 0.86);
-    const pts = Array.from({ length: 6 }, (_, k) => {
-      const a = (k / 6) * Math.PI * 2 + Math.PI / 6;
-      return `${cx + Math.cos(a) * rad},${cy + Math.sin(a) * rad}`;
-    }).join(' ');
-    return `<polygon points="${pts}" fill="none" stroke="${accent}" stroke-width="${2 + (1 - t) * 3}" opacity="${0.15 + (1 - t) * 0.5}"/>`;
-  }).join('');
+  const vx = w * 0.5;          // vanishing point
+  const vy = h * 0.34;
+  const cols = 7;
+  const rows = 8;
+  // Missing tiles, fixed rather than random so the cover is reproducible.
+  const holes = new Set(['2,1', '4,2', '1,3', '5,4', '3,5', '6,5', '2,6']);
+
+  // Each row is a horizontal band of the floor; nearer rows are taller and
+  // wider, which is the whole of the perspective.
+  const tiles: string[] = [];
+  for (let r = 0; r < rows; r++) {
+    const t0 = r / rows;
+    const t1 = (r + 1) / rows;
+    const scale = (t: number) => Math.pow(t, 1.9);
+    const y0 = vy + (h * 0.62) * scale(t0);
+    const y1 = vy + (h * 0.62) * scale(t1);
+    const halfW0 = (w * 0.52) * scale(t0);
+    const halfW1 = (w * 0.52) * scale(t1);
+    for (let c = 0; c < cols; c++) {
+      if (holes.has(`${c},${r}`)) continue;
+      const f0 = c / cols - 0.5;
+      const f1 = (c + 1) / cols - 0.5;
+      const pts = [
+        `${vx + halfW0 * f0 * 2},${y0}`,
+        `${vx + halfW0 * f1 * 2},${y0}`,
+        `${vx + halfW1 * f1 * 2},${y1}`,
+        `${vx + halfW1 * f0 * 2},${y1}`,
+      ].join(' ');
+      const lit = 0.16 + t1 * 0.5 + ((c + r) % 2) * 0.1;
+      tiles.push(
+        `<polygon points="${pts}" fill="${accent}" opacity="${lit.toFixed(3)}" stroke="#d9c8ff" stroke-opacity="${(0.1 + t1 * 0.28).toFixed(3)}" stroke-width="1"/>`,
+      );
+    }
+  }
+
+  // The runner, a few rows in, mid-stride.
+  const rx = vx - w * 0.1;
+  const ry = vy + h * 0.62 * Math.pow(0.62, 1.9);
+  const s = Math.min(w, h) * 0.05;
+  const runner = `
+    <ellipse cx="${rx}" cy="${ry + s * 0.15}" rx="${s * 0.8}" ry="${s * 0.2}" fill="#000" opacity="0.45"/>
+    <circle cx="${rx}" cy="${ry - s * 1.55}" r="${s * 0.42}" fill="#f0ecfa"/>
+    <rect x="${rx - s * 0.3}" y="${ry - s * 1.15}" width="${s * 0.6}" height="${s * 0.85}" rx="${s * 0.2}" fill="#f0ecfa"/>
+    <rect x="${rx - s * 0.5}" y="${ry - s * 0.3}" width="${s * 0.26}" height="${s * 0.42}" fill="#c9b6ef"/>
+    <rect x="${rx + s * 0.2}" y="${ry - s * 0.32}" width="${s * 0.26}" height="${s * 0.44}" fill="#c9b6ef"/>`;
+
   return shell(
     w, h, accent,
-    `${rings}
-     <circle cx="${cx - Math.min(w, h) * 0.11}" cy="${cy + Math.min(w, h) * 0.16}" r="${Math.min(w, h) * 0.035}" fill="#f0ecfa"/>
+    `${tiles.join('')}
+     ${runner}
      <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#efe7fb">RUN 3</text>
      <text x="${w * 0.09}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.021}" fill="${accent}">the floor is optional</text>`,
   );
@@ -551,16 +621,34 @@ function duckLife(w: number, h: number): string {
         <rect x="${barX}" y="${y}" width="${barW * v}" height="${h * 0.018}" rx="${h * 0.009}" fill="${accent}" opacity="${0.55 + v * 0.4}"/>`;
     })
     .join('');
-  // A duckling: body, head, beak. Geometry only, no traced art.
-  const bx = w / 2, by = h * 0.38, s = Math.min(w, h) * 0.14;
+  // The training screen, not a mascot portrait: the duck is running on a
+  // track with hurdles behind it and the stat panel below, which is what the
+  // player actually looks at. The first version was a flat cartoon duck
+  // floating on the accent colour, which read as clip art next to the rest of
+  // the shelf.
+  const groundY = h * 0.5;
+  const bx = w * 0.34, by = groundY - Math.min(w, h) * 0.08, s = Math.min(w, h) * 0.1;
+  const track = `
+    <rect x="0" y="${groundY}" width="${w}" height="${h * 0.06}" fill="#2b3320"/>
+    <rect x="0" y="${groundY}" width="${w}" height="${h * 0.006}" fill="${accent}" opacity="0.7"/>
+    ${Array.from({ length: 8 }, (_, i) =>
+      `<rect x="${w * (0.04 + i * 0.125)}" y="${groundY + h * 0.024}" width="${w * 0.05}" height="${h * 0.006}" fill="${accent}" opacity="0.22"/>`).join('')}
+    ${[0.62, 0.82].map((fx) =>
+      `<rect x="${w * fx}" y="${groundY - h * 0.075}" width="${w * 0.012}" height="${h * 0.075}" fill="#5d6b3f"/>
+       <rect x="${w * fx - w * 0.016}" y="${groundY - h * 0.078}" width="${w * 0.044}" height="${h * 0.011}" fill="#8ea355"/>`).join('')}`;
   const duck = `
-    <ellipse cx="${bx}" cy="${by + s * 0.35}" rx="${s * 1.05}" ry="${s * 0.72}" fill="${accent}" opacity="0.85"/>
-    <circle cx="${bx + s * 0.72}" cy="${by - s * 0.45}" r="${s * 0.52}" fill="${accent}"/>
-    <circle cx="${bx + s * 0.86}" cy="${by - s * 0.58}" r="${s * 0.1}" fill="#1f2714"/>
-    <path d="M ${bx + s * 1.18} ${by - s * 0.42} L ${bx + s * 1.72} ${by - s * 0.3} L ${bx + s * 1.16} ${by - s * 0.12} Z" fill="#e0a53d"/>`;
+    <ellipse cx="${bx}" cy="${groundY + h * 0.004}" rx="${s * 1.1}" ry="${s * 0.16}" fill="#000" opacity="0.4"/>
+    <ellipse cx="${bx}" cy="${by + s * 0.35}" rx="${s * 1.05}" ry="${s * 0.7}" fill="${accent}"/>
+    <path d="M ${bx - s * 0.9} ${by + s * 0.3} q ${s * 0.5} ${s * 0.5} ${s * 1.1} ${s * 0.2}" fill="none" stroke="#7f9a34" stroke-width="${s * 0.16}"/>
+    <circle cx="${bx + s * 0.74}" cy="${by - s * 0.42}" r="${s * 0.5}" fill="${accent}"/>
+    <circle cx="${bx + s * 0.9}" cy="${by - s * 0.54}" r="${s * 0.09}" fill="#1f2714"/>
+    <path d="M ${bx + s * 1.18} ${by - s * 0.4} L ${bx + s * 1.66} ${by - s * 0.28} L ${bx + s * 1.16} ${by - s * 0.1} Z" fill="#e0a53d"/>
+    <rect x="${bx - s * 0.32}" y="${by + s * 0.95}" width="${s * 0.16}" height="${s * 0.5}" fill="#e0a53d"/>
+    <rect x="${bx + s * 0.24}" y="${by + s * 0.95}" width="${s * 0.16}" height="${s * 0.34}" fill="#c98f2f"/>`;
   return shell(
     w, h, accent,
-    `${duck}
+    `${track}
+     ${duck}
      <text x="${w * 0.09}" y="${h * 0.15}" ${disp} font-size="${w * 0.05}" fill="#eef5dc">DUCK LIFE</text>
      <text x="${w * 0.09}" y="${h * 0.15 + w * 0.042}" ${mono} font-size="${w * 0.021}" fill="${accent}">train it, race it, win the cup</text>
      ${bars}`,

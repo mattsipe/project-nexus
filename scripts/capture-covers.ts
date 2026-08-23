@@ -15,7 +15,7 @@
  * Requires `public/` served on :4322 (the script starts and stops its own
  * static server via `python3 -m http.server`).
  */
-import { chromium } from '@playwright/test';
+import { chromium, type Page } from '@playwright/test';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
 
@@ -45,6 +45,16 @@ interface Capture {
    */
   cropCapsule?: [number, number];
   cropHero?: [number, number];
+  /**
+   * Frame the shot on something the game put somewhere unpredictable.
+   *
+   * The fixed centre-crops above assume the interesting part of the game sits
+   * in the middle of the viewport. For a game whose subject wanders — Snake's
+   * snake ends a scripted run wherever it ends — that assumption fails
+   * intermittently, which is worse than failing every time. Return a rect in
+   * viewport coordinates and the screenshot is clipped to it instead.
+   */
+  clipTo?: (page: Page, kind: 'capsule' | 'hero') => Promise<{ x: number; y: number; width: number; height: number } | null>;
   /**
    * The mirror image of `padColor`, for games that only look right in
    * landscape. Engines that scale to fit width (melonJS, say) fill a portrait
@@ -109,10 +119,34 @@ const CAPTURES: Capture[] = [
     // viewport, so a portrait capture would clip it. Take the capsule as the
     // middle slice of the landscape hero instead.
     capsuleFromHero: true,
-    // ...and crop the hero to the board itself (720x470 plus its border),
-    // which otherwise floats in a wide field of empty ink at the 1280x720
-    // capture size. 843x474 is the 16:9 box around it.
-    cropHero: [474, 843],
+    // A fixed centre-crop framed the snake only about half the time — a
+    // scripted run ends wherever it ends. Frame on the snake itself instead.
+    // On the snake alone, not the snake and its food: including the food
+    // pulled the centre off toward whichever corner it had spawned in, and
+    // the capsule (the middle slice of this) then framed the food and missed
+    // the snake entirely.
+    clipTo: async (page) => {
+      const box = await page.evaluate(
+        () =>
+          (window as unknown as {
+            __nexusFrame?: { cx: number; cy: number; field: { left: number; top: number; right: number; bottom: number } };
+          }).__nexusFrame ?? null,
+      );
+      if (!box) return null;
+      // The whole board, not a tight window on the snake. A tight window
+      // frames beautifully when the snake is mid-board and clips it against
+      // an edge when it is not, and the capsule — the middle slice of this —
+      // then shows an empty corner. The board always contains the snake.
+      const height = box.field.bottom - box.field.top;
+      const width = Math.min(height * (16 / 9), box.field.right - box.field.left);
+      const h = Math.min(height, width * (9 / 16));
+      return {
+        x: Math.min(Math.max(box.cx - width / 2, box.field.left), box.field.right - width),
+        y: Math.min(Math.max(box.cy - h / 2, box.field.top), box.field.bottom - h),
+        width,
+        height: h,
+      };
+    },
     // A snake one block long is not a picture of Snake. Steering blind never
     // reliably found food, so the capture plays properly: read the food's
     // position off the DOM and chase it greedily until the tail is long
@@ -141,11 +175,18 @@ const CAPTURES: Capture[] = [
             const r = t.getBoundingClientRect();
             target = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
           }
+          const body = [...document.querySelectorAll('.snake-snakebody-alive')].map((el) => {
+            const r = el.getBoundingClientRect();
+            return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+          });
           return {
-            len: document.querySelectorAll('.snake-snakebody-alive').length,
+            len: body.length,
             block: h.width,
+            hx: h.left + h.width / 2,
+            hy: h.top + h.height / 2,
             dx: target.x - (h.left + h.width / 2),
             dy: target.y - (h.top + h.height / 2),
+            body,
             clear: {
               ArrowLeft: h.left - f.left,
               ArrowRight: f.right - h.right,
@@ -170,6 +211,11 @@ const CAPTURES: Capture[] = [
           const wanted = Math.abs(st.dx) > Math.abs(st.dy)
             ? [st.dx > 0 ? 'ArrowRight' : 'ArrowLeft', st.dy > 0 ? 'ArrowDown' : 'ArrowUp']
             : [st.dy > 0 ? 'ArrowDown' : 'ArrowUp', st.dx > 0 ? 'ArrowRight' : 'ArrowLeft'];
+          // Wall clearance only. Self-avoidance was tried and made things
+          // worse: which DOM node is the head and which is the tail tip is not
+          // knowable from order alone, and guessing wrong makes the chase
+          // refuse every direction. At the lengths this capture needs, a plain
+          // greedy chase survives comfortably.
           const key = [...wanted, 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].find(
             (k) => k !== flip[heading] && st.clear[k]! > st.block * 2,
           );
@@ -186,57 +232,78 @@ const CAPTURES: Capture[] = [
       // screenshot, aim for a modest length and simply restart on death — the
       // board resets to a one-block snake, so a failed attempt is detectable
       // and cheap to redo.
-      const TARGET = 12;
-      let best = 0;
-      for (let attempt = 0; attempt < 5; attempt++) {
-        // 1 — grow. A one-block snake is not a picture of Snake.
-        await chase('.snake-food-block', 90, (st) => st.len >= TARGET);
-        // 2 — bring it back to the middle, so the centre-crop the capsule
-        //     takes is guaranteed to contain it.
-        await chase(null, 30, (st) => Math.abs(st.dx) < st.block * 2 && Math.abs(st.dy) < st.block * 2);
+      // Grow, freeze, then check what actually survived.
+      //
+      // Two things made earlier versions of this flaky. Centring the snake
+      // after growing it added scripted ticks, and every extra tick is another
+      // chance to die — clipTo removes the need for it entirely. And accepting
+      // a run *before* pausing meant the snake could die in the gap between
+      // the check and the shutter, at which point the Space keypress meant for
+      // pause landed on the death dialog and started a fresh one-block game.
+      // So the freeze happens inside the attempt, and the length is verified
+      // after it.
+      const TARGET = 10;
+      const ACCEPT = 6;
+      let frozen = 0;
+      for (let attempt = 0; attempt < 6; attempt++) {
+        await chase('.snake-food-block', 80, (st) => st.len >= TARGET);
+        // Walk back toward the middle so the capsule's centre slice frames the
+        // snake rather than an empty corner. This used to be the main source
+        // of flakiness — it adds ticks, and every tick is a chance to die —
+        // but the freeze-and-verify below now catches that and retries, so it
+        // can only cost an attempt, never the capture.
+        await chase(null, 26, (st) => Math.abs(st.dx) < st.block * 3 && Math.abs(st.dy) < st.block * 3);
 
-        const st = await read(null);
-        if (st && st.len >= TARGET) {
-          // 3 — one deliberate turn, so the body reads as a snake, not a bar.
-          const turn = (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'] as const)
-            .filter((k) => k !== heading && k !== flip[heading])
-            .sort((a, b) => st.clear[b]! - st.clear[a]!)[0];
-          if (turn) {
-            await page.keyboard.press(turn);
-            await page.waitForTimeout(330);
+        const alive = await read(null);
+        if (alive && alive.len >= ACCEPT) {
+          await page.keyboard.press('Space');   // pause
+          await page.waitForTimeout(200);
+          const after = await page.evaluate(() => {
+            const dead = document.querySelector('.snake-try-again-dialog') as HTMLElement | null;
+            if (dead && dead.offsetParent !== null) return 0;
+            return document.querySelectorAll('.snake-snakebody-alive').length;
+          });
+          if (after >= ACCEPT) {
+            frozen = after;
+            break;
           }
-          best = st.len;
-          break;
         }
 
-        // Died, or ran out of ticks short of TARGET. Restart and try again.
         const again = page.getByRole('button', { name: 'Play Again?' });
         if (await again.isVisible().catch(() => false)) {
           await again.click();
-          await page.waitForTimeout(300);
-          heading = '';
-        } else if (st) {
-          best = st.len;
-          break; // alive but short — good enough, take it
-        } else {
-          break;
+          await page.waitForTimeout(350);
         }
+        heading = '';
       }
-      if (!best) throw new Error('snake capture: could not keep a snake alive long enough');
+      if (!frozen) throw new Error(`snake capture: no run reached ${ACCEPT} segments alive`);
 
-      // Freeze. The snake keeps moving after prepare() returns, and with a
-      // coiled body the next few ticks are as likely to end in a self-collision
-      // as not — which would replace the cover with a "You died :(" dialog.
-      // Pausing captures exactly the position that was played; the pause
-      // overlay is hidden for the shot, being transient chrome rather than
-      // part of the game's picture.
-      await page.keyboard.press('Space');
-      await page.waitForTimeout(150);
+      // Record the framing NOW, while the board is paused but nothing has
+      // been hidden yet. Measuring it later, from clipTo, gave zero-sized
+      // rects and a window parked in the board's top-left corner.
+      await page.evaluate(() => {
+        const parts = [...document.querySelectorAll('.snake-snakebody-alive')].map((el) =>
+          el.getBoundingClientRect(),
+        );
+        const field = document.querySelector('.snake-playing-field');
+        if (!parts.length || !field) return;
+        const f = field.getBoundingClientRect();
+        (window as unknown as { __nexusFrame: unknown }).__nexusFrame = {
+          cx: (Math.min(...parts.map((r) => r.left)) + Math.max(...parts.map((r) => r.right))) / 2,
+          cy: (Math.min(...parts.map((r) => r.top)) + Math.max(...parts.map((r) => r.bottom))) / 2,
+          field: { left: f.left, top: f.top, right: f.right, bottom: f.bottom },
+        };
+      });
+
+      // The pause overlay is transient chrome, and the author's credit strip
+      // belongs in the game rather than in its cover art — the same
+      // attribution is on the detail page and /credits.
       await page.addStyleTag({
         content:
-          '.snake-pause-screen, .snake-try-again-dialog, .snake-welcome-dialog { display: none !important; }',
+          '.snake-pause-screen, .snake-try-again-dialog, .snake-welcome-dialog,' +
+          '.snake-panel-component { display: none !important; }',
       });
-      await page.waitForTimeout(100);
+      await page.waitForTimeout(120);
     },
   },
   {
@@ -342,6 +409,10 @@ const CAPTURES: Capture[] = [
   {
     slug: 'flappy',
     path: '/play/flappy/index.html',
+    // The playfield is a tall column with a lot of empty sky; crop onto the
+    // band the bird and the pipe gap actually occupy.
+    cropCapsule: [560, 420],
+    cropHero: [400, 711],
     // Space leaves the splash; after that the bird needs a flap roughly every
     // third of a second to hold altitude. Too few and it is on the ground when
     // the shutter opens, too many and it climbs into the ceiling. Stop as soon
@@ -374,26 +445,47 @@ const CAPTURES: Capture[] = [
   {
     slug: 'belt-runner',
     path: '/play/belt-runner/index.html',
-    // Vector line art on white — the game's own look. The playfield is a
-    // fixed 780x540 box, so both captures crop into it rather than keeping
-    // the page's white margin.
-    cropCapsule: [532, 399],
-    cropHero: [438, 778],
+    // Vector line art, light-on-ink since the bundle was inverted for the
+    // launcher. The playfield is a fixed 780x540 box — wider than the 600px
+    // capsule viewport, so the capsule is taken as the middle slice of the
+    // landscape hero rather than a clipped portrait shot.
+    capsuleFromHero: true,
+    cropHero: [546, 786],
     prepare: async (page) => {
       await page.waitForTimeout(1200);
-      // One press leaves 'waiting'. After that the ship has a single life, so
-      // firing into the field and then flying through it ends the run and
-      // puts the start prompt back on screen — turn and shoot, don't charge.
-      await page.keyboard.press('Space');
-      await page.waitForTimeout(700);
-      for (let i = 0; i < 6; i++) {
-        await page.keyboard.down('ArrowLeft');
-        await page.waitForTimeout(120);
-        await page.keyboard.up('ArrowLeft');
-        await page.keyboard.press('Space');
-        await page.waitForTimeout(260);
+      // Game.FSM.state drives everything: 'waiting' is the start prompt, 'run'
+      // is a live game. Wait for the real transition rather than guessing at
+      // timings — the ship has one life, so a run that ends early puts the
+      // prompt back and the cover becomes a screenshot of a title screen.
+      // KEY_STATUS.space is sampled once per frame, so a normal press is over
+      // before the game looks at it — hold it across a few frames instead.
+      // Same shape of problem as radius-raid's menu.
+      for (let attempt = 0; attempt < 4; attempt++) {
+        await page.keyboard.down('Space');
+        await page.waitForTimeout(140);
+        await page.keyboard.up('Space');
+        await page.waitForTimeout(700);
+        const running = await page.evaluate(
+          () => (window as unknown as { Game: { FSM: { state: string } } }).Game.FSM.state === 'run',
+        );
+        if (running) break;
       }
-      await page.waitForTimeout(400);
+      // Deliberately do NOT shoot. Destroying asteroids empties the field,
+      // and an empty field is exactly what made the first version of this
+      // cover look like a failed render. Just turn on the spot so the ship is
+      // angled rather than axis-aligned, and let the five spawned asteroids
+      // drift into frame.
+      // Five asteroids across a 780x540 field leaves most of the frame empty,
+      // and the capsule is a slice of that frame. Spawn a few more for the
+      // shot; the shipped game's own difficulty curve is untouched.
+      await page.evaluate(() =>
+        (window as unknown as { Game: { spawnAsteroids: (n: number) => void } }).Game.spawnAsteroids(6),
+      );
+      await page.keyboard.down('ArrowLeft');
+      await page.waitForTimeout(260);
+      await page.keyboard.up('ArrowLeft');
+      await page.waitForTimeout(1700);
+      await page.waitForTimeout(300);
     },
   },
   {
@@ -535,7 +627,9 @@ async function main(): Promise<void> {
         const capsulePage = await browser.newPage({ viewport: CAPSULE });
         await capsulePage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
         await c.prepare(capsulePage, 'capsule');
-        await capsulePage.screenshot({ path: capsulePath });
+        const capsuleClip = c.clipTo ? await c.clipTo(capsulePage, 'capsule') : null;
+        await capsulePage.screenshot({ path: capsulePath, ...(capsuleClip ? { clip: capsuleClip } : {}) });
+        if (capsuleClip) await runSips(['-z', String(CAPSULE.height), String(CAPSULE.width), capsulePath]);
         await capsulePage.close();
         if (c.cropCapsule) {
           await runSips(['-c', String(c.cropCapsule[0]), String(c.cropCapsule[1]), capsulePath]);
@@ -556,7 +650,9 @@ async function main(): Promise<void> {
         const heroPage = await browser.newPage({ viewport: HERO });
         await heroPage.goto(`${BASE}${c.path}`, { waitUntil: 'load', timeout: 15000 });
         await c.prepare(heroPage, 'hero');
-        await heroPage.screenshot({ path: heroPath });
+        const heroClip = c.clipTo ? await c.clipTo(heroPage, 'hero') : null;
+        await heroPage.screenshot({ path: heroPath, ...(heroClip ? { clip: heroClip } : {}) });
+        if (heroClip) await runSips(['-z', String(HERO.height), String(HERO.width), heroPath]);
         await heroPage.close();
         if (c.cropHero) {
           await runSips(['-c', String(c.cropHero[0]), String(c.cropHero[1]), heroPath]);

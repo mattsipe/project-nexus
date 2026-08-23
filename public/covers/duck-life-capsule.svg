@@ -6,10 +6,21 @@
     </radialGradient>
     <rect width="600" height="800" fill="url(#g)"/>
   
-    <ellipse cx="300" cy="333.4" rx="88.20000000000002" ry="60.48000000000001" fill="#a8d13c" opacity="0.85"/>
-    <circle cx="360.48" cy="266.2" r="43.68000000000001" fill="#a8d13c"/>
-    <circle cx="372.24" cy="255.28" r="8.400000000000002" fill="#1f2714"/>
-    <path d="M 399.12 268.72 L 444.48 278.8 L 397.44 293.92 Z" fill="#e0a53d"/>
+    <rect x="0" y="400" width="600" height="48" fill="#2b3320"/>
+    <rect x="0" y="400" width="600" height="4.8" fill="#a8d13c" opacity="0.7"/>
+    <rect x="24" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="99" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="174" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="249" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="324" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="399" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="474" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/><rect x="549" y="419.2" width="30" height="4.8" fill="#a8d13c" opacity="0.22"/>
+    <rect x="372" y="340" width="7.2" height="60" fill="#5d6b3f"/>
+       <rect x="362.4" y="337.6" width="26.4" height="8.799999999999999" fill="#8ea355"/><rect x="491.99999999999994" y="340" width="7.2" height="60" fill="#5d6b3f"/>
+       <rect x="482.3999999999999" y="337.6" width="26.4" height="8.799999999999999" fill="#8ea355"/>
+     
+    <ellipse cx="204.00000000000003" cy="403.2" rx="66" ry="9.6" fill="#000" opacity="0.4"/>
+    <ellipse cx="204.00000000000003" cy="373" rx="63" ry="42" fill="#a8d13c"/>
+    <path d="M 150.00000000000003 370 q 30 30 66 12" fill="none" stroke="#7f9a34" stroke-width="9.6"/>
+    <circle cx="248.40000000000003" cy="326.8" r="30" fill="#a8d13c"/>
+    <circle cx="258" cy="319.6" r="5.3999999999999995" fill="#1f2714"/>
+    <path d="M 274.8 328 L 303.6 335.2 L 273.6 346 Z" fill="#e0a53d"/>
+    <rect x="184.80000000000004" y="409" width="9.6" height="30" fill="#e0a53d"/>
+    <rect x="218.40000000000003" y="409" width="9.6" height="20.400000000000002" fill="#c98f2f"/>
      <text x="54" y="120" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="30" fill="#eef5dc">DUCK LIFE</text>
      <text x="54" y="145.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.600000000000001" fill="#a8d13c">train it, race it, win the cup</text>
      <text x="60" y="470.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12" fill="#9aa87a">running</text>

@@ -1032,6 +1032,17 @@ $(function () {
 
   var context = canvas[0].getContext("2d");
 
+  // [Nexus] Upstream draws black vector strokes on a white page — correct for
+  // 1979, but inside a near-black launcher the whole card read as a blank
+  // white rectangle. Only two strokeStyle assignments exist in this file (the
+  // debug grid), so everything else inherits the context default: set it once
+  // here and the entire game inverts to light-on-ink. Geometry untouched.
+  context.strokeStyle = "#d6e5e2";
+  context.fillStyle = "#d6e5e2";
+  // 1px hairlines all but vanish on a 235px library card; 2 keeps the vector
+  // look while staying legible when the cover is scaled down.
+  context.lineWidth = 2;
+
   Text.context = context;
   Text.face = vector_battle;
 

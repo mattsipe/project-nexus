@@ -41,3 +41,13 @@ pre-muted upstream and are only unmuted once the player starts firing.
 
 Audit (2026-08-21): no analytics, no third-party requests, no absolute paths.
 Sound effects are triggered by collisions and firing, not on load.
+
+2026-08-22 — inverted for the launcher
+- game.js: the 2d context's default strokeStyle and fillStyle are set once, at
+  creation, to #d6e5e2. Upstream draws black vector strokes on a white page;
+  inside Nexus's near-black player the whole game read as a blank white
+  rectangle, and its library cover looked like a failed render. Only two
+  strokeStyle assignments exist in the file (both in the debug grid), so
+  everything else inherits this default. No geometry, physics or logic changed.
+- index.html: page background #fff -> #060e0f and the canvas border black ->
+  #1f3330, to match.

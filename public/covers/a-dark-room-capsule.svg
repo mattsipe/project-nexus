@@ -7,10 +7,11 @@
     <rect width="600" height="800" fill="url(#g)"/>
   <text x="60" y="120" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="30" fill="#efe7da">A DARK ROOM</text>
      <text x="60" y="145.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.2" fill="#d9cdb8">the fire is burning.</text>
-     <circle cx="300" cy="404" r="180" fill="#d9cdb8" opacity="0.05"/>
-     <path d="M 300 248 C 390 350 374.4 464 300 464 C 225.6 464 210 350 300 248 Z" fill="#d9cdb8" opacity="0.13"/>
-     <path d="M 300 293.6 C 355.8 356.84 346.128 427.52 300 427.52 C 253.872 427.52 244.2 356.84 300 293.6 Z" fill="#d9cdb8" opacity="0.28"/>
-     <path d="M 300 332 C 327 362.6 322.32 396.8 300 396.8 C 277.68 396.8 273 362.6 300 332 Z" fill="#d9cdb8" opacity="0.6"/>
+     <circle cx="300" cy="404" r="228" fill="#b8632a" opacity="0.14"/>
+     <circle cx="300" cy="404" r="132" fill="#d4772e" opacity="0.18"/>
+     <path d="M 300 242 C 394.5 349.1 378.12 468.8 300 468.8 C 221.88 468.8 205.5 349.1 300 242 Z" fill="#c2551f" opacity="0.55"/>
+     <path d="M 300 288.8 C 359.4 356.12 349.104 431.36 300 431.36 C 250.89600000000002 431.36 240.6 356.12 300 288.8 Z" fill="#e08b2a" opacity="0.85"/>
+     <path d="M 300 329.6 C 328.8 362.24 323.808 398.72 300 398.72 C 276.192 398.72 271.2 362.24 300 329.6 Z" fill="#ffd27a" opacity="1"/>
      <line x1="60" y1="540" x2="330" y2="540" stroke="#3a3630" stroke-width="2"/>
      <text x="60" y="526.4" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12" fill="#6d665d">STORES</text>
      <text x="60" y="576" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="15.6" fill="#8f877c">wood</text>

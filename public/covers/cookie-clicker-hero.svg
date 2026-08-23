@@ -5,11 +5,27 @@
       <stop offset="100%" stop-color="#c98b4a" stop-opacity="0"/>
     </radialGradient>
     <rect width="1280" height="720" fill="url(#g)"/>
-  <circle cx="640" cy="338.4" r="187.20000000000002" fill="#c98b4a" opacity="0.9"/>
-     <circle cx="640" cy="338.4" r="187.20000000000002" fill="none" stroke="#8a5c2c" stroke-width="11.232000000000001"/>
-     <circle cx="640" cy="338.4" r="14.040000000000001" fill="#5c3a1e"/><circle cx="610.0605918596285" cy="365.88003721422456" r="18.158400000000004" fill="#5c3a1e"/><circle cx="644.9142362062872" cy="281.1383942532989" r="22.2768" fill="#5c3a1e"/><circle cx="682.9884294250298" cy="394.1364938872365" r="14.040000000000001" fill="#5c3a1e"/><circle cx="559.9106922347472" cy="324.5513465619847" r="18.158400000000004" fill="#5c3a1e"/><circle cx="716.437398981893" cy="289.2580926058273" r="22.2768" fill="#5c3a1e"/><circle cx="614.7138081804374" cy="434.67944813826955" r="14.040000000000001" fill="#5c3a1e"/><circle cx="589.800835088716" cy="243.3174670202456" r="18.158400000000004" fill="#5c3a1e"/><circle cx="748.2701523430406" cy="376.9971365821616" r="22.2768" fill="#5c3a1e"/><circle cx="527.714324191919" cy="385.89328851680756" r="14.040000000000001" fill="#5c3a1e"/><circle cx="693.3454026656461" cy="221.48347394252096" r="18.158400000000004" fill="#5c3a1e"/>
+  <circle cx="396.8" cy="331.2" r="144" fill="#c98b4a" opacity="0.92"/>
+     <circle cx="396.8" cy="331.2" r="144" fill="none" stroke="#8a5c2c" stroke-width="10.080000000000002"/>
+     <circle cx="396.8" cy="331.2" r="10.799999999999999" fill="#5c3a1e"/><circle cx="373.7696860458681" cy="352.33849016478814" r="13.968" fill="#5c3a1e"/><circle cx="400.58018169714404" cy="287.1526109640761" r="17.136" fill="#5c3a1e"/><circle cx="429.86802263463835" cy="374.074226067105" r="10.799999999999999" fill="#5c3a1e"/><circle cx="335.19284018057476" cy="320.5471896630652" r="13.968" fill="#5c3a1e"/><circle cx="455.59799921684083" cy="293.3985327737133" r="17.136" fill="#5c3a1e"/><circle cx="377.34908321572107" cy="405.261113952515" r="10.799999999999999" fill="#5c3a1e"/><circle cx="358.1852577605508" cy="258.0595900155736" r="13.968" fill="#5c3a1e"/><circle cx="480.08473257156976" cy="360.89010506320125" r="17.136" fill="#5c3a1e"/><circle cx="310.42640322455316" cy="367.73329885908277" r="10.799999999999999" fill="#5c3a1e"/><circle cx="437.8349251274201" cy="241.26421072501614" r="13.968" fill="#5c3a1e"/>
+     <rect x="716.8000000000001" y="244.8" width="460.79999999999995" height="48.4128" rx="10.24" fill="#2a1a0d" stroke="#4a3018" stroke-width="1"/>
+        <rect x="716.8000000000001" y="244.8" width="7.68" height="48.4128" fill="#c98b4a" opacity="0.8"/>
+        <text x="752.6400000000001" y="266.0544" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#f3e3cf">cursor</text>
+        <text x="752.6400000000001" y="283.76640000000003" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="21.76" fill="#c98b4a">218</text>
+        <text x="1149.4399999999998" y="275.5008" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="34.56" fill="#8a5c2c" text-anchor="end">15</text><rect x="716.8000000000001" y="303.84000000000003" width="460.79999999999995" height="48.4128" rx="10.24" fill="#2a1a0d" stroke="#4a3018" stroke-width="1"/>
+        <rect x="716.8000000000001" y="303.84000000000003" width="7.68" height="48.4128" fill="#c98b4a" opacity="0.8"/>
+        <text x="752.6400000000001" y="325.0944" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#f3e3cf">grandma</text>
+        <text x="752.6400000000001" y="342.80640000000005" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="21.76" fill="#c98b4a">1.1K</text>
+        <text x="1149.4399999999998" y="334.54080000000005" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="34.56" fill="#8a5c2c" text-anchor="end">8</text><rect x="716.8000000000001" y="362.88" width="460.79999999999995" height="48.4128" rx="10.24" fill="#2a1a0d" stroke="#4a3018" stroke-width="1"/>
+        <rect x="716.8000000000001" y="362.88" width="7.68" height="48.4128" fill="#c98b4a" opacity="0.8"/>
+        <text x="752.6400000000001" y="384.13439999999997" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#f3e3cf">farm</text>
+        <text x="752.6400000000001" y="401.8464" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="21.76" fill="#c98b4a">12K</text>
+        <text x="1149.4399999999998" y="393.5808" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="34.56" fill="#8a5c2c" text-anchor="end">3</text><rect x="716.8000000000001" y="421.92" width="460.79999999999995" height="48.4128" rx="10.24" fill="#2a1a0d" stroke="#4a3018" stroke-width="1"/>
+        <rect x="716.8000000000001" y="421.92" width="7.68" height="48.4128" fill="#c98b4a" opacity="0.8"/>
+        <text x="752.6400000000001" y="443.1744" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#f3e3cf">mine</text>
+        <text x="752.6400000000001" y="460.88640000000004" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="21.76" fill="#c98b4a">130K</text>
+        <text x="1149.4399999999998" y="452.62080000000003" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="34.56" fill="#8a5c2c" text-anchor="end">1</text>
      <text x="115.19999999999999" y="108" font-family="Archivo, Arial Narrow, sans-serif" font-weight="800" font-size="58.879999999999995" fill="#f3e3cf">COOKIE CLICKER</text>
-     <text x="115.19999999999999" y="159.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="26.880000000000003" fill="#c98b4a">cursors · grandmas · portals · time machines</text>
-     <text x="640" y="597.6" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="40.96" fill="#f3e3cf" text-anchor="middle">1.4 million</text>
-     <text x="640" y="643.6800000000001" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="28.159999999999997" fill="#c98b4a" text-anchor="middle">cookies per second</text>
+     <text x="115.19999999999999" y="159.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="25.6" fill="#c98b4a">1.4 million per second</text>
+     <text x="396.8" y="529.2" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="28.159999999999997" fill="#8a5c2c" text-anchor="middle">click</text>
 </svg>
