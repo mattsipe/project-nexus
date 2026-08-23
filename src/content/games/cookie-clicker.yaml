@@ -10,9 +10,12 @@ delivery:
   mode: external
   url: https://orteil.dashnet.org/cookieclicker/
   reason: >-
-    The game is proprietary with no redistribution grant, and orteil.dashnet.org
-    answers non-browser clients with a 403 behind a Cloudflare challenge.
-    Orteil has also objected to the game being embedded elsewhere. Verified
+    Proprietary, with no redistribution grant. Embedding is not possible either:
+    orteil.dashnet.org sits behind a Cloudflare bot challenge, and the challenge
+    page itself sends X-Frame-Options SAMEORIGIN, so any visitor who gets
+    challenged would see an empty frame. Sites that appear to embed Cookie
+    Clicker are serving their own copied build, which we will not do. Orteil has
+    also objected to the game being embedded. Re-verified in a real browser on
     2026-08-22.
 accent: "#c98b4a"
 cover:

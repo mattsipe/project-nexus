@@ -102,11 +102,22 @@ const badges = [
 
         {
           data.delivery.mode === 'external' && (
-            <p class="mt-4 max-w-prose text-sm text-text-faint">
-              {data.source.author} has not licensed this game for us to host, and their site does
-              not permit embedding. Rather than copy it without permission, we send you to the
-              original.
-            </p>
+            <div class="mt-4 max-w-prose rounded-lg border border-edge bg-raised/60 p-4">
+              <p class="flex items-center gap-1.5 font-display text-sm font-bold text-emerald">
+                Opens externally
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M7 17 17 7M9 7h8v8" />
+                </svg>
+              </p>
+              <p class="mt-1.5 text-sm text-text-dim">
+                This game is not played on Nexus. The Play button opens{' '}
+                <span class="text-text">{new URL(data.delivery.url).hostname.replace(/^www\./, '')}</span>{' '}
+                in a new tab.
+              </p>
+              {/* The manifest's own auditable reason, rather than a generic
+                  apology — these differ per game and the difference matters. */}
+              <p class="mt-2 text-sm text-text-faint">{data.delivery.reason}</p>
+            </div>
           )
         }
 

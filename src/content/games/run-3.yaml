@@ -10,10 +10,13 @@ delivery:
   mode: external
   url: https://www.coolmathgames.com/0-run-3
   reason: >-
-    Proprietary with no redistribution grant, and coolmathgames.com sends
-    X-Frame-Options SAMEORIGIN. Y8 was checked for a publisher-provided embed
-    endpoint, as used for Slope, and does not carry this game. Verified
-    2026-08-22.
+    Proprietary, with no redistribution grant, and coolmathgames.com sends
+    X-Frame-Options SAMEORIGIN. Y8 was re-checked on 2026-08-22 using its actual
+    underscore slug (y8.com/embed/run_3, which the previous audit missed): it
+    responds without framing headers, but it serves a 2017 Flash upload played
+    through Ruffle rather than the publisher's current build, and unlike Slope
+    the Y8 page offers no iFrame Embed snippet. An unblocked URL is not an
+    offered route, so it does not meet the bar set in docs/DECISIONS.md #24.
 accent: "#a06ff0"
 cover:
   capsule: /covers/run-3-capsule.svg

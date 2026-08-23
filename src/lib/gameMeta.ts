@@ -103,6 +103,20 @@ export function licenseLabel(license: string): string {
 }
 
 /**
+ * The host a game actually runs on, for the card's provider chip and the
+ * detail page's "Runs on" row. Bare — `www.` stripped — because the chip is a
+ * label, not a link. Returns null for anything served from our own origin.
+ */
+export function deliveryHost(urlish: string | null): string | null {
+  if (!urlish || urlish.startsWith('/')) return null;
+  try {
+    return new URL(urlish).hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Everything the launcher needs about one game — rendering, filtering, and
  * launching it — flattened into one small object and inlined into the page at
  * build time. At this catalogue size that beats a runtime fetch: the library

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { LibraryDoc } from '../../lib/gameMeta.ts';
+import { deliveryHost, type LibraryDoc } from '../../lib/gameMeta.ts';
 import { setStageHue } from '../../lib/stageHue.ts';
 import FavoriteButton from './FavoriteButton.tsx';
 
@@ -36,6 +36,9 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
   const isHero = variant === 'hero';
   const cover = isHero ? doc.hero : doc.capsule;
   const playable = doc.src !== null;
+  // Embedded games run on someone else's origin; naming it on the card is the
+  // honest version of "this is not ours". Self-hosted games return null.
+  const host = deliveryHost(doc.mode === 'embed' ? doc.src : doc.officialUrl);
 
   const art = (
     <div className={`relative overflow-hidden bg-ink ${isHero ? 'aspect-video' : 'aspect-[3/4]'}`}>
@@ -69,13 +72,26 @@ const GameCapsule = forwardRef<HTMLButtonElement, Props>(function GameCapsule(
           )}
         </div>
       )}
-      {!playable && (
-        // Above the title strip on the left, because top-right is the (i)
-        // affordance on every card and top-left is the favourite. It reads as
-        // a property of the card rather than a control, which is what it is.
-        <span className="absolute bottom-10 left-2.5 rounded-md bg-ink/85 px-2 py-1 text-[10px] font-medium text-text-dim backdrop-blur-sm">
-          Official site ↗
+      {/* Delivery mode, told consistently across the grid:
+            selfhost — nothing at all, because "it plays here" is the default;
+            embed    — a quiet host chip, on hover/focus only;
+            external — a persistent warning, because leaving the site is the
+                       one thing a player must know BEFORE clicking.
+          All three sit above the title strip on the left: top-right is the (i)
+          affordance on every card and top-left is the favourite. */}
+      {!playable ? (
+        <span className="absolute bottom-10 left-2.5 flex items-center gap-1 rounded-md border border-emerald/35 bg-ink/90 px-2 py-1 text-[10px] font-semibold text-emerald backdrop-blur-sm">
+          Opens externally
+          <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M7 17 17 7M9 7h8v8" />
+          </svg>
         </span>
+      ) : (
+        host && (
+          <span className="absolute bottom-10 left-2.5 rounded-md bg-ink/85 px-2 py-1 text-[10px] font-medium text-text-faint opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+            {host}
+          </span>
+        )
       )}
     </div>
   );
