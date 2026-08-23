@@ -1,0 +1,52 @@
+title: Flappy
+tagline: One button, one gap, one more go. It never gets easier.
+description: >-
+  The endless side-scroller in its purest form: tap to rise, stop tapping to
+  fall, and thread a gap that never widens. Built on Nebez Briefkani's
+  open-source recreation, whose gravity and pipe spacing are the reason it
+  feels right, with artwork drawn for Nexus.
+categories: [arcade]
+tags: [one-button, endless, high-score, one-more-go]
+delivery:
+  mode: selfhost
+  path: /play/flappy/index.html
+player:
+  # The playfield is a fixed 9:16-ish column that the game scales to its
+  # container; letterboxing it keeps the pipes a sensible width on a desktop
+  # instead of stretching the gap across a 1920px frame.
+  aspect: "3/4"
+accent: "#f2d33f"
+cover:
+  capsule: /covers/flappy-capsule.png
+  hero: /covers/flappy-hero.png
+  source: captured
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Screenshot of our own self-hosted build, captured via
+    scripts/capture-covers.ts on 2026-08-22. Every sprite in shot is original
+    to Nexus (scripts/make-flappy-art.ts); the code is Apache-2.0. No
+    third-party rights question.
+weight: 73
+added: "2026-08-22"
+controls: [keyboard, mouse, touch]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Nebez Briefkani
+  homepage: https://nebezb.com/floppybird/
+  repo: https://github.com/nebez/floppybird
+  license: Apache-2.0
+  licenseUrl: https://github.com/nebez/floppybird/blob/master/LICENSE
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    LICENSE read at repo root on 2026-08-22: Apache-2.0, covering Nebez
+    Briefkani's code. It does NOT cover the repository's assets/ directory,
+    which shipped the original Flappy Bird sprite and sound set — the README
+    calls the project a "vintage knockoff", and Dong Nguyen granted no
+    redistribution rights. Every one of those files was deleted before
+    anything was committed and replaced with artwork drawn for Nexus
+    (scripts/make-flappy-art.ts). Only the code, which the licence does cover,
+    is upstream's. Nexus titles it "Flappy" rather than using the original
+    commercial title, and claims no affiliation with Dong Nguyen or dotGEARS;
+    the game credits the concept to him and the recreation to Nebez Briefkani.
+    See NEXUS-MODIFICATIONS.txt and docs/DECISIONS.md.

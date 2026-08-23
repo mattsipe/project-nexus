@@ -340,20 +340,34 @@ const CAPTURES: Capture[] = [
     },
   },
   {
-    slug: 'clumsy-bird',
-    path: '/play/clumsy-bird/index.html',
-    // Enter leaves the title screen; a few taps put the bird mid-flight
-    // between pipes instead of on the ground at the start of a run.
+    slug: 'flappy',
+    path: '/play/flappy/index.html',
+    // Space leaves the splash; after that the bird needs a flap roughly every
+    // third of a second to hold altitude. Too few and it is on the ground when
+    // the shutter opens, too many and it climbs into the ceiling. Stop as soon
+    // as a pipe pair is on screen beside the bird, which is the picture that
+    // actually says what this game is.
     prepare: async (page) => {
-      await page.waitForTimeout(1800);
-      await page.keyboard.press('Enter');
+      // The credit strip belongs in the game, not in its cover art; the
+      // attribution it carries is also on the detail page and /credits.
+      await page.addStyleTag({ content: '#footer { display: none !important; }' });
       await page.waitForTimeout(900);
-      // Flap on a rhythm that roughly holds altitude. Too few taps and the
-      // bird is on the ground; too many and it climbs into the top pipe and
-      // the shutter catches the death fade, which is a white screen.
-      for (let i = 0; i < 5; i++) {
+      await page.keyboard.press('Space');
+      for (let i = 0; i < 16; i++) {
         await page.keyboard.press('Space');
-        await page.waitForTimeout(340);
+        await page.waitForTimeout(300);
+        const framed = await page.evaluate(() => {
+          const bird = document.querySelector('#player');
+          const pipes = [...document.querySelectorAll('.pipe')];
+          if (!bird || !pipes.length) return false;
+          const b = bird.getBoundingClientRect();
+          // A pipe whose gap the bird is about to fly through.
+          return pipes.some((p) => {
+            const r = p.getBoundingClientRect();
+            return r.left > b.right - 40 && r.left < b.right + 260;
+          });
+        });
+        if (framed && i > 3) break;
       }
     },
   },
