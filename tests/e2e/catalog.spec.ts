@@ -97,14 +97,14 @@ test('the search box is always present and narrows the grid live', async ({ page
   await page.keyboard.press('Control+k');
   await expect(input).toBeFocused();
 
-  // Subsequence matching: "srpnt" is not a substring of "Neon Serpent", and a
-  // title hit outranks the tagline hits the same query picks up elsewhere
+  // Subsequence matching: "spchgrs" is not a substring of "Space Huggers", and
+  // a title hit outranks the tagline hits the same query picks up elsewhere
   // (searchGames penalises those by 300). Asserting on the *ranking* rather
   // than on an exact result count, because the count is a function of how many
   // games happen to be in the catalogue.
-  await input.fill('srpnt');
+  await input.fill('spchgrs');
   const hits = page.locator('[data-capsule]');
-  await expect(hits.first()).toContainText('Neon Serpent');
+  await expect(hits.first()).toContainText('Space Huggers');
   expect(await hits.count()).toBeLessThan(playable.length / 3);
 
   // Clearing the query restores the full grid.
@@ -146,17 +146,17 @@ test('launching a game inline records it in Continue, with no page navigation', 
   await waitForLibrary(page);
   const urlBefore = page.url();
 
-  const neonSerpent = page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' });
-  await neonSerpent.click();
+  const snake = page.locator('[data-capsule]').filter({ hasText: 'Snake' }).first();
+  await snake.click();
   expect(page.url()).toBe(urlBefore); // click-to-launch never navigates
 
-  const frame = page.frameLocator('iframe[title="Neon Serpent"]');
-  await expect(frame.getByRole('heading', { name: 'Neon Serpent' })).toBeVisible();
+  const frame = page.frameLocator('iframe[title="Snake"]');
+  await expect(frame.getByRole('button', { name: 'Play Game' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
   // Launching immediately adds the game to Continue, so by this point it
   // legitimately appears twice on the page (Continue row + main grid,
   // both hidden under the player overlay) — assert at least one, not "the".
-  await expect(page.getByRole('link', { name: 'About Neon Serpent' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'About Snake' }).first()).toBeVisible();
   await waitForLaunchAnimation(page);
 
   await page.getByRole('button', { name: '← Back' }).click();
@@ -175,16 +175,19 @@ test('arrow keys move focus around the library grid', async ({ page }) => {
   await expect(capsules.nth(0)).toBeFocused();
 });
 
-test('Neon Serpent actually plays', async ({ page }) => {
-  await page.goto('/play/neon-serpent/index.html');
-  await page.getByRole('button', { name: 'Start' }).click();
-  await expect(page.locator('#overlay')).toBeHidden();
-  // The snake must be moving: steer it and confirm the game survives a few ticks.
+test('Snake actually plays', async ({ page }) => {
+  await page.goto('/play/snake/index.html');
+  // Nexus's own theme must be the one that loads — the stock themes fight the
+  // launcher's palette, and a 404'd stylesheet would silently fall back.
+  await expect(page.locator('link#style')).toHaveAttribute('href', /nexus-snake\.css/);
+  await page.getByRole('button', { name: 'Play Game' }).click();
+
+  // The snake must actually be on the board and steerable.
+  await expect(page.locator('.snake-snakebody-alive').first()).toBeVisible();
+  await expect(page.locator('.snake-food-block').first()).toBeVisible();
   await page.keyboard.press('ArrowDown');
   await page.waitForTimeout(600);
-  await expect(page.locator('#score')).toBeVisible();
-  await page.keyboard.press('p');
-  await expect(page.getByRole('heading', { name: 'Paused' })).toBeVisible();
+  await expect(page.getByText(/Length:/)).toBeVisible();
 });
 
 test('every page is free of horizontal overflow on a laptop viewport', async ({ page }) => {
@@ -202,7 +205,7 @@ test('the player covers the rail completely', async ({ page }) => {
   // alone did not lift it above the rail. It is portalled to <body> now.
   await page.goto('/');
   await waitForLibrary(page);
-  await page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' }).click();
+  await page.locator('[data-capsule]').filter({ hasText: 'Snake' }).first().click();
   await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
   await waitForLaunchAnimation(page);
 

@@ -101,32 +101,142 @@ const CAPTURES: Capture[] = [
     },
   },
   {
-    slug: 'neon-serpent',
-    path: '/play/neon-serpent/index.html',
-    prepare: async (page, kind) => {
-      await page.getByRole('button', { name: 'Start' }).click();
+    slug: 'snake',
+    path: '/play/snake/index.html',
+    // Crop to the board. The full page is mostly empty playing field plus a
+    // theme picker, and a cover should show the game, not its chrome.
+    // The board is a fixed 720px-wide box, wider than the 600px capsule
+    // viewport, so a portrait capture would clip it. Take the capsule as the
+    // middle slice of the landscape hero instead.
+    capsuleFromHero: true,
+    // ...and crop the hero to the board itself (720x470 plus its border),
+    // which otherwise floats in a wide field of empty ink at the 1280x720
+    // capture size. 843x474 is the 16:9 box around it.
+    cropHero: [474, 843],
+    // A snake one block long is not a picture of Snake. Steering blind never
+    // reliably found food, so the capture plays properly: read the food's
+    // position off the DOM and chase it greedily until the tail is long
+    // enough to read as a game in progress. Easy mode gives the chase enough
+    // time per tick to actually land its turns.
+    prepare: async (page) => {
+      // Easy mode: the slowest tick, so each scripted turn actually lands.
+      await page.selectOption('#selectMode', '100');
+      await page.getByRole('button', { name: 'Play Game' }).click();
       await page.waitForTimeout(300);
-      // Neon Serpent is ours (original, MIT) — scripting a snake AI to
-      // reliably survive long enough to earn a good score against a
-      // randomly-placed pellet turned out to be the wrong amount of
-      // engineering for a cover screenshot. game.js exposes a small
-      // debug-only setter for exactly this (see its own comment); this
-      // draws the SAME frame a real long game reaches, without depending on
-      // one actually surviving that long in a scripted browser session.
-      const rows = kind === 'hero' ? [9, 10, 11] : [9, 10];
-      await page.evaluate((rows) => {
-        const tailToHead: { x: number; y: number }[] = [];
-        rows.forEach((y: number, i: number) => {
-          const xs = [];
-          for (let x = 4; x <= 16; x++) xs.push(x);
-          if (i % 2 === 1) xs.reverse();
-          for (const x of xs) tailToHead.push({ x, y });
-        });
-        const headFirst = tailToHead.slice().reverse();
-        (window as unknown as { __neonSerpentDebug: { setForCapture: (c: unknown, s: number) => void } })
-          .__neonSerpentDebug.setForCapture(headFirst, headFirst.length - 3);
-      }, rows);
-      await page.waitForTimeout(300);
+
+      /** Head, target and wall clearances, or null once the snake is dead. */
+      const read = (targetSel: string | null) =>
+        page.evaluate((sel) => {
+          const dead = document.querySelector('.snake-try-again-dialog') as HTMLElement | null;
+          if (dead && dead.offsetParent !== null) return null;
+          const head = document.querySelector('.snake-snakebody-alive');
+          const field = document.querySelector('.snake-playing-field');
+          if (!head || !field) return null;
+          const h = head.getBoundingClientRect();
+          const f = field.getBoundingClientRect();
+          let target = { x: (f.left + f.right) / 2, y: (f.top + f.bottom) / 2 };
+          if (sel) {
+            const t = document.querySelector(sel);
+            if (!t) return null;
+            const r = t.getBoundingClientRect();
+            target = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+          }
+          return {
+            len: document.querySelectorAll('.snake-snakebody-alive').length,
+            block: h.width,
+            dx: target.x - (h.left + h.width / 2),
+            dy: target.y - (h.top + h.height / 2),
+            clear: {
+              ArrowLeft: h.left - f.left,
+              ArrowRight: f.right - h.right,
+              ArrowUp: h.top - f.top,
+              ArrowDown: f.bottom - h.bottom,
+            } as Record<string, number>,
+          };
+        }, targetSel);
+
+      const flip: Record<string, string> = {
+        ArrowLeft: 'ArrowRight', ArrowRight: 'ArrowLeft',
+        ArrowUp: 'ArrowDown', ArrowDown: 'ArrowUp',
+      };
+      let heading = '';
+
+      /** Steer greedily toward `target` for at most `ticks`, avoiding walls. */
+      const chase = async (target: string | null, ticks: number, until?: (s: NonNullable<Awaited<ReturnType<typeof read>>>) => boolean) => {
+        for (let i = 0; i < ticks; i++) {
+          const st = await read(target);
+          if (!st) return false;
+          if (until?.(st)) return true;
+          const wanted = Math.abs(st.dx) > Math.abs(st.dy)
+            ? [st.dx > 0 ? 'ArrowRight' : 'ArrowLeft', st.dy > 0 ? 'ArrowDown' : 'ArrowUp']
+            : [st.dy > 0 ? 'ArrowDown' : 'ArrowUp', st.dx > 0 ? 'ArrowRight' : 'ArrowLeft'];
+          const key = [...wanted, 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].find(
+            (k) => k !== flip[heading] && st.clear[k]! > st.block * 2,
+          );
+          if (!key) return false;
+          if (key !== heading) await page.keyboard.press(key);
+          heading = key;
+          await page.waitForTimeout(112);
+        }
+        return true;
+      };
+
+      // Greedy chasing does not avoid the snake's own body, so a long enough
+      // run eventually coils into itself. Rather than write a pathfinder for a
+      // screenshot, aim for a modest length and simply restart on death — the
+      // board resets to a one-block snake, so a failed attempt is detectable
+      // and cheap to redo.
+      const TARGET = 12;
+      let best = 0;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        // 1 — grow. A one-block snake is not a picture of Snake.
+        await chase('.snake-food-block', 90, (st) => st.len >= TARGET);
+        // 2 — bring it back to the middle, so the centre-crop the capsule
+        //     takes is guaranteed to contain it.
+        await chase(null, 30, (st) => Math.abs(st.dx) < st.block * 2 && Math.abs(st.dy) < st.block * 2);
+
+        const st = await read(null);
+        if (st && st.len >= TARGET) {
+          // 3 — one deliberate turn, so the body reads as a snake, not a bar.
+          const turn = (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'] as const)
+            .filter((k) => k !== heading && k !== flip[heading])
+            .sort((a, b) => st.clear[b]! - st.clear[a]!)[0];
+          if (turn) {
+            await page.keyboard.press(turn);
+            await page.waitForTimeout(330);
+          }
+          best = st.len;
+          break;
+        }
+
+        // Died, or ran out of ticks short of TARGET. Restart and try again.
+        const again = page.getByRole('button', { name: 'Play Again?' });
+        if (await again.isVisible().catch(() => false)) {
+          await again.click();
+          await page.waitForTimeout(300);
+          heading = '';
+        } else if (st) {
+          best = st.len;
+          break; // alive but short — good enough, take it
+        } else {
+          break;
+        }
+      }
+      if (!best) throw new Error('snake capture: could not keep a snake alive long enough');
+
+      // Freeze. The snake keeps moving after prepare() returns, and with a
+      // coiled body the next few ticks are as likely to end in a self-collision
+      // as not — which would replace the cover with a "You died :(" dialog.
+      // Pausing captures exactly the position that was played; the pause
+      // overlay is hidden for the shot, being transient chrome rather than
+      // part of the game's picture.
+      await page.keyboard.press('Space');
+      await page.waitForTimeout(150);
+      await page.addStyleTag({
+        content:
+          '.snake-pause-screen, .snake-try-again-dialog, .snake-welcome-dialog { display: none !important; }',
+      });
+      await page.waitForTimeout(100);
     },
   },
   {

@@ -1,0 +1,53 @@
+Nexus modifications to JavaScript Snake
+=======================================
+
+Upstream:  https://github.com/patorjk/JavaScript-Snake
+Author:    Patrick Gillespie (patorjk)
+Licence:   MIT
+Vendored:  2026-08-22  (repo subdirectory src/, which holds the playable build)
+
+MIT does not require a change record. This file exists because Nexus keeps one
+for every vendored bundle regardless of licence, so the audit trail is uniform.
+
+The game's own credit links — patorjk.com, the source repository, the author's
+YouTube channel — are left exactly as upstream renders them on the game-over
+screen. They are plain hyperlinks and issue no request until clicked.
+
+Changes
+-------
+
+1. index.html — removed the (already commented-out) Google Analytics gtag
+   block outright, rather than shipping a dormant tracker. Nexus does not
+   carry analytics.
+
+2. css/*.css — every theme referenced its sprite as
+       url("src/css/images/<name>.png")
+   which is the path from the repository root, not from the stylesheet. Because
+   only the src/ subtree is vendored, those URLs resolved to
+   /play/snake/css/src/css/images/... and 404'd, leaving several themes with an
+   invisible or plain-coloured snake. Rewritten to url("images/<name>.png").
+
+3. index.html — the THEMES array listed five stylesheets that do not exist in
+   the repository (clean, blue, golden, cotton-candy, og). Selecting one
+   removed the current stylesheet and loaded nothing, leaving the game
+   unstyled. Trimmed to the themes that actually ship, and teal-snake.css —
+   which ships but was missing from the list — was added.
+
+4. css/nexus-snake.css — ADDED. A new theme using Project Nexus's own palette
+   (ink ground, emerald snake, amber food), registered through the game's
+   documented theme mechanism. Made the default. Reason: every stock theme
+   fights the launcher's colours — the "neon" theme is a full-bleed cyan field
+   and "matrix" surrounds the board in bright green. No upstream file was
+   changed to add it beyond the one THEMES entry.
+
+5. css/teal-snake.css — removed an @import of Google Fonts (Electrolize). A
+   third-party request, and commonly blocked on school networks. The
+   stylesheet's own fallback stack still applies.
+
+6. index.html — removed the in-game "Full Screen" button and its handler. Nexus
+   provides fullscreen in the player chrome, and the upstream handler calls
+   alert() when the API refuses, which freezes an embedded frame.
+
+7. Removed ai-example.html, js/ai-init.js and css/images/Thumbs.db — an
+   autoplay demo harness not reachable from the game, and a Windows Explorer
+   artefact.

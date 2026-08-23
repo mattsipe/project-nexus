@@ -50,7 +50,12 @@ async function listFiles(pkg: string): Promise<JsDelivrFile[]> {
 function shouldKeep(name: string, subdir: string): boolean {
   if (subdir && !name.startsWith(subdir)) return false;
   if (ALWAYS_KEEP.test(name)) return true;
-  return !SKIP_PATTERNS.some((re) => re.test(name));
+  // Skip rules describe scaffolding relative to the root we are vendoring, so
+  // they must be tested against the path *after* --subdir is removed. Asking
+  // for --subdir src otherwise matched the /src/ rule and kept nothing —
+  // patorjk/JavaScript-Snake keeps its whole playable build under src/.
+  const rel = subdir ? name.slice(subdir.length) || '/' : name;
+  return !SKIP_PATTERNS.some((re) => re.test(rel));
 }
 
 /**

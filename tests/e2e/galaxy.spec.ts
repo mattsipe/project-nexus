@@ -40,7 +40,7 @@ test.describe('galaxy background', () => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    await page.locator('[data-capsule]').filter({ hasText: 'Neon Serpent' }).click();
+    await page.locator('[data-capsule]').filter({ hasText: 'Snake' }).first().click();
     await expect(page.getByRole('button', { name: 'Fullscreen' })).toBeVisible();
     // Give `stop()` a moment to actually take effect — the pause reacts to a
     // state change, so it lands a frame or two after the click itself, not

@@ -1,0 +1,50 @@
+title: Snake
+tagline: Eat, grow, and run out of room. The one everybody already knows.
+description: >-
+  Classic grid Snake, played the way it always was: arrow keys, one square at a
+  time, a tail that grows with every bite and kills you the moment you cross
+  it. Five speeds, from Easy to Impossible, and a Rush mode that never lets up.
+  Patrick Gillespie has maintained this version for well over a decade.
+categories: [arcade, classic]
+tags: [snake, grid, high-score, one-more-go]
+delivery:
+  mode: selfhost
+  path: /play/snake/index.html
+player:
+  # The board is pinned to a fixed classic-proportioned grid in the bundle
+  # rather than
+  # sized to the window, so the page has a real natural size. The player
+  # scales that whole page up to the frame — a bigger screen gets a bigger
+  # board, not more empty squares.
+  nativeWidth: 760
+  nativeHeight: 575
+accent: "#35b2e0"
+cover:
+  capsule: /covers/snake-capsule.png
+  hero: /covers/snake-hero.png
+  source: captured
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    Screenshot of our own self-hosted build in its Nexus theme, captured via
+    scripts/capture-covers.ts on 2026-08-22. Inherits the game's MIT licence;
+    no separate rights question.
+weight: 71
+added: "2026-08-22"
+controls: [keyboard, touch]
+fullscreen: supported
+savesTo: origin
+source:
+  author: Patrick Gillespie (patorjk)
+  homepage: https://patorjk.com/games/snake/
+  repo: https://github.com/patorjk/JavaScript-Snake
+  license: MIT
+  licenseUrl: https://github.com/patorjk/JavaScript-Snake/blob/master/LICENSE
+  verifiedOn: "2026-08-22"
+  rightsNote: >-
+    LICENSE read at repo root on 2026-08-22: MIT, covering the code and the
+    author's own block sprites — there are no third-party assets in the bundle.
+    Upstream titles the project "JavaScript Snake"; Nexus lists it as "Snake",
+    the ordinary name for the genre and not a trademark, with Patrick Gillespie
+    credited here and on /credits. Analytics removed, several broken sprite
+    paths fixed, and a Nexus-palette theme added through the game's own theme
+    mechanism — see NEXUS-MODIFICATIONS.txt.

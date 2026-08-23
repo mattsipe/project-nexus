@@ -1,0 +1,101 @@
+/*
+ * Nexus theme for JavaScript Snake.
+ *
+ * [Nexus] Added, not upstream. The game ships a documented theme mechanism
+ * (drop a stylesheet in css/ and add an entry to THEMES in index.html), and
+ * every stock theme fights the launcher's palette — the "neon" one is a
+ * full-bleed cyan field, "matrix" surrounds the board in bright green. This
+ * uses Project Nexus's own tokens so the game reads as part of the site:
+ * ink ground, emerald snake, amber food (amber marks live state everywhere
+ * else on the site too).
+ *
+ * Values mirror src/styles/theme.css. Kept as literals rather than custom
+ * properties because this file is served inside an iframe that never sees
+ * the parent's :root.
+ */
+
+body {
+  background-color: #060e0f;
+}
+
+.snake-toolbar {
+  color: #7c9490;
+}
+
+#mode-wrapper {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: #7c9490;
+}
+
+a.snake-link,
+a.snake-link:link,
+a.snake-link:visited {
+  color: #7c9490;
+}
+
+a.snake-link:hover {
+  color: #2ada86;
+}
+
+.snake-pause-screen {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 14px;
+  background-color: #0b1416;
+  color: #d6e5e2;
+}
+
+.snake-panel-component {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: #7c9490;
+  background-color: #060e0f;
+}
+
+/* The snake itself: solid emerald, the system's own identity colour. No
+   sprite, so nothing to 404 and nothing to scale badly. */
+.snake-snakebody-block {
+  background-color: #2ada86;
+  border: 0;
+}
+
+.snake-snakebody-alive {
+  background-image: none;
+  background-color: #2ada86;
+}
+
+.snake-snakebody-dead {
+  background-image: none;
+  background-color: #1ea968;
+}
+
+/* Amber is the live-state colour across the whole site; the food is the one
+   thing on the board that is about to change state. */
+.snake-food-block {
+  background-color: #ffb020;
+  border: 2px solid #060e0f;
+}
+
+.snake-playing-field {
+  background-color: #0b1416;
+  border: 2px solid #1f3330;
+}
+
+.snake-game-container {
+  background-color: #060e0f;
+}
+
+.snake-welcome-dialog {
+  background-color: #122220;
+  color: #d6e5e2;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  border: 1px solid #2d4a45;
+}
+
+.snake-try-again-dialog,
+.snake-win-dialog {
+  background-color: #122220;
+  color: #d6e5e2;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 14px;
+  border: 1px solid #2d4a45;
+}
