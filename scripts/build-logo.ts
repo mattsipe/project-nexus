@@ -22,9 +22,12 @@ const SRC = 'assets/brand/nexus-mark-source.png';
 const OUT_DIR = 'public/brand';
 const INK = '#060e0f';
 
-// The rail glyph renders at 26px in CSS; ship 1x/2x/3x so it stays crisp on
+// The rail glyph renders at 40px in CSS; ship 1x/2x/3x so it stays crisp on
 // retina and 1.5x/2x display scaling (school-issue laptops vary a lot here).
-const RAIL_SIZES = [26, 52, 78];
+// It was 26px, which left the brand slot looking undersized in a 64px
+// (--rail-w) column; 40 still leaves 12px of breathing room each side, so the
+// rail itself does not grow.
+const RAIL_SIZES = [40, 80, 120];
 
 /** Scan the alpha channel directly for the mark's real bounding box.
  * sharp's own trim() compares against the top-left corner pixel, which for

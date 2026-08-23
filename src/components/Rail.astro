@@ -27,21 +27,24 @@ const itemClass = (active: boolean) =>
 >
   <a
     href="/"
-    class="mb-0 hidden h-9 w-9 place-items-center rounded-lg opacity-90 transition-opacity hover:opacity-100 md:mb-3 md:grid"
+    class="mb-0 hidden h-11 w-11 place-items-center rounded-lg opacity-95 transition-opacity hover:opacity-100 md:mb-3 md:grid"
     aria-label="Nexus home"
     title="Nexus"
   >
     {/* The actual supplied mark (scripts/build-logo.ts derivatives), not a
         reconstruction — it stays legible at this size, so there was no need
         to trade the real bevelled/gradient art for a flat redraw. A raster
-        can't take currentColor; the mark is always its own emerald. */}
+        can't take currentColor; the mark is always its own emerald.
+        Rendered at 40px, up from 26: the brand slot read as undersized in a
+        64px (--rail-w) column. Still 12px of clearance each side, so the rail
+        itself does not grow — resize the mark, not the chassis. */}
     <picture>
-      <source srcset="/brand/mark-26.webp 1x, /brand/mark-52.webp 2x, /brand/mark-78.webp 3x" type="image/webp" />
+      <source srcset="/brand/mark-40.webp 1x, /brand/mark-80.webp 2x, /brand/mark-120.webp 3x" type="image/webp" />
       <img
-        src="/brand/mark-26.png"
-        srcset="/brand/mark-26.png 1x, /brand/mark-52.png 2x, /brand/mark-78.png 3x"
-        width="26"
-        height="26"
+        src="/brand/mark-40.png"
+        srcset="/brand/mark-40.png 1x, /brand/mark-80.png 2x, /brand/mark-120.png 3x"
+        width="40"
+        height="40"
         alt=""
       />
     </picture>
@@ -57,13 +60,11 @@ const itemClass = (active: boolean) =>
     </svg>
   </a>
 
-  <a href="/#continue" class={itemClass(false)} title="Continue playing">
-    <span class="sr-only">Continue playing</span>
-    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 12a9 9 0 1 1 3 6.7" />
-      <path d="M3 17v-5h5" />
-    </svg>
-  </a>
+  {/* Continue is deliberately NOT here. It is a section of the library, not a
+      place you navigate to — the rail's job is destinations (Library,
+      Favourites) and controls (Settings, mute), and a link that only scrolls
+      the page you are already on is neither. The #continue section still
+      exists in Library.tsx, and /#continue still resolves to it. */}
 
   <a href="/favorites" class={itemClass(isFavorites)} aria-current={isFavorites ? 'page' : undefined} title="Favourites">
     <span class="sr-only">Favourites</span>
