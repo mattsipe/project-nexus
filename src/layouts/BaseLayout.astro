@@ -3,6 +3,7 @@ import '../styles/theme.css';
 import Rail from '../components/Rail.astro';
 import Galaxy from '../components/react/Galaxy.tsx';
 import MusicPlayer from '../components/react/MusicPlayer.tsx';
+import CloseGuard from '../components/react/CloseGuard.tsx';
 
 interface Props {
   title?: string;
@@ -60,5 +61,6 @@ const fullTitle = title ? `${title} · Nexus` : 'Project Nexus — browser games
 
     {/* Mounted once at the layout level so it survives client-side navigation state. */}
     <MusicPlayer client:idle />
+    <CloseGuard client:idle />
   </body>
 </html>

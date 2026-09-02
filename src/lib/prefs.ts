@@ -8,12 +8,15 @@ export interface Prefs {
   /** 0–1. Persisted separately from `musicEnabled` so unmuting restores the old level. */
   volume: number;
   gridDensity: 'comfortable' | 'compact';
+  /** Opt-in "leave site?" prompt on tab close / navigation away. See CloseGuard.tsx. */
+  confirmOnClose: boolean;
 }
 
 export const DEFAULT_PREFS: Prefs = {
   musicEnabled: false,
   volume: 0.35,
   gridDensity: 'comfortable',
+  confirmOnClose: false,
 };
 
 const isPrefs = (v: unknown): v is Partial<Prefs> =>
