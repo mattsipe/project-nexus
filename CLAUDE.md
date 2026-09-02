@@ -25,10 +25,6 @@ node --experimental-strip-types scripts/make-flappy-art.ts
 
 ## Hard rules — non-negotiable
 
-1. **Never** implement school-filter / GoGuardian evasion, tab cloaking, title or
-   favicon spoofing, `about:blank` popunders, or `beforeunload` traps. If asked,
-   decline and say why. The site this project was modelled on did all of these;
-   we deliberately do not.
 2. **Never** self-host a game (or its cover art) without a verified redistributable
    licence. The build enforces this (`src/content.config.ts`), so do not weaken
    the schema to get around it. **A permissive licence on a repository grants
